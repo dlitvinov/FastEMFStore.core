@@ -7,9 +7,13 @@ package org.eclipse.emf.emfstore.client.test.server;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -25,6 +29,7 @@ import org.eclipse.emf.emfstore.modelmutator.api.ModelMutatorConfiguration;
 import org.eclipse.emf.emfstore.modelmutator.api.ModelMutatorUtil;
 import org.eclipse.emf.emfstore.server.exceptions.EmfStoreException;
 import org.eclipse.emf.emfstore.server.model.versioning.PrimaryVersionSpec;
+import org.junit.AfterClass;
 import org.junit.Test;
 
 /**
@@ -34,11 +39,23 @@ import org.junit.Test;
  */
 public class PerformanceTest extends ServerTests {
 
-	private static final String MODELS_DIR = "C:\\TUM\\Masters Thesis\\Models\\";
-	private static final String[] MODELS = new String[] { "1000" };// , "10000", "50000", "100000" };// , "200000" };
-	private static final int NUM_ITERATIONS = 10;
+	private static final String MODELS_DIR = "C:\\EMFStore_workspace\\Models\\";
+	private static final String[] MODELS = new String[] { "200000" };// , "10000", "50000", "100000", "200000", "500000"
+																		// };
+	private static final int NUM_ITERATIONS = 1000;
+	private static FileWriter writer;
+	private static File file;
 
 	private Usersession usersession;
+	private ProjectSpace projectSpace2;
+
+	@AfterClass
+	public static void finish() throws EmfStoreException, IOException {
+		ServerTests.tearDownAfterClass();
+		if (writer != null) {
+			writer.close();
+		}
+	}
 
 	/**
 	 * Opens projects of different sizes, shares them with the server and then deletes them. r
@@ -66,11 +83,16 @@ public class PerformanceTest extends ServerTests {
 			final ProjectSpace projectSpace = setupHelper.getTestProjectSpace();
 
 			double[] times = new double[NUM_ITERATIONS];
+			long[] memBefore = new long[NUM_ITERATIONS];
+			long[] memDuring = new long[NUM_ITERATIONS];
+			long[] memAfter = new long[NUM_ITERATIONS];
+			MemoryMeter memoryMeter = new MemoryMeter();
+			memoryMeter.start();
+			// try {
 			for (int i = 0; i < NUM_ITERATIONS; i++) {
-				// assertTrue(getConnectionManager().getProjectList(sessionId).size() ==
-				// getProjectsOnServerBeforeTest());
-				Runtime.getRuntime().gc();
-				long memBefore = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+				assert (getConnectionManager().getProjectList(usersession.getSessionId()).size() == getProjectsOnServerBeforeTest());
+				memoryMeter.startMeasurments();
+				memBefore[i] = usedMemory();
 				long time = System.currentTimeMillis();
 				// setupHelper.shareProject();
 				new EMFStoreCommand() {
@@ -90,19 +112,18 @@ public class PerformanceTest extends ServerTests {
 							}
 							projectSpace.shareProject(usersession, null);
 						} catch (EmfStoreException e) {
-							e.printStackTrace();
+							ModelUtil.logException(e);
 						}
 					}
 				}.run(false);
 				times[i] = (System.currentTimeMillis() - time) / 1000.0;
-				// assertTrue(getConnectionManager().getProjectList(sessionId).size() == getProjectsOnServerBeforeTest()
-				// + 1);
+				assert (getConnectionManager().getProjectList(usersession.getSessionId()).size() == getProjectsOnServerBeforeTest() + 1);
 				assertNotNull(setupHelper.getTestProject());
-				Runtime.getRuntime().gc();
-				long memAfter = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+				memAfter[i] = usedMemory();
+				memDuring[i] = memoryMeter.stopMeasurments();
 				ModelUtil.logInfo("share project " + modelName + " iteration #" + (i + 1) + ": time=" + times[i]
-					+ ", memory used before: " + memBefore / 1024 / 1024 + "MB, after: " + memAfter / 1024 / 1024
-					+ "MB");
+					+ ", memory used before: " + memBefore[i] / 1024 / 1024 + "MB, during: " + memDuring[i] / 1024
+					/ 1024 + "MB, after: " + memAfter[i] / 1024 / 1024 + "MB");
 				// assertEqual(projectSpace.getProject(),
 				// getConnectionManager().getProject(getSessionId(), projectInfo.getProjectId(),
 				// VersionSpec.HEAD_VERSION));
@@ -112,18 +133,62 @@ public class PerformanceTest extends ServerTests {
 						try {
 							getConnectionManager().deleteProject(usersession.getSessionId(),
 								projectSpace.getProjectId(), true);
-							WorkspaceManager.getInstance().getCurrentWorkspace().getUsersessions().remove(usersession);
+							// WorkspaceManager.getInstance().getCurrentWorkspace().getUsersessions().remove(usersession);
 						} catch (EmfStoreException e) {
 							e.printStackTrace();
 						}
 					}
 				}.run(false);
-				usersession = null;
-			}
+			} // for loop with iterations
+				// } finally {
 			ModelUtil.logInfo("times=" + Arrays.toString(times));
 			ModelUtil.logInfo("shareProjectTest(): model " + modelName + ": average=" + average(times) + ", min="
 				+ min(times) + ", max=" + max(times) + ", mean=" + mean(times));
+			writedata("Share", modelName, times, memBefore, memDuring, memAfter);
+			new EMFStoreCommand() {
+				@Override
+				protected void doRun() {
+					WorkspaceManager.getInstance().getCurrentWorkspace().getUsersessions().remove(usersession);
+				}
+			}.run(false);
+			usersession = null;
 			SetupHelper.cleanupWorkspace();
+			// }
+
+		} // for loop with different models
+	}
+
+	private static void writedata(String title, String modelName, double[] times, long[] memBefore, long[] memDuring,
+		long[] memAfter) {
+		try {
+			if (writer == null) {
+				String fileName = new SimpleDateFormat("yyyy.MM.dd_HH.mm").format(new Date()) + ".csv";
+				file = new File(fileName);
+				writer = new FileWriter(file);
+			}
+			writer.write(title + "\nTime:;" + modelName + ";" + average(times));
+			for (double time : times) {
+				String text = (";" + time).replace('.', ',');
+				writer.write(text);
+			}
+			writer.write("\nMem Before:;;");
+			for (int i = 0; i < NUM_ITERATIONS; i++) {
+				writer.write(";" + memBefore[i]);
+			}
+			if (memDuring != null) {
+				writer.write("\nMem During:;;");
+				for (int i = 0; i < NUM_ITERATIONS; i++) {
+					writer.write(";" + memDuring[i]);
+				}
+			}
+			writer.write("\nMem After:;;");
+			for (int i = 0; i < NUM_ITERATIONS; i++) {
+				writer.write(";" + memAfter[i]);
+			}
+			writer.write("\n\n");
+			writer.flush();
+		} catch (IOException e) {
+			ModelUtil.logException("Error occured while writing to file", e);
 		}
 	}
 
@@ -166,6 +231,13 @@ public class PerformanceTest extends ServerTests {
 			setupHelper.setupTestProjectSpace();
 
 			setupHelper.shareProject();
+			// final ProjectInfo projectInfo = setupHelper.getTestProjectSpace().getProjectInfo();
+			// try {
+			// WorkspaceManager.getInstance().getCurrentWorkspace()
+			// .deleteProjectSpace(setupHelper.getTestProjectSpace());
+			// } catch (IOException e) {
+			// e.printStackTrace();
+			// }
 
 			// SessionId sessionId = setupHelper.getUsersession().getSessionId();
 			// ProjectInfo projectInfo = getConnectionManager().createProject(getSessionId(),
@@ -179,23 +251,24 @@ public class PerformanceTest extends ServerTests {
 			// VersionSpec.HEAD_VERSION));
 
 			double[] times = new double[NUM_ITERATIONS];
+			long[] memBefore = new long[NUM_ITERATIONS];
+			long[] memDuring = new long[NUM_ITERATIONS];
+			long[] memAfter = new long[NUM_ITERATIONS];
+			MemoryMeter memoryMeter = new MemoryMeter();
+			memoryMeter.start();
 			final ProjectSpace projectSpace = setupHelper.getTestProjectSpace();
 			// final Usersession usersession = setupHelper.getUsersession();
 			for (int i = 0; i < NUM_ITERATIONS; i++) {
-				Runtime.getRuntime().gc();
-				long memBefore = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+				memoryMeter.startMeasurments();
+				memBefore[i] = usedMemory();
 				long time = System.currentTimeMillis();
 
 				new EMFStoreCommand() {
 					@Override
 					protected void doRun() {
 						try {
-							setupHelper.loginServer();
-							Usersession usersession = setupHelper.getUsersession();
-							setupHelper.getWorkSpace().getUsersessions().add(usersession);
-							// usersession.checkout(projectSpace.getProjectInfo());
-							WorkspaceManager.getInstance().getCurrentWorkspace()
-								.checkout(usersession, projectSpace.getProjectInfo());
+							projectSpace2 = WorkspaceManager.getInstance().getCurrentWorkspace()
+								.checkout(setupHelper.getUsersession(), projectSpace.getProjectInfo());
 						} catch (EmfStoreException e) {
 							e.printStackTrace();
 						}
@@ -203,30 +276,28 @@ public class PerformanceTest extends ServerTests {
 				}.run(false);
 				// setupHelper.getUsersession().checkout(projectSpace.getProjectInfo());
 				times[i] = (System.currentTimeMillis() - time) / 1000.0;
-				Runtime.getRuntime().gc();
-				long memAfter = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+				memAfter[i] = usedMemory();
+				memDuring[i] = memoryMeter.stopMeasurments();
 				ModelUtil.logInfo("checkout project " + projectSpace.getProjectName() + " iteration #" + (i + 1)
-					+ ": time=" + times[i] + ", memory used before: " + memBefore / 1024 / 1024 + "MB, after: "
-					+ memAfter / 1024 / 1024 + "MB");
+					+ ": time=" + times[i] + ", memory used before: " + memBefore[i] / 1024 / 1024 + "MB, during: "
+					+ memDuring[i] / 1024 / 1024 + "MB, after: " + memAfter[i] / 1024 / 1024 + "MB");
 				new EMFStoreCommand() {
 					@Override
 					protected void doRun() {
 						try {
-							WorkspaceManager.getInstance().getCurrentWorkspace().deleteProjectSpace(projectSpace);
-							WorkspaceManager.getInstance().getCurrentWorkspace().getUsersessions()
-								.remove(setupHelper.getUsersession());
+							WorkspaceManager.getInstance().getCurrentWorkspace().deleteProjectSpace(projectSpace2);
+							projectSpace2 = null;
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
-						// finally {
-						// SetupHelper.cleanupWorkspace();
-						// }
 					}
 				}.run(false);
 			}
+
 			ModelUtil.logInfo("times=" + Arrays.toString(times));
 			ModelUtil.logInfo("checkoutProjectTest(): model " + modelName + ": average=" + average(times) + ", min="
 				+ min(times) + ", max=" + max(times) + ", mean=" + mean(times));
+			writedata("Checkout", modelName, times, memBefore, memDuring, memAfter);
 
 			// SessionId sessionId = setupHelper.getUsersession().getSessionId();
 			// getConnectionManager().deleteProject(sessionId, projectSpace.getProjectId(), true);
@@ -238,6 +309,8 @@ public class PerformanceTest extends ServerTests {
 					try {
 						getConnectionManager().deleteProject(setupHelper.getUsersession().getSessionId(),
 							projectSpace.getProjectId(), true);
+						// WorkspaceManager.getInstance().getCurrentWorkspace().getUsersessions()
+						// .remove(setupHelper.getUsersession());
 					} catch (EmfStoreException e) {
 						e.printStackTrace();
 					} finally {
@@ -253,7 +326,6 @@ public class PerformanceTest extends ServerTests {
 	private int depth = 4;
 	private long seed = 1234567800;
 	private PrimaryVersionSpec version;
-	private ProjectSpace projectSpace2;
 
 	/**
 	 * Measures average time, spent for the commit and update operations. Opens projects of different sizes, shares them
@@ -308,9 +380,14 @@ public class PerformanceTest extends ServerTests {
 			double[] modelChangeTimes = new double[NUM_ITERATIONS];
 			double[] commitTimes = new double[NUM_ITERATIONS];
 			double[] updateTimes = new double[NUM_ITERATIONS];
+			long[] memBeforeMut = new long[NUM_ITERATIONS];
+			long[] memAfterMut = new long[NUM_ITERATIONS];
+			// long[] memBeforeComm = new long[NUM_ITERATIONS];
+			long[] memAfterComm = new long[NUM_ITERATIONS];
+			// long[] memBeforeUpd = new long[NUM_ITERATIONS];
+			long[] memAfterUpd = new long[NUM_ITERATIONS];
 			for (int i = 0; i < NUM_ITERATIONS; i++) {
-				Runtime.getRuntime().gc();
-				long memBefore = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+				memBeforeMut[i] = usedMemory();
 				long time = System.currentTimeMillis();
 				final ModelMutatorConfiguration mmc = new ModelMutatorConfiguration(
 					ModelMutatorUtil.getEPackage(modelKey), project1, seed);
@@ -327,14 +404,15 @@ public class PerformanceTest extends ServerTests {
 					}
 				}.run(false);
 				modelChangeTimes[i] = (System.currentTimeMillis() - time) / 1000.0;
-				Runtime.getRuntime().gc();
-				long memAfterMut = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
+				memAfterMut[i] = usedMemory();
 				ModelUtil.logInfo("change model " + modelName + " iteration #" + (i + 1) + ": time="
-					+ modelChangeTimes[i] + " memory used before:" + memBefore / 1024 / 1024 + " after: " + memAfterMut
-					/ 1024 / 1024 + "MB");
+					+ modelChangeTimes[i] + " memory used before:" + memBeforeMut[i] / 1024 / 1024 + "MB, after: "
+					+ memAfterMut[i] / 1024 / 1024 + "MB");
 
 				System.out.println("VERSION BEFORE commit:"
 					+ projectSpace1.getProjectInfo().getVersion().getIdentifier());
+				// memBeforeComm[i] = usedMemory();
 				time = System.currentTimeMillis();
 
 				new EMFStoreCommand() {
@@ -350,15 +428,12 @@ public class PerformanceTest extends ServerTests {
 
 				commitTimes[i] = (System.currentTimeMillis() - time) / 1000.0;
 
-				Runtime.getRuntime().gc();
-				long memAfterCommit = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-				System.out.println("VERSION AFTER commit:" + version.getIdentifier());
+				memAfterComm[i] = usedMemory();
+				System.out.println("VERSION AFTER commit:" + (version != null ? version.getIdentifier() : null));
 				ModelUtil.logInfo("commit project " + modelName + " iteration #" + (i + 1) + ": time=" + commitTimes[i]
-					+ ", memory used before: " + memAfterMut / 1024 / 1024 + "MB, after: " + memAfterCommit / 1024
+					+ ", memory used before: " + memAfterMut[i] / 1024 / 1024 + "MB, after: " + memAfterComm[i] / 1024
 					/ 1024 + "MB");
 
-				Runtime.getRuntime().gc();
-				memBefore = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 				time = System.currentTimeMillis();
 				new EMFStoreCommand() {
 					@Override
@@ -372,10 +447,9 @@ public class PerformanceTest extends ServerTests {
 				}.run(false);
 				updateTimes[i] = (System.currentTimeMillis() - time) / 1000.0;
 
-				Runtime.getRuntime().gc();
-				long memAfterUpdate = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+				memAfterUpd[i] = usedMemory();
 				ModelUtil.logInfo("update project " + modelName + " iteration #" + (i + 1) + ": time=" + updateTimes[i]
-					+ ", memory used before: " + memAfterCommit / 1024 / 1024 + "MB, after: " + memAfterUpdate / 1024
+					+ ", memory used before: " + memAfterComm[i] / 1024 / 1024 + "MB, after: " + memAfterUpd[i] / 1024
 					/ 1024 + "MB");
 				version = null;
 			}
@@ -388,6 +462,8 @@ public class PerformanceTest extends ServerTests {
 			ModelUtil.logInfo("commitAndUpdateProjectTest(): update project " + modelName + ": average="
 				+ average(updateTimes) + ", min=" + min(updateTimes) + ", max=" + max(updateTimes) + ", mean="
 				+ mean(updateTimes));
+			writedata("Commit", modelName, commitTimes, memAfterMut, null, memAfterComm);
+			writedata("Update", modelName, updateTimes, memAfterComm, null, memAfterUpd);
 
 			new EMFStoreCommand() {
 				@Override
@@ -423,7 +499,12 @@ public class PerformanceTest extends ServerTests {
 		SetupHelper.cleanupServer();
 	}
 
-	private double min(double[] arr) {
+	public static long usedMemory() {
+		Runtime.getRuntime().gc();
+		return Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+	}
+
+	public static double min(double[] arr) {
 		double min = Double.MAX_VALUE;
 		for (double x : arr) {
 			if (x < min) {
@@ -433,7 +514,7 @@ public class PerformanceTest extends ServerTests {
 		return min;
 	}
 
-	private double max(double[] arr) {
+	public static double max(double[] arr) {
 		double max = Double.MIN_VALUE;
 		for (double x : arr) {
 			if (x > max) {
@@ -443,7 +524,7 @@ public class PerformanceTest extends ServerTests {
 		return max;
 	}
 
-	private double average(double[] arr) {
+	public static double average(double[] arr) {
 		double sum = 0.0;
 		for (double x : arr) {
 			sum += x;
@@ -451,7 +532,7 @@ public class PerformanceTest extends ServerTests {
 		return (int) (sum / arr.length * 1000.0) / 1000.0;
 	}
 
-	private double mean(double[] arr) {
+	public static double mean(double[] arr) {
 		Arrays.sort(arr);
 		int ind = arr.length / 2 - 1 + arr.length % 2;
 		return arr[ind];
@@ -464,25 +545,35 @@ public class PerformanceTest extends ServerTests {
 		/**
 		 * Period to wait (in milliseconds) between memory measurements.
 		 **/
-		public static final int MEASURMENT_PERIOD = 500;
+		public static final int MEASURMENT_PERIOD = 250;
 
-		private boolean stop;
+		private boolean running;
 		private long maxUsedMemory;
 
 		@Override
 		public void run() {
-			stop = false;
-			maxUsedMemory = 0;
-			while (!stop) {
-				long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-				if (usedMemory > maxUsedMemory) {
-					maxUsedMemory = usedMemory;
+			startMeasurments();
+			try {
+				while (true) {
+					Thread.sleep(MEASURMENT_PERIOD);
+					if (running) {
+						long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+						if (usedMemory > maxUsedMemory) {
+							maxUsedMemory = usedMemory;
+						}
+					}
 				}
+			} catch (InterruptedException e) {
 			}
 		}
 
-		public long finish() {
-			stop = true;
+		public void startMeasurments() {
+			running = true;
+			maxUsedMemory = 0;
+		}
+
+		public long stopMeasurments() {
+			running = false;
 			return maxUsedMemory;
 		}
 	}
