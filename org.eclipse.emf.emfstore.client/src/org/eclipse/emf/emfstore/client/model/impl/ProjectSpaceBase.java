@@ -60,6 +60,7 @@ import org.eclipse.emf.emfstore.common.model.Project;
 import org.eclipse.emf.emfstore.common.model.impl.IdentifiableElementImpl;
 import org.eclipse.emf.emfstore.common.model.impl.ProjectImpl;
 import org.eclipse.emf.emfstore.common.model.util.AutoSplitAndSaveResourceContainmentList;
+import org.eclipse.emf.emfstore.common.model.util.FileUtil;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.server.exceptions.EmfStoreException;
 import org.eclipse.emf.emfstore.server.exceptions.FileTransferException;
@@ -108,6 +109,8 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 
 	private StatePersister statePersister;
 
+	protected ResourceSet resourceSet;
+
 	/**
 	 * Constructor.
 	 */
@@ -118,7 +121,7 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * o {@inheritDoc}
 	 * 
 	 * @see org.eclipse.emf.emfstore.client.model.ProjectSpace#addFile(java.io.File)
 	 */
@@ -552,6 +555,7 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 	 */
 	public void initResources(ResourceSet resourceSet) {
 		initCompleted = true;
+		this.resourceSet = resourceSet;
 		String projectSpaceFileNamePrefix = Configuration.getWorkspaceDirectory()
 			+ Configuration.getProjectSpaceDirectoryPrefix() + getIdentifier() + File.separatorChar;
 		String projectSpaceFileName = projectSpaceFileNamePrefix + this.getIdentifier()
@@ -604,6 +608,40 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 		}
 
 		init();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.eclipse.emf.emfstore.client.model.ProjectSpace#delete()
+	 * @generated NOT
+	 */
+	@SuppressWarnings("unchecked")
+	public void delete() throws IOException {
+		WorkspaceManager.getObserverBus().unregister(modifiedModelElementsCache);
+		WorkspaceManager.getObserverBus().unregister(this, LoginObserver.class);
+		WorkspaceManager.getObserverBus().unregister(this);
+
+		Resource psResource = eResource();
+		if (psResource != null) {
+			psResource.delete(null);
+		}
+
+		String pathToProject = Configuration.getWorkspaceDirectory() + Configuration.getProjectSpaceDirectoryPrefix()
+			+ getIdentifier();
+		List<Resource> resources = new ArrayList<Resource>();
+		for (Resource resource : resourceSet.getResources()) {
+			if (resource.getURI().toFileString().startsWith(pathToProject)) {
+				resources.add(resource);
+			}
+		}
+		for (Resource resource : resources) {
+			resource.delete(null);
+		}
+
+		// delete folder of project space
+		FileUtil.deleteFolder(new File(pathToProject));
+
 	}
 
 	/**
