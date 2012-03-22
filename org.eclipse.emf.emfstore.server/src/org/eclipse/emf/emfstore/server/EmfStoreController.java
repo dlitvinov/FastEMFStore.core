@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Timer;
 
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
@@ -31,6 +32,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.emfstore.common.ResourceFactoryRegistry;
 import org.eclipse.emf.emfstore.common.model.util.FileUtil;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.server.accesscontrol.AccessControlImpl;
@@ -51,8 +53,6 @@ import org.eclipse.emf.emfstore.server.startup.EmfStoreValidator;
 import org.eclipse.emf.emfstore.server.startup.ExtensionManager;
 import org.eclipse.emf.emfstore.server.startup.MigrationManager;
 import org.eclipse.emf.emfstore.server.storage.ResourceStorage;
-import org.eclipse.emf.emfstore.server.taskmanager.TaskManager;
-import org.eclipse.emf.emfstore.server.taskmanager.tasks.CleanMemoryTask;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 
@@ -78,17 +78,20 @@ public class EmfStoreController implements IApplication, Runnable {
 	private HistoryCache historyCache;
 
 	/**
+	 * The period of time in seconds between executing the clean memory task.
+	 */
+	private static final int CLEAN_MEMORY_TASK_PERIOD = 10;
+
+	/**
 	 * {@inheritDoc}
 	 * 
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
 	public Object start(IApplicationContext context) throws FatalEmfStoreException {
-
 		run(true);
 		instance = null;
 		ModelUtil.logInfo("Server is STOPPED.");
 		return IApplication.EXIT_OK;
-
 	}
 
 	/**
@@ -119,7 +122,6 @@ public class EmfStoreController implements IApplication, Runnable {
 		properties = initProperties();
 
 		new MigrationManager().migrateModel();
-
 		this.serverSpace = initServerSpace();
 
 		handleStartupListener();
@@ -138,19 +140,18 @@ public class EmfStoreController implements IApplication, Runnable {
 
 		if (Boolean.parseBoolean(ServerConfiguration.getProperties().getProperty(
 			ServerConfiguration.PERFORM_CLEAN_MEMORY_TASK, ServerConfiguration.PERFORM_CLEAN_MEMORY_TASK_DEFAULT))) {
-			TaskManager taskManager = TaskManager.getInstance();
-			taskManager.addTask(new CleanMemoryTask(serverSpace.eResource().getResourceSet()));
-			taskManager.start();
+			new Timer().schedule(new CleanMemoryTask(serverSpace.eResource().getResourceSet()),
+				CLEAN_MEMORY_TASK_PERIOD * 1000, CLEAN_MEMORY_TASK_PERIOD * 1000);
 		}
 
 		handlePostStartupListener();
 
 		ModelUtil.logInfo("Initialitation COMPLETE.");
 		ModelUtil.logInfo("Server is RUNNING...");
-
 		if (waitForTermination) {
 			waitForTermination();
 		}
+
 	}
 
 	private void initLogging() {
@@ -235,6 +236,8 @@ public class EmfStoreController implements IApplication, Runnable {
 		ResourceStorage storage = initStorage();
 		URI resourceUri = storage.init(properties);
 		ResourceSet resourceSet = new ResourceSetImpl();
+		resourceSet.setResourceFactoryRegistry(new ResourceFactoryRegistry());
+		resourceSet.getLoadOptions().putAll(ModelUtil.getResourceLoadOptions());
 		resource = resourceSet.createResource(resourceUri);
 		try {
 			resource.load(ModelUtil.getResourceLoadOptions());

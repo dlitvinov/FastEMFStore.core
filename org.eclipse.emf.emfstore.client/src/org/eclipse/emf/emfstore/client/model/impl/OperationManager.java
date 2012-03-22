@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.eclipse.emf.emfstore.client.model.CompositeOperationHandle;
 import org.eclipse.emf.emfstore.client.model.ProjectSpace;
-import org.eclipse.emf.emfstore.client.model.observers.OperationListener;
+import org.eclipse.emf.emfstore.client.model.observers.OperationObserver;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.CompositeOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.semantic.SemanticCompositeOperation;
@@ -13,7 +13,7 @@ import org.eclipse.emf.emfstore.server.model.versioning.operations.semantic.Sema
 public class OperationManager implements OperationRecorderListener {
 
 	private OperationRecorder operationRecorder;
-	private List<OperationListener> operationListeners;
+	private List<OperationObserver> operationListeners;
 
 	// private CompositeOperation compositeOperation;
 	private ProjectSpace projectSpace;
@@ -21,7 +21,7 @@ public class OperationManager implements OperationRecorderListener {
 	public OperationManager(OperationRecorder operationRecorder, ProjectSpace projectSpace) {
 		this.operationRecorder = operationRecorder;
 		operationRecorder.addOperationRecorderListener(this);
-		operationListeners = new ArrayList<OperationListener>();
+		operationListeners = new ArrayList<OperationObserver>();
 		this.projectSpace = projectSpace;
 	}
 
@@ -49,7 +49,7 @@ public class OperationManager implements OperationRecorderListener {
 	 * 
 	 * @param operationListener
 	 */
-	public void addOperationListener(OperationListener operationListener) {
+	public void addOperationListener(OperationObserver operationListener) {
 		operationListeners.add(operationListener);
 	}
 
@@ -58,14 +58,14 @@ public class OperationManager implements OperationRecorderListener {
 	 * 
 	 * @param operationListner
 	 */
-	public void removeOperationListener(OperationListener operationListner) {
+	public void removeOperationListener(OperationObserver operationListner) {
 		operationListeners.remove(operationListner);
 
 	}
 
 	// TODO: EM, changed to public
 	public void notifyOperationUndone(AbstractOperation operation) {
-		for (OperationListener operationListener : operationListeners) {
+		for (OperationObserver operationListener : operationListeners) {
 			operationListener.operationUnDone(operation);
 		}
 	}
@@ -86,7 +86,7 @@ public class OperationManager implements OperationRecorderListener {
 			}
 		}
 
-		for (OperationListener operationListener : operationListeners) {
+		for (OperationObserver operationListener : operationListeners) {
 			operationListener.operationExecuted(operation);
 		}
 	}

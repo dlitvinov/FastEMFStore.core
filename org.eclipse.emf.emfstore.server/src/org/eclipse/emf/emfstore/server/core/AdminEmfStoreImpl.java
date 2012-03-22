@@ -47,8 +47,7 @@ import org.eclipse.emf.emfstore.server.model.accesscontrol.roles.RolesPackage;
  * @author Wesendonk
  */
 // TODO: bring this interface in new subinterface structure and refactor it
-public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
-		AdminEmfStore {
+public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements AdminEmfStore {
 
 	/**
 	 * Default constructor.
@@ -60,17 +59,15 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	 * @throws FatalEmfStoreException
 	 *             in case of failure
 	 */
-	public AdminEmfStoreImpl(ServerSpace serverSpace,
-			AuthorizationControl authorizationControl)
-			throws FatalEmfStoreException {
+	public AdminEmfStoreImpl(ServerSpace serverSpace, AuthorizationControl authorizationControl)
+		throws FatalEmfStoreException {
 		super(serverSpace, authorizationControl);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<ACGroup> getGroups(SessionId sessionId)
-			throws EmfStoreException {
+	public List<ACGroup> getGroups(SessionId sessionId) throws EmfStoreException {
 		if (sessionId == null) {
 			throw new InvalidInputException();
 		}
@@ -89,8 +86,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<ACGroup> getGroups(SessionId sessionId, ACOrgUnitId orgUnitId)
-			throws EmfStoreException {
+	public List<ACGroup> getGroups(SessionId sessionId, ACOrgUnitId orgUnitId) throws EmfStoreException {
 		if (sessionId == null || orgUnitId == null) {
 			throw new InvalidInputException();
 		}
@@ -112,8 +108,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public ACOrgUnitId createGroup(SessionId sessionId, String name)
-			throws EmfStoreException {
+	public ACOrgUnitId createGroup(SessionId sessionId, String name) throws EmfStoreException {
 		if (sessionId == null || name == null) {
 			throw new InvalidInputException();
 		}
@@ -141,8 +136,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public void removeGroup(SessionId sessionId, ACOrgUnitId user,
-			ACOrgUnitId group) throws EmfStoreException {
+	public void removeGroup(SessionId sessionId, ACOrgUnitId user, ACOrgUnitId group) throws EmfStoreException {
 		if (sessionId == null || user == null || group == null) {
 			throw new InvalidInputException();
 		}
@@ -154,14 +148,12 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public void deleteGroup(SessionId sessionId, ACOrgUnitId group)
-			throws EmfStoreException {
+	public void deleteGroup(SessionId sessionId, ACOrgUnitId group) throws EmfStoreException {
 		if (sessionId == null || group == null) {
 			throw new InvalidInputException();
 		}
 		getAuthorizationControl().checkServerAdminAccess(sessionId);
-		for (Iterator<ACGroup> iter = getServerSpace().getGroups().iterator(); iter
-				.hasNext();) {
+		for (Iterator<ACGroup> iter = getServerSpace().getGroups().iterator(); iter.hasNext();) {
 			ACGroup next = iter.next();
 			if (next.getId().equals(group)) {
 				EcoreUtil.delete(next);
@@ -174,8 +166,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<ACOrgUnit> getMembers(SessionId sessionId, ACOrgUnitId groupId)
-			throws EmfStoreException {
+	public List<ACOrgUnit> getMembers(SessionId sessionId, ACOrgUnitId groupId) throws EmfStoreException {
 		if (sessionId == null || groupId == null) {
 			throw new InvalidInputException();
 		}
@@ -193,8 +184,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public void addMember(SessionId sessionId, ACOrgUnitId group,
-			ACOrgUnitId member) throws EmfStoreException {
+	public void addMember(SessionId sessionId, ACOrgUnitId group, ACOrgUnitId member) throws EmfStoreException {
 		if (sessionId == null || group == null || member == null) {
 			throw new InvalidInputException();
 		}
@@ -209,8 +199,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public void removeMember(SessionId sessionId, ACOrgUnitId group,
-			ACOrgUnitId member) throws EmfStoreException {
+	public void removeMember(SessionId sessionId, ACOrgUnitId group, ACOrgUnitId member) throws EmfStoreException {
 		if (sessionId == null || group == null || member == null) {
 			throw new InvalidInputException();
 		}
@@ -226,8 +215,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<ACOrgUnit> getParticipants(SessionId sessionId,
-			ProjectId projectId) throws EmfStoreException {
+	public List<ACOrgUnit> getParticipants(SessionId sessionId, ProjectId projectId) throws EmfStoreException {
 		if (sessionId == null || projectId == null) {
 			throw new InvalidInputException();
 		}
@@ -235,16 +223,14 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 		List<ACOrgUnit> result = new ArrayList<ACOrgUnit>();
 		for (ACOrgUnit orgUnit : getServerSpace().getUsers()) {
 			for (Role role : orgUnit.getRoles()) {
-				if (isServerAdmin(role)
-						|| role.getProjects().contains(projectId)) {
+				if (isServerAdmin(role) || role.getProjects().contains(projectId)) {
 					result.add(ModelUtil.clone(orgUnit));
 				}
 			}
 		}
 		for (ACOrgUnit orgUnit : getServerSpace().getGroups()) {
 			for (Role role : orgUnit.getRoles()) {
-				if (isServerAdmin(role)
-						|| role.getProjects().contains(projectId)) {
+				if (isServerAdmin(role) || role.getProjects().contains(projectId)) {
 					result.add(ModelUtil.clone(orgUnit));
 				}
 			}
@@ -257,8 +243,8 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public void addParticipant(SessionId sessionId, ProjectId projectId,
-			ACOrgUnitId participant) throws EmfStoreException {
+	public void addParticipant(SessionId sessionId, ProjectId projectId, ACOrgUnitId participant)
+		throws EmfStoreException {
 		if (sessionId == null || projectId == null || participant == null) {
 			throw new InvalidInputException();
 		}
@@ -285,8 +271,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 		save();
 	}
 
-	private ProjectId getProjectId(ProjectId projectId)
-			throws EmfStoreException {
+	private ProjectId getProjectId(ProjectId projectId) throws EmfStoreException {
 		for (ProjectHistory projectHistory : getServerSpace().getProjects()) {
 			if (projectHistory.getProjectId().equals(projectId)) {
 				return projectHistory.getProjectId();
@@ -298,8 +283,8 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public void removeParticipant(SessionId sessionId, ProjectId projectId,
-			ACOrgUnitId participant) throws EmfStoreException {
+	public void removeParticipant(SessionId sessionId, ProjectId projectId, ACOrgUnitId participant)
+		throws EmfStoreException {
 		if (sessionId == null || projectId == null || participant == null) {
 			throw new InvalidInputException();
 		}
@@ -318,8 +303,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public Role getRole(SessionId sessionId, ProjectId projectId,
-			ACOrgUnitId orgUnitId) throws EmfStoreException {
+	public Role getRole(SessionId sessionId, ProjectId projectId, ACOrgUnitId orgUnitId) throws EmfStoreException {
 		if (sessionId == null || projectId == null || orgUnitId == null) {
 			throw new InvalidInputException();
 		}
@@ -337,10 +321,9 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public void changeRole(SessionId sessionId, ProjectId projectId,
-			ACOrgUnitId orgUnitId, EClass roleClass) throws EmfStoreException {
-		if (sessionId == null || projectId == null || orgUnitId == null
-				|| roleClass == null) {
+	public void changeRole(SessionId sessionId, ProjectId projectId, ACOrgUnitId orgUnitId, EClass roleClass)
+		throws EmfStoreException {
+		if (sessionId == null || projectId == null || orgUnitId == null || roleClass == null) {
 			throw new InvalidInputException();
 		}
 		getAuthorizationControl().checkServerAdminAccess(sessionId);
@@ -355,8 +338,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 			}
 		}
 		// if server admin
-		if (roleClass.getName().equals(
-				RolesPackage.Literals.SERVER_ADMIN.getName())) {
+		if (roleClass.getName().equals(RolesPackage.Literals.SERVER_ADMIN.getName())) {
 			orgUnit.getRoles().add(RolesFactory.eINSTANCE.createServerAdmin());
 			save();
 			return;
@@ -370,9 +352,8 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 			}
 		}
 		// create role if does not exists
-		Role newRole = (Role) RolesPackage.eINSTANCE.getEFactoryInstance()
-				.create((EClass) RolesPackage.eINSTANCE
-						.getEClassifier(roleClass.getName()));
+		Role newRole = (Role) RolesPackage.eINSTANCE.getEFactoryInstance().create(
+			(EClass) RolesPackage.eINSTANCE.getEClassifier(roleClass.getName()));
 		newRole.getProjects().add(ModelUtil.clone(projectId));
 		orgUnit.getRoles().add(newRole);
 		save();
@@ -396,8 +377,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<ACOrgUnit> getOrgUnits(SessionId sessionId)
-			throws EmfStoreException {
+	public List<ACOrgUnit> getOrgUnits(SessionId sessionId) throws EmfStoreException {
 		if (sessionId == null) {
 			throw new InvalidInputException();
 		}
@@ -417,8 +397,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<ProjectInfo> getProjectInfos(SessionId sessionId)
-			throws EmfStoreException {
+	public List<ProjectInfo> getProjectInfos(SessionId sessionId) throws EmfStoreException {
 		if (sessionId == null) {
 			throw new InvalidInputException();
 		}
@@ -433,15 +412,13 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public ACOrgUnitId createUser(SessionId sessionId, String name)
-			throws EmfStoreException {
+	public ACOrgUnitId createUser(SessionId sessionId, String name) throws EmfStoreException {
 		if (sessionId == null || name == null) {
 			throw new InvalidInputException();
 		}
 		getAuthorizationControl().checkServerAdminAccess(sessionId);
 		if (userExists(name)) {
-			throw new InvalidInputException("username '" + name
-					+ "' already exists.");
+			throw new InvalidInputException("username '" + name + "' already exists.");
 		}
 		ACUser acUser = AccesscontrolFactory.eINSTANCE.createACUser();
 		// acUser.setId(AccesscontrolFactory.eINSTANCE.createACOrgUnitId());
@@ -464,14 +441,12 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public void deleteUser(SessionId sessionId, ACOrgUnitId user)
-			throws EmfStoreException {
+	public void deleteUser(SessionId sessionId, ACOrgUnitId user) throws EmfStoreException {
 		if (sessionId == null || user == null) {
 			throw new InvalidInputException();
 		}
 		getAuthorizationControl().checkServerAdminAccess(sessionId);
-		for (Iterator<ACUser> iter = getServerSpace().getUsers().iterator(); iter
-				.hasNext();) {
+		for (Iterator<ACUser> iter = getServerSpace().getUsers().iterator(); iter.hasNext();) {
 			ACUser next = iter.next();
 			if (next.getId().equals(user)) {
 				EcoreUtil.delete(next);
@@ -484,10 +459,9 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public void changeOrgUnit(SessionId sessionId, ACOrgUnitId orgUnitId,
-			String name, String description) throws EmfStoreException {
-		if (sessionId == null || orgUnitId == null || name == null
-				|| description == null) {
+	public void changeOrgUnit(SessionId sessionId, ACOrgUnitId orgUnitId, String name, String description)
+		throws EmfStoreException {
+		if (sessionId == null || orgUnitId == null || name == null || description == null) {
 			throw new InvalidInputException();
 		}
 		getAuthorizationControl().checkServerAdminAccess(sessionId);
@@ -501,8 +475,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public ACOrgUnit getOrgUnit(SessionId sessionId, ACOrgUnitId orgUnitId)
-			throws EmfStoreException {
+	public ACOrgUnit getOrgUnit(SessionId sessionId, ACOrgUnitId orgUnitId) throws EmfStoreException {
 		if (sessionId == null || orgUnitId == null) {
 			throw new InvalidInputException();
 		}
@@ -532,13 +505,11 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 	}
 
 	private boolean isServerAdmin(Role role) {
-		return role.eClass().getName()
-				.equals(RolesPackage.Literals.SERVER_ADMIN.getName());
+		return role.eClass().getName().equals(RolesPackage.Literals.SERVER_ADMIN.getName());
 	}
 
 	private boolean isReader(Role role) {
-		return role.eClass().getName()
-				.equals(RolesPackage.Literals.READER_ROLE.getName());
+		return role.eClass().getName().equals(RolesPackage.Literals.READER_ROLE.getName());
 	}
 
 	private ProjectInfo getProjectInfo(ProjectHistory project) {
@@ -559,8 +530,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements
 		throw new EmfStoreException("Given group doesn't exist.");
 	}
 
-	private ACOrgUnit getOrgUnit(ACOrgUnitId orgUnitId)
-			throws EmfStoreException {
+	private ACOrgUnit getOrgUnit(ACOrgUnitId orgUnitId) throws EmfStoreException {
 		for (ACOrgUnit unit : getServerSpace().getUsers()) {
 			if (unit.getId().equals(orgUnitId)) {
 				return unit;

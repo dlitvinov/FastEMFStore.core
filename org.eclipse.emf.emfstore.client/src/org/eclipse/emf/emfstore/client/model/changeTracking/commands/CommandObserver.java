@@ -11,13 +11,14 @@
 package org.eclipse.emf.emfstore.client.model.changeTracking.commands;
 
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.emfstore.common.observer.IObserver;
 
 /**
  * Listener for a {@link EMFStoreTransactionalCommandStack}.
  * 
  * @author koegel
  */
-public interface CommandObserver {
+public interface CommandObserver extends IObserver {
 
 	/**
 	 * Called to notify listener about the start of the given command.

@@ -212,14 +212,14 @@ public class ProjectImpl extends NotifiableIdEObjectCollectionImpl implements Pr
 	 * @see org.eclipse.emf.emfstore.common.model.Project#delete()
 	 */
 	public void delete() {
-		final Project project = this;
 		EObjectChangeObserverNotificationCommand command = new EObjectChangeObserverNotificationCommand() {
 			public void run(IdEObjectCollectionChangeObserver projectChangeObserver) {
 				IdEObjectCollectionChangeObserver observer = projectChangeObserver;
-				observer.collectionDeleted(project);
+				observer.collectionDeleted(ProjectImpl.this);
 			}
 		};
 		notifyIdEObjectCollectionChangeObservers(command);
+		dispose();
 	}
 
 	/**

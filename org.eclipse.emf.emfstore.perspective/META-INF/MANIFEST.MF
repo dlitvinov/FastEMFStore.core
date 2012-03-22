@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Emfperspective
+Bundle-Name: EMFStore Perspective
 Bundle-SymbolicName: org.eclipse.emf.emfstore.perspective;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.8.9.qualifier
 Bundle-Activator: org.eclipse.emf.emfstore.emfperspective.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime

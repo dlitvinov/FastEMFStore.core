@@ -41,15 +41,13 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.commons.codec.binary.Base64;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.emfstore.client.model.Configuration;
 import org.eclipse.emf.emfstore.client.model.ServerInfo;
 import org.eclipse.emf.emfstore.client.model.exceptions.CertificateStoreException;
 import org.eclipse.emf.emfstore.client.model.exceptions.InvalidCertificateException;
 import org.eclipse.emf.emfstore.client.model.util.ConfigurationProvider;
 import org.eclipse.emf.emfstore.client.model.util.WorkspaceUtil;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
 import org.eclipse.emf.emfstore.common.model.util.FileUtil;
 
 /**
@@ -90,16 +88,9 @@ public final class KeyStoreManager {
 	}
 
 	private void loadConfiguration() {
-		IConfigurationElement[] rawExtensions = Platform.getExtensionRegistry().getConfigurationElementsFor(
-			"org.eclipse.emf.emfstore.client.defaultConfigurationProvider");
-		ConfigurationProvider provider = null;
-		for (IConfigurationElement extension : rawExtensions) {
-			try {
-				provider = (ConfigurationProvider) extension.createExecutableExtension("providerClass");
-			} catch (CoreException e) {
-				// fail silently
-			}
-		}
+		ConfigurationProvider provider = new ExtensionPoint(
+			"org.eclipse.emf.emfstore.client.defaultConfigurationProvider").getClass("providerClass",
+			ConfigurationProvider.class);
 		if (provider == null) {
 			return;
 		}

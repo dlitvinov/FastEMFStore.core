@@ -79,10 +79,10 @@ public class LoginDialog extends TitleAreaDialog {
 		ComboListener comboListener = new ComboListener();
 		usernameCombo.addPostSelectionChangedListener(comboListener);
 		Combo combo = usernameCombo.getCombo();
-		if (controller.isUsersessionLocked()) {
-			combo.setEnabled(false);
-			// combo.setText(controller.getUsersession().getUsername());
-		}
+		// if (controller.isUsersessionLocked()) {
+		// combo.setEnabled(false);
+		// // combo.setText(controller.getUsersession().getUsername());
+		// }
 		combo.addModifyListener(comboListener);
 		GridData gd_usernameCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_usernameCombo.widthHint = 235;

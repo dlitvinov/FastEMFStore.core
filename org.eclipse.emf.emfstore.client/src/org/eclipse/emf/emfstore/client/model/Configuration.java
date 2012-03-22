@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.KeyStoreManager;
 import org.eclipse.emf.emfstore.client.model.util.ConfigurationProvider;
 import org.eclipse.emf.emfstore.client.model.util.DefaultWorkspaceLocationProvider;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPointException;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.server.LocationProvider;
 import org.eclipse.emf.emfstore.server.model.ClientVersionInfo;
@@ -31,6 +31,7 @@ import org.osgi.framework.Bundle;
  * Represents the current Workspace Configuration.
  * 
  * @author koegel
+ * @author wesendon
  */
 public final class Configuration {
 
@@ -60,6 +61,8 @@ public final class Configuration {
 	private static int xmlRPCReplyTimeout = XML_RPC_REPLY_TIMEOUT;
 	private static Boolean resourceSplitting;
 
+	private static boolean autoSave;
+
 	private Configuration() {
 		// nothing to do
 	}
@@ -88,18 +91,13 @@ public final class Configuration {
 	 */
 	public static LocationProvider getLocationProvider() {
 		if (locationProvider == null) {
-			IConfigurationElement[] rawExtensions = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				"org.eclipse.emf.emfstore.client.workspaceLocationProvider");
-			for (IConfigurationElement extension : rawExtensions) {
-				try {
-					Object executableExtension = extension.createExecutableExtension("providerClass");
-					if (executableExtension instanceof LocationProvider) {
-						locationProvider = (LocationProvider) executableExtension;
-					}
-				} catch (CoreException e) {
-					String message = "Error while instantiating location provider, switching to default location!";
-					ModelUtil.logWarning(message, e);
-				}
+			try {
+				// TODO EXPT PRIO
+				locationProvider = new ExtensionPoint("org.eclipse.emf.emfstore.client.workspaceLocationProvider")
+					.setThrowException(true).getClass("providerClass", LocationProvider.class);
+			} catch (ExtensionPointException e) {
+				String message = "Error while instantiating location provider, switching to default location!";
+				ModelUtil.logWarning(message, e);
 			}
 			if (locationProvider == null) {
 				locationProvider = new DefaultWorkspaceLocationProvider();
@@ -158,21 +156,15 @@ public final class Configuration {
 	 * @return server info
 	 */
 	public static List<ServerInfo> getDefaultServerInfos() {
-		IConfigurationElement[] rawExtensions = Platform.getExtensionRegistry().getConfigurationElementsFor(
-			"org.eclipse.emf.emfstore.client.defaultConfigurationProvider");
-		for (IConfigurationElement extension : rawExtensions) {
-			try {
-				ConfigurationProvider provider = (ConfigurationProvider) extension
-					.createExecutableExtension("providerClass");
-				List<ServerInfo> defaultServerInfos = provider.getDefaultServerInfos();
-				if (defaultServerInfos != null) {
-					return defaultServerInfos;
-				}
-			} catch (CoreException e) {
-				// fail silently
+		ConfigurationProvider provider = new ExtensionPoint(
+			"org.eclipse.emf.emfstore.client.defaultConfigurationProvider").getClass("providerClass",
+			ConfigurationProvider.class);
+		if (provider != null) {
+			List<ServerInfo> defaultServerInfos = provider.getDefaultServerInfos();
+			if (defaultServerInfos != null) {
+				return defaultServerInfos;
 			}
 		}
-
 		ArrayList<ServerInfo> result = new ArrayList<ServerInfo>();
 		result.add(getLocalhostServerInfo());
 		return result;
@@ -219,7 +211,6 @@ public final class Configuration {
 	 * 
 	 * @return the client version number
 	 */
-	@SuppressWarnings("cast")
 	public static ClientVersionInfo getClientVersion() {
 		ClientVersionInfo clientVersionInfo = org.eclipse.emf.emfstore.server.model.ModelFactory.eINSTANCE
 			.createClientVersionInfo();
@@ -375,13 +366,33 @@ public final class Configuration {
 		if (resourceSplitting != null) {
 			return resourceSplitting;
 		}
-		resourceSplitting = new Boolean(false);
-		IConfigurationElement[] rawExtensions = Platform.getExtensionRegistry().getConfigurationElementsFor(
-			"org.eclipse.emf.emfstore.client.persistence.options");
-		for (IConfigurationElement extension : rawExtensions) {
-			resourceSplitting = new Boolean(extension.getAttribute("enabled"));
+		try {
+			resourceSplitting = new ExtensionPoint("org.eclipse.emf.emfstore.client.persistence.options")
+				.setThrowException(true).getBoolean("enabled");
+		} catch (ExtensionPointException e) {
+			resourceSplitting = false;
 		}
 
 		return resourceSplitting;
+	}
+
+	/**
+	 * Whether to enable the automatic saving of the workspace.
+	 * If disabled, performance improves vastly, but clients have to
+	 * perform the saving of the workspace manually.
+	 * 
+	 * @param enabled whether to enable auto save
+	 */
+	public static void setAutoSave(boolean enabled) {
+		Configuration.autoSave = enabled;
+	}
+
+	/**
+	 * Whether auto-save is enabled.
+	 * 
+	 * @return true, if auto-save is enabled, false otherwise
+	 */
+	public static boolean isAutoSaveEnabled() {
+		return autoSave;
 	}
 }

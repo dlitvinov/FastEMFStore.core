@@ -12,11 +12,10 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.emfstore.client.model.util.EMFStoreCommand;
 import org.eclipse.emf.emfstore.client.test.WorkspaceTest;
 import org.eclipse.emf.emfstore.client.test.testmodel.TestmodelFactory;
-import org.eclipse.emf.emfstore.common.model.Project;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
+import org.eclipse.emf.emfstore.server.CleanMemoryTask;
 import org.eclipse.emf.emfstore.server.model.versioning.Version;
 import org.eclipse.emf.emfstore.server.model.versioning.VersioningFactory;
-import org.eclipse.emf.emfstore.server.taskmanager.tasks.CleanMemoryTask;
 import org.junit.Test;
 
 public class CleanMemoryTest extends WorkspaceTest {
@@ -37,7 +36,7 @@ public class CleanMemoryTest extends WorkspaceTest {
 				res.getContents().add(getProject());
 				res2.getContents().add(version);
 				res2.getContents().add(nextVersion);
-				nextVersion.setProjectState((Project) ModelUtil.clone(getProject()));
+				nextVersion.setProjectState(ModelUtil.clone(getProject()));
 				version.setNextVersion(nextVersion);
 			}
 		}.run(false);
@@ -45,7 +44,7 @@ public class CleanMemoryTest extends WorkspaceTest {
 		res.save(null);
 		res2.save(null);
 		CleanMemoryTask task = new CleanMemoryTask(resourceSet);
-		task.executeTask();
+		task.run();
 		// this is wrong?
 		assertEquals(2, resourceSet.getResources().size());
 

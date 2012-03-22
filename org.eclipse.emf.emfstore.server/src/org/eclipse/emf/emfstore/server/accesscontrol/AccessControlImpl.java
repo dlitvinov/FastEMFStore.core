@@ -16,10 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionElement;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.server.ServerConfiguration;
 import org.eclipse.emf.emfstore.server.accesscontrol.authentication.AbstractAuthenticationControl;
@@ -68,19 +67,11 @@ public class AccessControlImpl implements AuthenticationControl, AuthorizationCo
 	}
 
 	private AuthenticationControlFactory getAuthenticationFactory() {
-		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(
-			"org.eclipse.emf.emfstore.server.authenticationfactory");
-
-		// get all providers from the extension points
-		for (IConfigurationElement e : config) {
-			try {
-				Object o = e.createExecutableExtension("class");
-				if (o instanceof AuthenticationControlFactory) {
-					return (AuthenticationControlFactory) o;
-				}
-			} catch (CoreException e1) {
-				// fail silently
-				// e1.printStackTrace();
+		for (ExtensionElement e : new ExtensionPoint("org.eclipse.emf.emfstore.server.authenticationfactory")
+			.getExtensionElements()) {
+			AuthenticationControlFactory factory = e.getClass("class", AuthenticationControlFactory.class);
+			if (factory != null) {
+				return factory;
 			}
 		}
 

@@ -116,18 +116,31 @@ public class ChangePackageImpl extends EObjectImpl implements ChangePackage {
 		return VersioningPackage.Literals.CHANGE_PACKAGE;
 	}
 
+	// begin of custom code
 	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * <!-- begin-user-doc -->
+	 * Returns the operations of the change package. Will not enforce uniqueness, do NOT add the same element twice!
 	 * 
-	 * @generated
+	 * @return a list of operations.
+	 *         <!-- end-user-doc -->
+	 * 
+	 * @generated NOT
 	 */
+	@SuppressWarnings("serial")
 	public EList<AbstractOperation> getOperations() {
 		if (operations == null) {
 			operations = new EObjectContainmentEList.Resolving<AbstractOperation>(AbstractOperation.class, this,
-				VersioningPackage.CHANGE_PACKAGE__OPERATIONS);
+				VersioningPackage.CHANGE_PACKAGE__OPERATIONS) {
+				@Override
+				protected boolean isUnique() {
+					return false;
+				}
+			};
 		}
 		return operations;
 	}
+
+	// end of custom code
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->

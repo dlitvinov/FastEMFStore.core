@@ -14,11 +14,11 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.emfstore.client.model.changeTracking.notification.NotificationInfo;
 import org.eclipse.emf.emfstore.client.model.util.WorkspaceUtil;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionElement;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPointException;
 
 /**
  * This class filters a notification recording according to predefined stacks of
@@ -30,8 +30,9 @@ import org.eclipse.emf.emfstore.client.model.util.WorkspaceUtil;
 public final class FilterStack implements NotificationFilter {
 
 	private static final NotificationFilter[] DEFAULT_STACK = { new TouchFilter(), new TransientFilter(),
-		new EmptyRemovalsFilter(), new IgnoreDatatypeFilter(), new IgnoreOutsideProjectReferencesFilter(),
-		new IgnoreNullFeatureNotificationsFilter(), new NotifiableIdEObjectCollectionFilter() };
+		new UnknownEventTypeFilter(), new EmptyRemovalsFilter(), new IgnoreDatatypeFilter(),
+		new IgnoreOutsideProjectReferencesFilter(), new IgnoreNullFeatureNotificationsFilter(),
+		new NotifiableIdEObjectCollectionFilter() };
 
 	/**
 	 * The default filter stack.
@@ -53,13 +54,11 @@ public final class FilterStack implements NotificationFilter {
 	}
 
 	private void collectExtensionPoints() {
-		IConfigurationElement[] configElems = Platform.getExtensionRegistry().getConfigurationElementsFor(
-			"org.eclipse.emf.emfstore.client.notificationFilter");
-		for (IConfigurationElement elem : configElems) {
+		for (ExtensionElement element : new ExtensionPoint("org.eclipse.emf.emfstore.client.notificationFilter", true)
+			.getExtensionElements()) {
 			try {
-				NotificationFilter filter = (NotificationFilter) elem.createExecutableExtension("class");
-				filterList.add(filter);
-			} catch (CoreException e) {
+				filterList.add(element.getClass("class", NotificationFilter.class));
+			} catch (ExtensionPointException e) {
 				WorkspaceUtil.logException(e.getMessage(), e);
 			}
 		}

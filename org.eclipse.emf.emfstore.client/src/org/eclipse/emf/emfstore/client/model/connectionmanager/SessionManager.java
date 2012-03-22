@@ -12,7 +12,7 @@ package org.eclipse.emf.emfstore.client.model.connectionmanager;
 
 import org.eclipse.emf.emfstore.client.model.Usersession;
 import org.eclipse.emf.emfstore.client.model.WorkspaceManager;
-import org.eclipse.emf.emfstore.common.ExtensionPoint;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
 import org.eclipse.emf.emfstore.server.exceptions.EmfStoreException;
 import org.eclipse.emf.emfstore.server.exceptions.SessionTimedOutException;
 import org.eclipse.emf.emfstore.server.exceptions.UnknownSessionException;
@@ -97,6 +97,7 @@ public class SessionManager {
 	private AbstractSessionProvider getSessionProvider() {
 
 		if (provider == null) {
+			// TODO EXPT PRIO
 			provider = new ExtensionPoint(AbstractSessionProvider.ID).getClass("class", AbstractSessionProvider.class);
 		}
 

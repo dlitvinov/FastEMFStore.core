@@ -41,6 +41,7 @@ public interface ProjectHistory extends EObject {
 	 * description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * 
 	 * @return the value of the '<em>Project Id</em>' containment reference.
 	 * @see #setProjectId(ProjectId)
 	 * @see org.eclipse.emf.emfstore.server.model.ModelPackage#getProjectHistory_ProjectId()
@@ -50,8 +51,10 @@ public interface ProjectHistory extends EObject {
 	ProjectId getProjectId();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.emf.emfstore.server.model.ProjectHistory#getProjectId <em>Project Id</em>}' containment reference.
+	 * Sets the value of the '{@link org.eclipse.emf.emfstore.server.model.ProjectHistory#getProjectId
+	 * <em>Project Id</em>}' containment reference.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @param value the new value of the '<em>Project Id</em>' containment reference.
 	 * @see #getProjectId()
 	 * @generated
@@ -67,6 +70,7 @@ public interface ProjectHistory extends EObject {
 	 * a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * 
 	 * @return the value of the '<em>Versions</em>' containment reference list.
 	 * @see org.eclipse.emf.emfstore.server.model.ModelPackage#getProjectHistory_Versions()
 	 * @model containment="true" resolveProxies="true" required="true"
@@ -90,6 +94,7 @@ public interface ProjectHistory extends EObject {
 	 * here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * 
 	 * @return the value of the '<em>Project Name</em>' attribute.
 	 * @see #setProjectName(String)
 	 * @see org.eclipse.emf.emfstore.server.model.ModelPackage#getProjectHistory_ProjectName()
@@ -99,8 +104,10 @@ public interface ProjectHistory extends EObject {
 	String getProjectName();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.emf.emfstore.server.model.ProjectHistory#getProjectName <em>Project Name</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.emf.emfstore.server.model.ProjectHistory#getProjectName
+	 * <em>Project Name</em>}' attribute.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @param value the new value of the '<em>Project Name</em>' attribute.
 	 * @see #getProjectName()
 	 * @generated
@@ -115,6 +122,7 @@ public interface ProjectHistory extends EObject {
 	 * description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * 
 	 * @return the value of the '<em>Project Description</em>' attribute.
 	 * @see #setProjectDescription(String)
 	 * @see org.eclipse.emf.emfstore.server.model.ModelPackage#getProjectHistory_ProjectDescription()
@@ -124,8 +132,10 @@ public interface ProjectHistory extends EObject {
 	String getProjectDescription();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.emf.emfstore.server.model.ProjectHistory#getProjectDescription <em>Project Description</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.emf.emfstore.server.model.ProjectHistory#getProjectDescription
+	 * <em>Project Description</em>}' attribute.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @param value the new value of the '<em>Project Description</em>' attribute.
 	 * @see #getProjectDescription()
 	 * @generated
@@ -141,6 +151,7 @@ public interface ProjectHistory extends EObject {
 	 * here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * 
 	 * @return the value of the '<em>Shared Properties</em>' containment reference list.
 	 * @see org.eclipse.emf.emfstore.server.model.ModelPackage#getProjectHistory_SharedProperties()
 	 * @model containment="true" resolveProxies="true"

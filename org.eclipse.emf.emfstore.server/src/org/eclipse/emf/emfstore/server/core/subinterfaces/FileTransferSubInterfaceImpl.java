@@ -69,18 +69,18 @@ public class FileTransferSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 	 */
 	public FileChunk readChunk(ProjectId projectId, FileTransferInformation fileInformation)
 		throws FileTransferException {
-		synchronized (MonitorProvider.getInstance().getMonitor(FILELOAD)) {
-			// check if folders exist, otherwise create
-			createDirectories(projectId);
-			// try to localize file that is to be downloaded
-			File file;
-			try {
-				file = findFile(fileInformation, projectId);
-			} catch (FileNotFoundException e) {
-				throw new FileNotOnServerException(projectId, fileInformation.getFileIdentifier());
-			}
-			return FilePartitionerUtil.readChunk(file, fileInformation);
+
+		// check if folders exist, otherwise create
+		createDirectories(projectId);
+		// try to localize file that is to be downloaded
+		File file;
+		try {
+			file = findFile(fileInformation, projectId);
+		} catch (FileNotFoundException e) {
+			throw new FileNotOnServerException(projectId, fileInformation.getFileIdentifier());
 		}
+
+		return FilePartitionerUtil.readChunk(file, fileInformation);
 	}
 
 	/**

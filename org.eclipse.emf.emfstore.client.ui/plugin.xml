@@ -156,7 +156,7 @@
            name="Create Project On Server">
      </command>
      <command
-           defaultHandler="org.eclipse.emf.emfstore.client.ui.handlers.DeleteProjectHandler"
+           defaultHandler="org.eclipse.emf.emfstore.client.ui.handlers.DeleteProjectOnServerHandler"
            id="org.eclipse.emf.emfstore.client.ui.repositorybrowser.DeleteProjectOnServer"
            name="Delete Project On Server">
      </command>
@@ -355,7 +355,7 @@
                     operator="and">
                  <test
                        forcePluginActivation="true"
-                       property="org.eclipse.emf.emfstore.client.ui.commands.isServerAdmin"
+                       property="org.eclipse.emf.emfstore.client.ui.testers.isServerAdmin"
                        value="true">
                  </test>
                  <instanceof
@@ -529,7 +529,7 @@
               id="org.eclipse.emf.emfstore.client.ui.commands.isAdminTester"
               namespace="org.eclipse.emf.emfstore.client.ui.commands"
               properties="isAdmin"
-              type="org.eclipse.emf.emfstore.client.model.ProjectSpace">
+              type="org.eclipse.emf.ecore.EObject">
         </propertyTester>
         <propertyTester
               class="org.eclipse.emf.emfstore.client.ui.views.historybrowserview.HistoryBrowserAdminTester"
@@ -547,10 +547,10 @@
         </propertyTester>
         <propertyTester
               class="org.eclipse.emf.emfstore.client.ui.testers.IsServerAdminTester"
-              id="org.eclipse.emf.emfstore.client.ui.testers.isServerAdminTester"
+              id="org.eclipse.emf.emfstore.client.ui.testers.isServerAdmin"
               namespace="org.eclipse.emf.emfstore.client.ui.testers"
               properties="isServerAdmin"
-              type="org.eclipse.emf.emfstore.client.model.ServerInfo">
+              type="org.eclipse.emf.ecore.EObject">
         </propertyTester>
         <propertyTester
               class="org.eclipse.emf.emfstore.client.ui.testers.ServerInfoIsLoggedInTester"
@@ -685,9 +685,9 @@
            name="undoLastOperation">
      </command>
      <command
-           defaultHandler="org.eclipse.emf.emfstore.client.ui.handlers.ProjectPropertiesHandler"
+           defaultHandler="org.eclipse.emf.emfstore.client.ui.handlers.ProjectInfoPropertiesHandler"
            id="org.eclipse.emf.emfstore.client.ui.repositorybrowser.ProjectProperties"
-           name="ProjectProperties">
+           name="ProjectInfo Properties">
      </command>
      <command
            defaultHandler="org.eclipse.emf.emfstore.client.ui.handlers.CompareProjectsHandler"

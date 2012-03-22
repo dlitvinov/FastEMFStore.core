@@ -14,22 +14,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.emfstore.client.model.util.WorkspaceUtil;
 import org.eclipse.emf.emfstore.client.ui.dialogs.merge.DecisionManager;
 import org.eclipse.emf.emfstore.client.ui.dialogs.merge.conflict.ConflictOption.OptionType;
 import org.eclipse.emf.emfstore.client.ui.dialogs.merge.util.DecisionUtil;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionElement;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.FeatureOperation;
 
 /**
  * Main class representing a conflict. it offers all kind of convenience methods
  * and organizes the conflicts initialization. Read the constructor's
- * description for further implemenation details (
- * {@link #Conflict(List, List, DecisionManager)})
+ * description for further implemenation details ( {@link #Conflict(List, List, DecisionManager)})
  * 
  * @author wesendon
  */
@@ -65,9 +62,8 @@ public abstract class Conflict extends Observable {
 	 * @param decisionManager
 	 *            decision manager
 	 */
-	public Conflict(List<AbstractOperation> leftOperations,
-			List<AbstractOperation> rightOperations,
-			DecisionManager decisionManager) {
+	public Conflict(List<AbstractOperation> leftOperations, List<AbstractOperation> rightOperations,
+		DecisionManager decisionManager) {
 		this(leftOperations, rightOperations, decisionManager, true, true);
 	}
 
@@ -96,9 +92,8 @@ public abstract class Conflict extends Observable {
 	 *            allows to deactivate initialization, has to be done manually
 	 *            otherwise.
 	 */
-	public Conflict(List<AbstractOperation> leftOperations,
-			List<AbstractOperation> rightOperations,
-			DecisionManager decisionManager, boolean leftIsMy, boolean init) {
+	public Conflict(List<AbstractOperation> leftOperations, List<AbstractOperation> rightOperations,
+		DecisionManager decisionManager, boolean leftIsMy, boolean init) {
 		this.leftIsMy = leftIsMy;
 		this.leftOperations = leftOperations;
 		this.rightOperations = rightOperations;
@@ -119,35 +114,19 @@ public abstract class Conflict extends Observable {
 		initAdditionalConflictOptions(options);
 	}
 
-	private void initAdditionalConflictOptions(
-			ArrayList<ConflictOption> options2) {
+	private void initAdditionalConflictOptions(ArrayList<ConflictOption> options2) {
 		if (!allowOtherOptions()) {
 			return;
 		}
-		IConfigurationElement[] config = Platform
-				.getExtensionRegistry()
-				.getConfigurationElementsFor(
-						"org.eclipse.emf.emfstore.client.ui.merge.customoption");
 
-		for (IConfigurationElement e : config) {
-			try {
-				Object object = e.createExecutableExtension("class");
-				if (object instanceof CustomConflictOptionFactory) {
-
-					CustomConflictOptionFactory factory = (CustomConflictOptionFactory) object;
-					if (factory.isApplicableConflict(this)) {
-						CustomConflictOption customConflictOption = factory
-								.createCustomConflictOption(this);
-						if (customConflictOption != null) {
-							options.add(customConflictOption);
-						}
-					}
-
+		for (ExtensionElement element : new ExtensionPoint("org.eclipse.emf.emfstore.client.ui.merge.customoption")
+			.getExtensionElements()) {
+			CustomConflictOptionFactory factory = element.getClass("class", CustomConflictOptionFactory.class);
+			if (factory != null && factory.isApplicableConflict(Conflict.this)) {
+				CustomConflictOption customConflictOption = factory.createCustomConflictOption(Conflict.this);
+				if (customConflictOption != null) {
+					options.add(customConflictOption);
 				}
-			} catch (CoreException e1) {
-				WorkspaceUtil.logException(
-						"Couldn't load merge option extension point.", e1);
-				// fail silently
 			}
 		}
 	}
@@ -177,20 +156,17 @@ public abstract class Conflict extends Observable {
 	 *            pre initialized description
 	 * @return description
 	 */
-	protected abstract ConflictDescription initConflictDescription(
-			ConflictDescription description);
+	protected abstract ConflictDescription initConflictDescription(ConflictDescription description);
 
 	private ConflictDescription initConflictDescription() {
 		ConflictDescription description = new ConflictDescription("");
 		description.setImage("notset.gif");
-		EObject modelElement = getDecisionManager().getModelElement(
-				getMyOperation().getModelElementId());
+		EObject modelElement = getDecisionManager().getModelElement(getMyOperation().getModelElementId());
 		if (modelElement != null) {
 			description.add("modelelement", modelElement);
 		}
 		if (getMyOperation() instanceof FeatureOperation) {
-			description.add("feature",
-					((FeatureOperation) getMyOperation()).getFeatureName());
+			description.add("feature", ((FeatureOperation) getMyOperation()).getFeatureName());
 		}
 		description.setDecisionManager(getDecisionManager());
 		return initConflictDescription(description);
@@ -202,8 +178,7 @@ public abstract class Conflict extends Observable {
 	 * @return context.
 	 */
 	protected ConflictContext initConflictContext() {
-		return new ConflictContext(getDecisionManager(), getMyOperation(),
-				getTheirOperation());
+		return new ConflictContext(getDecisionManager(), getMyOperation(), getTheirOperation());
 	}
 
 	/**
@@ -294,8 +269,7 @@ public abstract class Conflict extends Observable {
 	 */
 	public List<AbstractOperation> getRejectedTheirs() {
 		if (!isResolved()) {
-			throw new IllegalStateException(
-					"Can't call this method, unless conflict is resolved.");
+			throw new IllegalStateException("Can't call this method, unless conflict is resolved.");
 		}
 		if (solution.getType() == OptionType.TheirOperation) {
 			return new ArrayList<AbstractOperation>();
@@ -318,8 +292,7 @@ public abstract class Conflict extends Observable {
 	 */
 	public List<AbstractOperation> getAcceptedMine() {
 		if (!isResolved()) {
-			throw new IllegalStateException(
-					"Can't call this method, unless conflict is resolved.");
+			throw new IllegalStateException("Can't call this method, unless conflict is resolved.");
 		}
 		if (solution.getType() == OptionType.TheirOperation) {
 			return new ArrayList<AbstractOperation>();

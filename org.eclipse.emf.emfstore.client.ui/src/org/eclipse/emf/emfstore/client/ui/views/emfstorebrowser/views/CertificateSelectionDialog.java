@@ -150,18 +150,23 @@ public class CertificateSelectionDialog extends ElementListSelectionDialog {
 	}
 
 	/**
-	 * @return alias
+	 * Returns the alias of the certificate
+	 * 
+	 * @return the certificate alias
 	 */
-	protected String getCertificateAlias() {
+	public String getCertificateAlias() {
 		return alias;
 	}
 
 	/**
-	 * @param message
-	 *            error message
+	 * Opens up an information {@link MessageDialog} with the given <code>errorMessage</code>.
+	 * 
+	 * @param errorMessage
+	 *            the error message
 	 */
-	protected void setErrorMessage(String message) {
-		MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Attention", message);
+	// TODO: rename method
+	public void setErrorMessage(String errorMessage) {
+		MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Attention", errorMessage);
 	}
 
 	/**

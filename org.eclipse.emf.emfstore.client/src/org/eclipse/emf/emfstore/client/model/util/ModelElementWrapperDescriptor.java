@@ -59,6 +59,7 @@ public class ModelElementWrapperDescriptor {
 		}
 
 		factoriesMap = new HashMap<String, List<IModelElementWrapperFactory>>();
+
 		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(EP_ID).getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] configElements = extensions[i].getConfigurationElements();

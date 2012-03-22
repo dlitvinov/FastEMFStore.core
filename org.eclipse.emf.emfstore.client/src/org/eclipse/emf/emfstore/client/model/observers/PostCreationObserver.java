@@ -8,9 +8,10 @@
  * 
  * Contributors:
  ******************************************************************************/
-package org.eclipse.emf.emfstore.common.observer;
+package org.eclipse.emf.emfstore.client.model.observers;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.emfstore.common.observer.IObserver;
 
 /**
  * Enables the modification of attributes of newly created model elements.<br>

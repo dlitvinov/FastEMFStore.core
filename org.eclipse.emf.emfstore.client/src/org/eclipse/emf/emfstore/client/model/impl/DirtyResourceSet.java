@@ -14,23 +14,36 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.emfstore.client.model.Configuration;
+import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.emfstore.client.model.util.WorkspaceUtil;
+import org.eclipse.emf.emfstore.common.EMFStoreResource;
+import org.eclipse.emf.emfstore.common.model.IdEObjectCollection;
+import org.eclipse.emf.emfstore.common.model.ModelElementId;
+import org.eclipse.emf.emfstore.common.model.impl.IdEObjectCollectionImpl;
+import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 
 /**
- * Track a set of dirty resources for saving.
+ * Tracks a set of dirty resources for saving.
  * 
  * @author koegel
  */
 public class DirtyResourceSet {
 
 	private Set<Resource> resources;
+	private final IdEObjectCollectionImpl collection;
+	private boolean resourcesPending;
 
 	/**
 	 * Constructor.
+	 * 
+	 * @param collection
+	 *            the {@link IdEObjectCollection} that is supposed to contain the model elements
+	 *            that will be saved by the dirty resource set
 	 */
-	public DirtyResourceSet() {
+	public DirtyResourceSet(IdEObjectCollectionImpl collection) {
+		this.collection = collection;
 		resources = new HashSet<Resource>();
 	}
 
@@ -49,21 +62,67 @@ public class DirtyResourceSet {
 	 */
 	public void save() {
 		Set<Resource> resourcesToRemove = new HashSet<Resource>();
+
 		for (Resource resource : resources) {
+
 			if (resource.getURI() == null || resource.getURI().toString().equals("")) {
 				continue;
 			}
+
+			if (resource instanceof EMFStoreResource) {
+				((EMFStoreResource) resource).setIdToEObjectMap(collection.getIdToEObjectMap(),
+					collection.getEObjectToIdMap());
+			} else {
+				Set<EObject> modelElements = ModelUtil.getAllContainedModelElements(resource, false, false);
+
+				for (EObject modelElement : modelElements) {
+					setModelElementIdOnResource((XMIResource) resource, modelElement);
+				}
+			}
+
 			try {
-				resource.save(Configuration.getResourceSaveOptions());
+				resource.save(ModelUtil.getResourceSaveOptions());
 				resourcesToRemove.add(resource);
 			} catch (IOException e) {
 				// ignore exception
 			}
 		}
+
 		resources.removeAll(resourcesToRemove);
-		// if (resources.size() > 0) {
-		String message = resources.size() + " unsaved resources remained in the dirty resource set!";
-		WorkspaceUtil.logWarning(message, null);
-		// }
+
+		if (resources.size() > 0 || resourcesPending) {
+			String message = resources.size() + " unsaved resources remained in the dirty resource set!";
+			WorkspaceUtil.logWarning(message, null);
+			resourcesPending = (resources.size() != 0);
+		} else {
+			resourcesPending = false;
+		}
 	}
+
+	private void setModelElementIdOnResource(XMIResource resource, EObject modelElement) {
+
+		if (modelElement instanceof IdEObjectCollection) {
+			return;
+		}
+
+		ModelElementId modelElementId = getIDForEObject(modelElement);
+
+		String modelElementIdString = modelElementId.getId();
+		resource.setID(modelElement, modelElementIdString);
+	}
+
+	private ModelElementId getIDForEObject(EObject modelElement) {
+		ModelElementId modelElementId = collection.getModelElementId(modelElement);
+
+		if (modelElementId == null) {
+			modelElementId = collection.getDeletedModelElementId(modelElement);
+		}
+
+		if (modelElementId == null) {
+			WorkspaceUtil.handleException(new IllegalStateException("No ID for model element" + modelElement));
+		}
+
+		return modelElementId;
+	}
+
 }

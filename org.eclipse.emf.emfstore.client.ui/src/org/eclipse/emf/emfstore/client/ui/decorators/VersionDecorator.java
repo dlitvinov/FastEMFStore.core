@@ -38,8 +38,10 @@ public class VersionDecorator extends AdapterImpl implements ILightweightLabelDe
 	private ArrayList<ILabelProviderListener> listeners = new ArrayList<ILabelProviderListener>();
 	private ProjectSpace element;
 
+	/**
+	 * Default constructor.
+	 */
 	public VersionDecorator() {
-		WorkspaceManager.getObserverBus().register(this);
 		WorkspaceManager.getObserverBus().register(this);
 	}
 

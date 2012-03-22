@@ -10,9 +10,8 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.migration;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPointException;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 
 /**
@@ -61,25 +60,16 @@ public final class EMFStoreMigratorUtil {
 	}
 
 	private static EMFStoreMigrator loadMigrator() throws EMFStoreMigrationException {
-		IConfigurationElement[] rawExtensions = Platform.getExtensionRegistry().getConfigurationElementsFor(
-			"org.eclipse.emf.emfstore.migration.migrator");
-		if (rawExtensions.length > 1) {
+		ExtensionPoint extensionPoint = new ExtensionPoint("org.eclipse.emf.emfstore.migration.migrator", true);
+		if (extensionPoint.size() > 1) {
 			ModelUtil
 				.logWarning("Multiple EMFStore Migrators are registered. EMFStore will default to first loadable migrator.");
 		}
-		for (IConfigurationElement extension : rawExtensions) {
-			try {
-				Object executableExtension = extension.createExecutableExtension(MIGRATOR_CLASS);
-				if (executableExtension instanceof EMFStoreMigrator) {
-					migrator = (EMFStoreMigrator) executableExtension;
-					return migrator;
-				}
-
-			} catch (CoreException e) {
-				String message = "Error while instantiating EMFStore Migrator: "
-					+ extension.getAttribute(MIGRATOR_CLASS);
-				ModelUtil.logWarning(message, e);
-			}
+		try {
+			return extensionPoint.getFirst().getClass(MIGRATOR_CLASS, EMFStoreMigrator.class);
+		} catch (ExtensionPointException e) {
+			String message = "Error while instantiating EMFStore Migrator";
+			ModelUtil.logWarning(message, e);
 		}
 		throw new EMFStoreMigrationException("No EMFStore migrator registered.");
 	}

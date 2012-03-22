@@ -158,8 +158,6 @@ public class HistoryBrowserView extends ViewPart implements ProjectSpaceContaine
 		}
 	}
 
-	private static final String VIEW_ID = "org.eclipse.emf.emfstore.client.ui.views.historybrowserview";
-
 	private List<HistoryInfo> historyInfos;
 
 	private ProjectSpace projectSpace;
@@ -183,8 +181,6 @@ public class HistoryBrowserView extends ViewPart implements ProjectSpaceContaine
 	private SCMContentProvider contentProvider;
 
 	private SCMLabelProvider labelProvider;
-
-	private Action groupByMe;
 
 	private Action showRoots;
 
@@ -272,19 +268,11 @@ public class HistoryBrowserView extends ViewPart implements ProjectSpaceContaine
 		IToolBarManager menuManager = bars.getToolBarManager();
 
 		addExpandAllAndCollapseAllAction(menuManager);
-
 		addRefreshAction(menuManager);
-
-		addGroupByModelElementButton(menuManager);
-
 		addShowRootAction(menuManager);
-
 		addNextAndPreviousAction(menuManager);
-
 		addJumpToRevisionAction(menuManager);
-
 		addLinkWithNavigatorAction(menuManager);
-
 	}
 
 	private void addExpandAllAndCollapseAllAction(IToolBarManager menuManager) {
@@ -322,31 +310,6 @@ public class HistoryBrowserView extends ViewPart implements ProjectSpaceContaine
 		menuManager.add(refresh);
 	}
 
-	private void addGroupByModelElementButton(IToolBarManager menuManager) {
-		boolean isGroupByME = Activator.getDefault().getDialogSettings().getBoolean("GroupByModelElement");
-		groupByMe = new Action("", SWT.TOGGLE) {
-			@Override
-			public void run() {
-				boolean showRootsCache = contentProvider.showRootNodes();
-				Activator.getDefault().getDialogSettings().put("GroupByModelElement", isChecked());
-				if (isChecked()) {
-					contentProvider = new SCMContentProvider.Compact(viewer);
-				} else {
-					contentProvider = new SCMContentProvider.Detailed(viewer);
-				}
-				contentProvider.setShowRootNodes(showRootsCache);
-				viewer.setContentProvider(contentProvider);
-				viewer.refresh();
-			}
-
-		};
-
-		groupByMe.setImageDescriptor(Activator.getImageDescriptor("/icons/groupByME.png"));
-		groupByMe.setToolTipText("Group by model element");
-		groupByMe.setChecked(isGroupByME);
-		menuManager.add(groupByMe);
-	}
-
 	private void addShowRootAction(IToolBarManager menuManager) {
 		showRoots = new Action("", SWT.TOGGLE) {
 			@Override
@@ -356,7 +319,6 @@ public class HistoryBrowserView extends ViewPart implements ProjectSpaceContaine
 				} else {
 					contentProvider.setShowRootNodes(false);
 				}
-				viewer.setContentProvider(contentProvider);
 				viewer.refresh();
 			}
 
@@ -508,7 +470,7 @@ public class HistoryBrowserView extends ViewPart implements ProjectSpaceContaine
 			changePackageCache.values()), projectSpace.getProject());
 		labelProvider.setChangePackageVisualizationHelper(changePackageVisualizationHelper);
 		logLabelProvider.setChangePackageVisualizationHelper(changePackageVisualizationHelper);
-		contentProvider.setChangePackageVisualizationHelper(changePackageVisualizationHelper);
+		// contentProvider.setChangePackageVisualizationHelper(changePackageVisualizationHelper);
 	}
 
 	/**
@@ -537,24 +499,18 @@ public class HistoryBrowserView extends ViewPart implements ProjectSpaceContaine
 		currentEnd = -1;
 		String label = "History for ";
 		Project project = projectSpace.getProject();
+		contentProvider = new SCMContentProvider();
+
 		if (me != null && project.containsInstance(me)) {
 			label += adapterFactoryLabelProvider.getText(me);
-			groupByMe.setChecked(false);
 			showRoots.setChecked(false);
-			contentProvider = new SCMContentProvider.Detailed(viewer);
 			contentProvider.setShowRootNodes(false);
 		} else {
 			label += projectSpace.getProjectName();
-			boolean isGroupedByME = Activator.getDefault().getDialogSettings().getBoolean("GroupByModelElement");
-			groupByMe.setChecked(isGroupedByME);
 			showRoots.setChecked(true);
-			if (isGroupedByME) {
-				contentProvider = new SCMContentProvider.Compact(viewer);
-			} else {
-				contentProvider = new SCMContentProvider.Detailed(viewer);
-			}
 			contentProvider.setShowRootNodes(true);
 		}
+
 		setContentDescription(label);
 		labelProvider = new SCMLabelProvider(project);
 		changesColumn.setLabelProvider(labelProvider);

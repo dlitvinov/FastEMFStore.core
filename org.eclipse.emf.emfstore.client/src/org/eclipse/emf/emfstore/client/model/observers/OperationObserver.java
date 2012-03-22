@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.client.model.observers;
 
+import org.eclipse.emf.emfstore.common.observer.IObserver;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation;
 
 /**
@@ -17,8 +18,7 @@ import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOpera
  * 
  * @author hodaie
  */
-// TODO Chain use ObserverBus and extends IObserver
-public interface OperationListener {
+public interface OperationObserver extends IObserver {
 
 	/**
 	 * Operation is executed.

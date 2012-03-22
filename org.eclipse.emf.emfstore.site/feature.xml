@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.emf.emfstore.site"
       label="EMF Store Site"
-      version="1.0.0.qualifier"
+      version="0.8.9.qualifier"
       provider-name="EMFT"
       image="eclipse_update_120.jpg"
       license-feature-version="2.0.0.qualifier">
@@ -33,6 +33,46 @@
 
    <includes
          id="org.eclipse.emf.emfstore.client.ui.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.emfstore.perspective.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.ecp.common.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.ecp.editor.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.ecp.navigator.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.ecp.navigatoreditorbridge.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.ecp.validation.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.emfstore.backchannel.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.emfstore.client.transaction.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.emfstore.ecore.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.emfstore.ecp.feature"
          version="0.0.0"/>
 
 </feature>

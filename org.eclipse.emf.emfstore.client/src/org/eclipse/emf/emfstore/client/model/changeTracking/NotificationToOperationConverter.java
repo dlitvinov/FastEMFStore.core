@@ -20,8 +20,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.emfstore.client.model.changeTracking.notification.NotificationInfo;
 import org.eclipse.emf.emfstore.client.model.util.WorkspaceUtil;
-import org.eclipse.emf.emfstore.common.model.IdEObjectCollection;
 import org.eclipse.emf.emfstore.common.model.ModelElementId;
+import org.eclipse.emf.emfstore.common.model.impl.IdEObjectCollectionImpl;
 import org.eclipse.emf.emfstore.common.model.impl.ProjectImpl;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation;
@@ -44,7 +44,7 @@ import org.eclipse.emf.emfstore.server.model.versioning.operations.SingleReferen
  */
 public final class NotificationToOperationConverter {
 
-	private IdEObjectCollection project;
+	private IdEObjectCollectionImpl project;
 
 	/**
 	 * Default constructor.
@@ -52,7 +52,7 @@ public final class NotificationToOperationConverter {
 	 * @param project
 	 *            project
 	 */
-	public NotificationToOperationConverter(IdEObjectCollection project) {
+	public NotificationToOperationConverter(IdEObjectCollectionImpl project) {
 		this.project = project;
 	}
 
@@ -203,7 +203,7 @@ public final class NotificationToOperationConverter {
 			n.getPosition());
 	}
 
-	public static MultiReferenceOperation createMultiReferenceOperation(IdEObjectCollection collection,
+	public static MultiReferenceOperation createMultiReferenceOperation(IdEObjectCollectionImpl collection,
 		EObject modelElement, EReference reference, List<EObject> referencedElements, boolean isAdd, int position) {
 		MultiReferenceOperation op = OperationsFactory.eINSTANCE.createMultiReferenceOperation();
 		setCommonValues(collection, op, modelElement);
@@ -281,7 +281,7 @@ public final class NotificationToOperationConverter {
 		}
 	}
 
-	public static SingleReferenceOperation createSingleReferenceOperation(IdEObjectCollection collection,
+	public static SingleReferenceOperation createSingleReferenceOperation(IdEObjectCollectionImpl collection,
 		ModelElementId oldReference, ModelElementId newReference, EReference reference, EObject modelElement) {
 
 		SingleReferenceOperation op = OperationsFactory.eINSTANCE.createSingleReferenceOperation();
@@ -332,7 +332,7 @@ public final class NotificationToOperationConverter {
 	}
 
 	// utility methods
-	private static void setCommonValues(IdEObjectCollection collection, AbstractOperation operation,
+	private static void setCommonValues(IdEObjectCollectionImpl collection, AbstractOperation operation,
 		EObject modelElement) {
 		operation.setClientDate(new Date());
 		ModelElementId id = collection.getModelElementId(modelElement);

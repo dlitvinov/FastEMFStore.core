@@ -1,0 +1,12 @@
+### Use these as JVM arguments:
+#-Dbuild.root=$WORKSPACE
+#-Dbuild.type=R
+#-Dcheckout.root=$WORKSPACE/git
+#-Dbuild.props=$WORKSPACE/git/org.eclipse.buckminster.releng/build.properties
+#-XX:MaxPermSize=256m
+#-Xmx512m
+
+resolve http://git.eclipse.org/c/emf-store/org.eclipse.emf.emfstore.core.git/plain/org.eclipse.emf.emfstore.releng/buckminster.mspec 
+build --clean --thorough
+junit --launch /org.eclipse.emf.emfstore.client.test/AllChangeTrackingTestsWithNormalEditingDomain.launch ${buckminster.output.root}/testReport.xml --terseXML --flatXML
+perform org.eclipse.emf.emfstore.site#site.p2.zip

@@ -11,21 +11,34 @@
 package org.eclipse.emf.emfstore.common.observer;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.emf.emfstore.common.Activator;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionElement;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPointException;
 
 /**
- * This is a universal observer bus. Better documentation will follow... Example code:
+ * This is a universal observer bus. This class follows the publish/subscribe pattern, it is a central dispatcher for
+ * observers and makes use of generics in order to allow type safety. It can be used as singleton or be injected through
+ * DI.
+ * Observers have to implement the {@link IObserver} interface, which is only used as a marker. Future use of
+ * Annotations is possible.
+ * by using {@link #notify(Class)} (e.g. <code>bus.notify(MyObserver.class).myObserverMethod()</code>) all registered
+ * Observers are notified.
+ * This is implemented by using the java {@link Proxy} class. By calling {@link #notify(Class)} a proxy is returned,
+ * which then calls all registered observers.
+ * The proxy can also be casted into {@link ObserverCall}, which allows to access all results by the different
+ * observers.
+ * 
+ * 
+ * Example code:
  * 
  * <pre>
  * // A is IObserver
@@ -52,9 +65,9 @@ import org.eclipse.emf.emfstore.common.Activator;
  * ObserverBus.register(b);
  * ObserverBus.register(a);
  * 
- * ObserverBus.send(A.class).foo();
+ * ObserverBus.notify(A.class).foo();
  * 
- * ObserverBus.send(B.class).say(&quot;w00t&quot;);
+ * ObserverBus.notify(B.class).say(&quot;w00t&quot;);
  * 
  * // Output:
  * 
@@ -70,14 +83,18 @@ import org.eclipse.emf.emfstore.common.Activator;
 public class ObserverBus {
 
 	private static ObserverBus instance;
-	private HashMap<Class<? extends IObserver>, ProxyHandler> observerProxies;
-	
+	private HashMap<Class<? extends IObserver>, List<IObserver>> observerMap;
 
+	/**
+	 * Static ObserverBus singleton. Use of singleton is optional, for that reason the constructor is public.
+	 * 
+	 * @return Static instance of the observerbus
+	 */
 	public static ObserverBus getInstance() {
 		if (instance == null) {
 			instance = new ObserverBus();
 		}
-		
+
 		return instance;
 	}
 
@@ -85,7 +102,7 @@ public class ObserverBus {
 	 * Default constructor.
 	 */
 	public ObserverBus() {
-		observerProxies = new HashMap<Class<? extends IObserver>, ProxyHandler>();
+		observerMap = new HashMap<Class<? extends IObserver>, List<IObserver>>();
 		collectionExtensionPoints();
 	}
 
@@ -101,17 +118,7 @@ public class ObserverBus {
 		if (clazz == null) {
 			return null;
 		}
-		return (T) getProxyHandler(clazz, true).getProxy();
-	}
-
-	private List<IObserver> getObserver(Class<? extends IObserver> clazz, boolean force) {
-		ProxyHandler proxyHandler = getProxyHandler(clazz, force);
-		
-		if (proxyHandler != null) {
-			return proxyHandler.getObservers();
-		}
-		
-		return null;
+		return (T) createProxy(clazz);
 	}
 
 	/**
@@ -132,7 +139,7 @@ public class ObserverBus {
 	public void register(IObserver observer, Class<? extends IObserver>... classes) {
 		for (Class<? extends IObserver> iface : classes) {
 			if (iface.isInstance(observer)) {
-				getObserver(iface, true).add(observer);
+				addObserver(observer, iface);
 			}
 		}
 	}
@@ -155,24 +162,43 @@ public class ObserverBus {
 	public void unregister(IObserver observer, Class<? extends IObserver>... classes) {
 		for (Class<? extends IObserver> iface : classes) {
 			if (iface.isInstance(observer)) {
-				List<IObserver> observers = getObserver(iface, false);
-				if (observers != null) {
-					observers.remove(observer);
-				}
+				removeObserver(observer, iface);
 			}
 		}
 	}
 
-	private ProxyHandler getProxyHandler(Class<? extends IObserver> clazz, boolean force) {
-		ProxyHandler handler = observerProxies.get(clazz);
-		if (handler == null && force) {
-			handler = new ProxyHandler();
-			Object observer = Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] { clazz }, handler);
-			handler.setProxy(observer);
-			observerProxies.put(clazz, handler);
-			return handler;
+	private void addObserver(IObserver observer, Class<? extends IObserver> iface) {
+		List<IObserver> observers = initObserverList(iface);
+		observers.add(observer);
+	}
+
+	private void removeObserver(IObserver observer, Class<? extends IObserver> iface) {
+		List<IObserver> observers = initObserverList(iface);
+		observers.remove(observer);
+	}
+
+	private List<IObserver> initObserverList(Class<? extends IObserver> iface) {
+		List<IObserver> list = observerMap.get(iface);
+		if (list == null) {
+			list = new ArrayList<IObserver>();
+			observerMap.put(iface, list);
 		}
-		return handler;
+		return list;
+	}
+
+	private List<IObserver> getObserverByClass(Class<IObserver> clazz) {
+		List<IObserver> list = observerMap.get(clazz);
+		if (list == null) {
+			list = Collections.emptyList();
+		}
+		return Collections.unmodifiableList(list);
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T extends IObserver> T createProxy(Class<T> clazz) {
+		ProxyHandler handler = new ProxyHandler((Class<IObserver>) clazz);
+		return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] { clazz, ObserverCall.class }, handler);
+
 	}
 
 	/**
@@ -180,66 +206,57 @@ public class ObserverBus {
 	 * 
 	 * @author wesendon
 	 */
-	private final class ProxyHandler implements InvocationHandler {
+	private final class ProxyHandler implements InvocationHandler, ObserverCall {
 
-		private Object proxy;
-		private ArrayList<IObserver> observers;
+		private Class<IObserver> clazz;
+		private List<ObserverCall.Result> lastResults;
 
-		public ProxyHandler() {
-			observers = new ArrayList<IObserver>();
+		public ProxyHandler(Class<IObserver> clazz) {
+			this.clazz = clazz;
+			this.lastResults = new ArrayList<ObserverCall.Result>();
 		}
 
-		public List<IObserver> getObservers() {
-			return observers;
-		}
-
-		public void setProxy(Object proxy) {
-			this.proxy = proxy;
-		}
-
-		public Object getProxy() {
-			return proxy;
-		}
-
-		// BEGIN SUPRESS CATCH EXCEPTION
-		// TODO: handle exception
-		// TODO: handle return values
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			Object firstResult = null;
+			// fork for calls to ObserverCall.class
+			if (ObserverCall.class.equals(method.getDeclaringClass())) {
+				return accessObserverCall(method, args);
+			}
+
+			List<IObserver> observers = getObserverByClass(clazz);
+
+			// return default value if no observers are registered
+			if (observers.size() == 0) {
+				lastResults = new ArrayList<ObserverCall.Result>();
+				return Result.getDefaultValue(method);
+			}
+
+			lastResults = notifiyObservers(observers, method, args);
+			return lastResults.get(0).getResultOrDefaultValue();
+		}
+
+		private Object accessObserverCall(Method method, Object[] args) throws IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException {
+			return method.invoke(this, args);
+
+		}
+
+		private List<ObserverCall.Result> notifiyObservers(List<IObserver> observers, Method method, Object[] args) {
+			List<ObserverCall.Result> results = new ArrayList<ObserverCall.Result>(observers.size());
 			for (IObserver observer : observers) {
 				try {
-					if (firstResult == null) {
-						firstResult = method.invoke(observer, args);
-					} else {
-						method.invoke(observer, args);
-					}
+					results.add(new Result(observer, method, method.invoke(observer, args)));
 				} catch (Throwable e) {
+					results.add(new Result(observer, e, method));
 				}
 			}
-			if (firstResult==null && method.getReturnType().isPrimitive()) {
-				return getDefaultValueForPrimitive(method.getReturnType());
-			}
-			
-			return firstResult;
+			return results;
 		}
-		// END SUPRESS CATCH EXCEPTION
 
-		private Object getDefaultValueForPrimitive(Class<?> returnType) {
-			String simpleName = returnType.getSimpleName();
-			return primitiveToObjectDefaultValueMap.get(simpleName);
+		public List<Result> getObserverCallResults() {
+			return lastResults;
 		}
-	
-	}
-	
-	private static final Map<String, Object> primitiveToObjectDefaultValueMap = new HashMap<String, Object>();
-	static {
-		primitiveToObjectDefaultValueMap.put("int", new Integer(0));
-		primitiveToObjectDefaultValueMap.put("boolean", new Boolean(false));
-		primitiveToObjectDefaultValueMap.put("long", new Long(0));
-		primitiveToObjectDefaultValueMap.put("float", new Float(0));
-		primitiveToObjectDefaultValueMap.put("double", new Double(0));
-		primitiveToObjectDefaultValueMap.put("byte", Byte.MIN_VALUE);
-		primitiveToObjectDefaultValueMap.put("short", Short.MIN_VALUE);
+
+		// END SUPRESS CATCH EXCEPTION
 	}
 
 	@SuppressWarnings("unchecked")
@@ -263,23 +280,19 @@ public class ObserverBus {
 		}
 		return false;
 	}
-	
 
+	/**
+	 * Pulls observers from an extensionpoint and registers them.
+	 */
 	public void collectionExtensionPoints() {
-		IConfigurationElement[] confs = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				"org.eclipse.emf.emfstore.common.observer");
-		for (IConfigurationElement element : confs) {
+		for (ExtensionElement outer : new ExtensionPoint("org.eclipse.emf.emfstore.common.observer",true)
+			.getExtensionElements()) {
 			try {
-				String extensionPointName = element.getAttribute("extensionPointName");
-				String observerAttributeName = element.getAttribute("observerAttributeName");
-				IConfigurationElement[] extensions = Platform.getExtensionRegistry().getConfigurationElementsFor(
-						extensionPointName);
-				for (IConfigurationElement extension : extensions) {
-					IObserver o = (IObserver) extension.createExecutableExtension(observerAttributeName);
-					register(o);
+				for (ExtensionElement inner : new ExtensionPoint(outer.getAttribute("extensionPointName"),true)
+					.getExtensionElements()) {
+					register(inner.getClass(outer.getAttribute("observerAttributeName"), IObserver.class));
 				}
-			} catch (CoreException e) {
-				Activator.getDefault().logException(e.getMessage(), e);
+			} catch (ExtensionPointException e) {
 			}
 		}
 	}

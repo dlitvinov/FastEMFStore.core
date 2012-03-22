@@ -14,9 +14,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPointException;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.osgi.framework.Bundle;
 
@@ -373,7 +373,7 @@ public final class ServerConfiguration {
 	/**
 	 * Default value for {@link #PERFORM_CLEAN_MEMORY_TASK}.
 	 */
-	public static final String PERFORM_CLEAN_MEMORY_TASK_DEFAULT = FALSE;
+	public static final String PERFORM_CLEAN_MEMORY_TASK_DEFAULT = TRUE;
 
 	private static boolean testing;
 
@@ -433,19 +433,15 @@ public final class ServerConfiguration {
 	 */
 	public static LocationProvider getLocationProvider() {
 		if (locationProvider == null) {
-			IConfigurationElement[] rawExtensions = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				"org.eclipse.emf.emfstore.server.locationprovider");
-			for (IConfigurationElement extension : rawExtensions) {
-				try {
-					Object executableExtension = extension.createExecutableExtension("providerClass");
-					if (executableExtension instanceof LocationProvider) {
-						locationProvider = (LocationProvider) executableExtension;
-					}
-				} catch (CoreException e) {
-					String message = "Error while instantiating location provider, switching to default location!";
-					ModelUtil.logWarning(message, e);
-				}
+			// TODO EXPT PRIO
+			try {
+				locationProvider = new ExtensionPoint("org.eclipse.emf.emfstore.server.locationprovider", true)
+					.getClass("providerClass", LocationProvider.class);
+			} catch (ExtensionPointException e) {
+				String message = "No location provider or error while instantiating location provider, switching to default location!";
+				ModelUtil.logWarning(message);
 			}
+
 			if (locationProvider == null) {
 				locationProvider = new DefaultServerWorkspaceLocationProvider();
 			}
@@ -566,7 +562,8 @@ public final class ServerConfiguration {
 	public static String getServerVersion() {
 
 		Bundle emfStoreBundle = Platform.getBundle("org.eclipse.emf.emfstore.server");
-		String emfStoreVersionString = emfStoreBundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
+		String emfStoreVersionString = (String) emfStoreBundle.getHeaders().get(
+			org.osgi.framework.Constants.BUNDLE_VERSION);
 		return emfStoreVersionString;
 	}
 

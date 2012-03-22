@@ -162,12 +162,7 @@ public class CreateDeleteTest extends IntegrationTest {
 		System.out.println("DeleteAndRevertDeleteTest");
 
 		final IntegrationTestHelper testHelper = new IntegrationTestHelper(randomSeed, getTestProject());
-		new EMFStoreCommand() {
-			@Override
-			protected void doRun() {
-				testHelper.doDeleteAndRevert();
-			}
-		}.run(false);
+		testHelper.doDeleteAndRevert();
 
 		commitChanges();
 		assertTrue(IntegrationTestHelper.areEqual(getTestProject(), getCompareProject(), "DeleteAndRevertDeleteTest"));

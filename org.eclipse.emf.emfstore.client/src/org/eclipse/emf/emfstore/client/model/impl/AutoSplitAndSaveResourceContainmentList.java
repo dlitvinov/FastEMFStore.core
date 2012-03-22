@@ -8,11 +8,10 @@
  * 
  * Contributors:
  ******************************************************************************/
-package org.eclipse.emf.emfstore.common.model.util;
+package org.eclipse.emf.emfstore.client.model.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,20 +19,18 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.emfstore.client.model.Configuration;
+import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 
 /**
  * Implements a list for a containment reference that will automatically split into several resources and save them
- * whenever necessary ude to operations on the list. The containmentList is part of a root object that holds the
+ * whenever necessary due to operations on the list. The containmentList is part of a root object that holds the
  * containment list. Elements added to the list will be saved to files in the given path with a randomly assigned names
  * and the given extension. The list does not support the set method.
  * 
@@ -44,6 +41,7 @@ public class AutoSplitAndSaveResourceContainmentList<T extends EObject> implemen
 
 	private static final String ROOT_NAME = "root";
 	private static final int MAX_CAPACITY = 30;
+	private static final int MAX_FILE_SIZE = 100000;
 	private final EList<T> list;
 	private Resource currentResource;
 	private int currentResourceElementCount;
@@ -86,6 +84,12 @@ public class AutoSplitAndSaveResourceContainmentList<T extends EObject> implemen
 
 		// init first resource
 		initCurrentResource(resourceSet);
+	}
+
+	private void saveDirtyResources() {
+		if (Configuration.isAutoSaveEnabled()) {
+			save();
+		}
 	}
 
 	private void initCurrentResource(ResourceSet resourceSet) {
@@ -131,8 +135,7 @@ public class AutoSplitAndSaveResourceContainmentList<T extends EObject> implemen
 		URI uri = currentResource.getURI();
 		File file = new File(uri.toFileString());
 
-		// TODO: magic number
-		if (currentResourceElementCount > MAX_CAPACITY || file.length() > 100000) {
+		if (currentResourceElementCount > MAX_CAPACITY || file.length() > MAX_FILE_SIZE) {
 			currentResource = createRandomResource(resourceSet, path);
 			currentResourceElementCount = 0;
 		}
@@ -362,42 +365,49 @@ public class AutoSplitAndSaveResourceContainmentList<T extends EObject> implemen
 		return result;
 	}
 
-	private void saveDirtyResources() {
+	public void save() {
+		// int threads = Runtime.getRuntime().availableProcessors();
+		// ExecutorService execService = Executors.newFixedThreadPool(threads);
 
-		int threads = Runtime.getRuntime().availableProcessors();
-		ExecutorService execService = Executors.newFixedThreadPool(threads);
+		// int resourcesPerThread = (dirtyResourceSet.size() + threads - 1) / threads;
+		// final ArrayList<Resource> resources = new ArrayList<Resource>(dirtyResourceSet);
 
-		int resourcesPerThread = (dirtyResourceSet.size() + threads - 1) / threads;
-		final ArrayList<Resource> resources = new ArrayList<Resource>(dirtyResourceSet);
+		// for (int i = 0; i < resources.size(); i += resourcesPerThread) {
+		// final int min = i;
+		// final int max = Math.min(min + resourcesPerThread, resources.size());
+		// execService.submit(new Runnable() {
+		// public void run() {
+		// for (int j = min; j <= max; j++) {
+		// try {
+		// resources.get(j).save(ModelUtil.getResourceSaveOptions());
+		// } catch (IOException e) {
+		// String message = "Saving to resource failed!";
+		// ModelUtil.log(message, e, IStatus.ERROR);
+		// throw new IllegalStateException(message, e);
+		// }
+		// }
+		// }
+		// });
+		// }
 
-		for (int i = 0; i < resources.size(); i += resourcesPerThread) {
-			final int min = i;
-			final int max = Math.min(min + resourcesPerThread, resources.size());
-			execService.submit(new Runnable() {
-				public void run() {
-					for (int j = min; j <= max; j++) {
-						try {
-							resources.get(j).save(null);
-						} catch (IOException e) {
-							String message = "Saving to resource failed!";
-							ModelUtil.log(message, e, IStatus.ERROR);
-							throw new IllegalStateException(message, e);
-						}
-					}
-				}
-			});
-		}
+		// execService.shutdown();
+		// try {
+		// // wait for 30 minutes to finish save
+		// boolean terminated = execService.awaitTermination(1800000, TimeUnit.MILLISECONDS);
+		// if (!terminated) {
+		// throw new IllegalStateException("FAIL: Save did not complete within time limit.");
+		// }
+		// } catch (InterruptedException e1) {
+		// String message = "Saving to resource failed!";
+		// throw new IllegalStateException(message, e1);
+		// }
 
-		execService.shutdown();
-		try {
-			// wait for 30 minutes to finish save
-			boolean terminated = execService.awaitTermination(1800000, TimeUnit.MILLISECONDS);
-			if (!terminated) {
-				throw new IllegalStateException("FAIL: Save did not complete within time limit.");
+		for (Resource res : dirtyResourceSet) {
+			try {
+				res.save(ModelUtil.getResourceSaveOptions());
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		} catch (InterruptedException e1) {
-			String message = "Saving to resource failed!";
-			throw new IllegalStateException(message, e1);
 		}
 
 		dirtyResourceSet.clear();

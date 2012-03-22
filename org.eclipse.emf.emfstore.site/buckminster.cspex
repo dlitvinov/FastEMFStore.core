@@ -4,10 +4,12 @@
 	xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0"
 	xmlns="http://www.eclipse.org/buckminster/CSpec-1.0">
 	<dependencies>
-		<dependency name="org.eclipse.rcp" componentType="eclipse.feature"/>
+		<dependency name="EMFStoreTargetPlatform" componentType="eclipse.feature"/>
+		<dependency name="EMFStoreDeveloper" componentType="eclipse.feature"/>
+		
+		<dependency name="ECPTargetPlatform" componentType="eclipse.feature"/>
+		<dependency name="ECPDeveloper" componentType="eclipse.feature"/>
 		
 		<dependency name="org.eclipse.emf.emfstore.client.test"/>
-		<dependency name="org.eclipse.emf.emfstore.ecore"/>
-		<dependency name="org.eclipse.emf.emfstore.perspective"/>
 	</dependencies>
 </cspecExtension>

@@ -16,6 +16,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -42,12 +41,17 @@ import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.util.EContentsEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.XMLResource;
+import org.eclipse.emf.ecore.xmi.impl.XMLMapImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMLParserPoolImpl;
 import org.eclipse.emf.emfstore.common.CommonUtil;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionElement;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPointException;
 import org.eclipse.emf.emfstore.common.model.AssociationClassElement;
 import org.eclipse.emf.emfstore.common.model.IdEObjectCollection;
 import org.eclipse.emf.emfstore.common.model.ModelElementId;
@@ -148,12 +152,12 @@ public final class ModelUtil {
 		boolean hrefCheckEnabled = false;
 		boolean proxyCheckEnabled = false;
 
-		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
-			"org.eclipse.emf.emfstore.common.model.serializationoptions");
-		if (elements != null && elements.length > 0) {
-			hrefCheckEnabled = Boolean.parseBoolean(elements[0].getAttribute("HrefCheck"));
-			proxyCheckEnabled = Boolean.parseBoolean(elements[0].getAttribute("ProxyCheck"));
-			containmentCheckEnabled = Boolean.parseBoolean(elements[0].getAttribute("SelfContainmentCheck"));
+		ExtensionElement element = new ExtensionPoint("org.eclipse.emf.emfstore.common.model.serializationoptions")
+			.getFirst();
+		if (element != null) {
+			hrefCheckEnabled = element.getBoolean("HrefCheck");
+			proxyCheckEnabled = element.getBoolean("ProxyCheck");
+			containmentCheckEnabled = element.getBoolean("SelfContainmentCheck");
 		}
 
 		return eObjectToString(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
@@ -177,25 +181,16 @@ public final class ModelUtil {
 	 */
 	public static String eObjectToString(EObject object, boolean overrideContainmentCheck, boolean overrideHrefCheck,
 		boolean overrideProxyCheck) throws SerializationException {
+
 		if (object == null) {
 			return null;
 		}
 
 		XMIResource res = (XMIResource) (new ResourceSetImpl()).createResource(VIRTUAL_URI);
-
+		((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
 		EObject copy;
-		if (object instanceof Project) {
-			Project project = (Project) object;
-			Project copiedProject = (Project) clone(object);
-
-			for (ModelElementId modelElementId : project.getAllModelElementIds()) {
-				if (isIgnoredDatatype(project.getModelElement(modelElementId))) {
-					continue;
-				}
-				res.setID(copiedProject.getModelElement(modelElementId), modelElementId.getId());
-			}
-			res.getContents().add(copiedProject);
-			copy = copiedProject;
+		if (object instanceof IdEObjectCollection) {
+			copy = copyIdEObjectCollection((IdEObjectCollection) object, res);
 		} else {
 			copy = ModelUtil.clone(object);
 			res.getContents().add(copy);
@@ -228,7 +223,23 @@ public final class ModelUtil {
 		if (!overrideHrefCheck) {
 			hrefCheck(result);
 		}
+
 		return result;
+	}
+
+	private static EObject copyIdEObjectCollection(IdEObjectCollection collection, XMIResource res) {
+		IdEObjectCollection copiedCollection = clone(collection);
+
+		for (EObject modelElement : copiedCollection.getAllModelElements()) {
+			if (isIgnoredDatatype(modelElement)) {
+				continue;
+			}
+			ModelElementId modelElementId = copiedCollection.getModelElementId(modelElement);
+			res.setID(modelElement, modelElementId.getId());
+		}
+
+		res.getContents().add(copiedCollection);
+		return copiedCollection;
 	}
 
 	/**
@@ -274,11 +285,12 @@ public final class ModelUtil {
 
 		if (ignoredDataTypes == null) {
 			ignoredDataTypes = new HashSet<String>();
-			IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				"org.eclipse.emf.emfstore.common.model.ignoredatatype");
-			for (IConfigurationElement extension : config) {
-				String className = extension.getAttribute("type");
-				ignoredDataTypes.add(className);
+			for (ExtensionElement element : new ExtensionPoint("org.eclipse.emf.emfstore.common.model.ignoredatatype",
+				true).getExtensionElements()) {
+				try {
+					ignoredDataTypes.add(element.getAttribute("type"));
+				} catch (ExtensionPointException e) {
+				}
 			}
 		}
 
@@ -296,12 +308,13 @@ public final class ModelUtil {
 	 *             if deserialization fails
 	 */
 	public static EObject stringToEObject(String object) throws SerializationException {
+
 		if (object == null) {
 			return null;
 		}
 
 		XMIResource res = (XMIResource) (new ResourceSetImpl()).createResource(VIRTUAL_URI);
-
+		((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
 		try {
 			res.load(new InputSource(new StringReader(object)), getResourceLoadOptions());
 		} catch (UnsupportedEncodingException e) {
@@ -311,38 +324,37 @@ public final class ModelUtil {
 		}
 
 		EObject result = res.getContents().get(0);
-		if (result instanceof Project) {
-			Project project = (Project) result;
-			Map<EObject, ModelElementId> eObjectToIdMap = new HashMap<EObject, ModelElementId>();
-			Map<ModelElementId, EObject> idToEObjectMap = new HashMap<ModelElementId, EObject>();
-			TreeIterator<EObject> it = ((Project) result).eAllContents();
-			while (it.hasNext()) {
-				EObject me = it.next();
-				String id;
 
-				if (ModelUtil.isIgnoredDatatype(me)) {
+		if (result instanceof IdEObjectCollection) {
+			IdEObjectCollection collection = (IdEObjectCollection) result;
+			Map<EObject, String> eObjectToIdMap = new HashMap<EObject, String>();
+			Map<String, EObject> idToEObjectMap = new HashMap<String, EObject>();
+
+			for (EObject modelElement : collection.getAllModelElements()) {
+				String modelElementId;
+				if (ModelUtil.isIgnoredDatatype(modelElement)) {
 					// create random ID for generic types, won't get serialized
 					// anyway
-					id = ModelFactory.eINSTANCE.createModelElementId().getId();
+					modelElementId = ModelFactory.eINSTANCE.createModelElementId().getId();
 				} else {
-					id = res.getID(me);
+					modelElementId = res.getID(modelElement);
 				}
 
-				if (id == null) {
-					throw new SerializationException("Failed to retrieve ID for EObject contained in project: " + me);
+				if (modelElementId == null) {
+					throw new SerializationException("Failed to retrieve ID for EObject contained in project: "
+						+ modelElement);
 				}
 
-				ModelElementId meId = ModelFactory.eINSTANCE.createModelElementId();
-				meId.setId(id);
-				eObjectToIdMap.put(me, meId);
-				idToEObjectMap.put(meId, me);
+				eObjectToIdMap.put(modelElement, modelElementId);
+				idToEObjectMap.put(modelElementId, modelElement);
 			}
-			project.initCaches(eObjectToIdMap, idToEObjectMap);
+
+			collection.initCaches(eObjectToIdMap, idToEObjectMap);
 		}
 
 		EcoreUtil.resolveAll(result);
-
 		res.getContents().remove(result);
+
 		return result;
 	}
 
@@ -353,18 +365,16 @@ public final class ModelUtil {
 	 * 
 	 * @return map of options for {@link XMIResource} or {@link XMLResource}.
 	 */
+	@SuppressWarnings("rawtypes")
 	public static Map<Object, Object> getResourceLoadOptions() {
 		if (resourceLoadOptions == null) {
 			resourceLoadOptions = new HashMap<Object, Object>();
-			// resourceLoadOptions.put(XMLResource.OPTION_DEFER_ATTACHMENT, Boolean.TRUE);
-			// resourceLoadOptions.put(XMLResource.OPTION_DEFER_IDREF_RESOLUTION, Boolean.TRUE);
-			// resourceLoadOptions.put(XMLResource.OPTION_USE_DEPRECATED_METHODS, Boolean.TRUE);
-			// resourceLoadOptions.put(XMLResource.OPTION_USE_PARSER_POOL, new XMLParserPoolImpl());
-			// resourceLoadOptions.put(XMLResource.OPTION_USE_XML_NAME_TO_FEATURE_MAP, new HashMap());
-			// resourceLoadOptions.put(XMLResource.OPTION_USE_ENCODED_ATTRIBUTE_STYLE, Boolean.TRUE);
-
+			resourceLoadOptions.put(XMLResource.OPTION_DEFER_ATTACHMENT, Boolean.TRUE);
+			resourceLoadOptions.put(XMLResource.OPTION_DEFER_IDREF_RESOLUTION, Boolean.TRUE);
+			resourceLoadOptions.put(XMLResource.OPTION_USE_DEPRECATED_METHODS, Boolean.TRUE);
+			resourceLoadOptions.put(XMLResource.OPTION_USE_PARSER_POOL, new XMLParserPoolImpl());
+			resourceLoadOptions.put(XMLResource.OPTION_USE_XML_NAME_TO_FEATURE_MAP, new HashMap());
 			resourceLoadOptions.put(XMLResource.OPTION_USE_ENCODED_ATTRIBUTE_STYLE, Boolean.TRUE);
-			resourceLoadOptions.put(XMLResource.OPTION_DEFER_IDREF_RESOLUTION, true);
 		}
 		return resourceLoadOptions;
 	}
@@ -378,6 +388,8 @@ public final class ModelUtil {
 		if (resourceSaveOptions == null) {
 			resourceSaveOptions = new HashMap<Object, Object>();
 			resourceSaveOptions.put(XMLResource.OPTION_USE_ENCODED_ATTRIBUTE_STYLE, Boolean.TRUE);
+			resourceSaveOptions.put(XMLResource.OPTION_USE_CACHED_LOOKUP_TABLE, new ArrayList());
+			resourceSaveOptions.put(XMLResource.OPTION_XML_MAP, new XMLMapImpl());
 		}
 		return resourceSaveOptions;
 	}
@@ -615,18 +627,16 @@ public final class ModelUtil {
 		if (eObject instanceof Project && resource instanceof XMIResource) {
 			XMIResource xmiResource = (XMIResource) resource;
 			Project project = (Project) eObject;
-			Map<EObject, ModelElementId> eObjectToIdMap = new HashMap<EObject, ModelElementId>();
-			Map<ModelElementId, EObject> idToEObjectMap = new HashMap<ModelElementId, EObject>();
+			Map<EObject, String> eObjectToIdMap = new HashMap<EObject, String>();
+			Map<String, EObject> idToEObjectMap = new HashMap<String, EObject>();
 
 			TreeIterator<EObject> it = project.eAllContents();
 			while (it.hasNext()) {
 				EObject obj = it.next();
-				ModelElementId objId = ModelFactory.eINSTANCE.createModelElementId();
 				String id = xmiResource.getID(obj);
 				if (id != null) {
-					objId.setId(id);
-					eObjectToIdMap.put(obj, objId);
-					idToEObjectMap.put(objId, obj);
+					eObjectToIdMap.put(obj, id);
+					idToEObjectMap.put(id, obj);
 				}
 			}
 
@@ -707,22 +717,17 @@ public final class ModelUtil {
 	 *             if there is no well formed or defined model version
 	 */
 	public static int getModelVersionNumber() throws MalformedModelVersionException {
-		IConfigurationElement[] rawExtensions = Platform.getExtensionRegistry().getConfigurationElementsFor(
-			"org.eclipse.emf.emfstore.common.model.modelversion");
-		if (rawExtensions.length != 1) {
-			String message = "There is " + rawExtensions.length
+		ExtensionPoint extensionPoint = new ExtensionPoint("org.eclipse.emf.emfstore.common.model.modelversion", true);
+		if (extensionPoint.size() != 1) {
+			String message = "There is " + extensionPoint.size()
 				+ " Model Version(s) registered for the given model. Migrator will assume model version 0.";
 			logInfo(message);
 			return 0;
 		}
-		IConfigurationElement extension = rawExtensions[0];
-		String string = extension.getAttribute("versionIdentifier");
 		try {
-			int version = Integer.parseInt(string);
-			return version;
-		} catch (NumberFormatException e) {
-			throw new MalformedModelVersionException("Version identifier was malformed, it must be an integer: "
-				+ string);
+			return extensionPoint.getFirst().getInteger("versionIdentifier");
+		} catch (ExtensionPointException e) {
+			throw new MalformedModelVersionException("Version identifier was malformed, it must be an integer.", e);
 		}
 	}
 
@@ -819,15 +824,64 @@ public final class ModelUtil {
 	 */
 	public static Set<EObject> getAllContainedModelElements(EObject modelElement, boolean includeTransientContainments,
 		boolean ignoreSingletonDatatypes) {
+		return getAllContainedModelElements(Collections.singletonList(modelElement), includeTransientContainments,
+			ignoreSingletonDatatypes);
+	}
+
+	/**
+	 * Get all contained elements of a given resource.
+	 * 
+	 * @param resource
+	 *            the resource
+	 * @param includeTransientContainments
+	 *            true if transient containments should be included in the
+	 *            result
+	 * @param ignoreSingletonDatatypes
+	 *            whether to ignore singleton datatypes like, for example,
+	 *            EString
+	 * @return a set of contained model elements
+	 *         Get all
+	 */
+	public static Set<EObject> getAllContainedModelElements(Resource resource, boolean includeTransientContainments,
+		boolean ignoreSingletonDatatypes) {
+		return getAllContainedModelElements(resource.getContents(), includeTransientContainments,
+			ignoreSingletonDatatypes);
+	}
+
+	/**
+	 * Get all contained elements of a given collection of model elements.
+	 * 
+	 * @param modelElements
+	 *            a collection of elements
+	 * @param includeTransientContainments
+	 *            true if transient containments should be included in the
+	 *            result
+	 * @param ignoreSingletonDatatypes
+	 *            whether to ignore singleton datatypes like, for example,
+	 *            EString
+	 * @return a set of contained model elements
+	 */
+	public static Set<EObject> getAllContainedModelElements(Collection<EObject> modelElements,
+		boolean includeTransientContainments, boolean ignoreSingletonDatatypes) {
+
 		Set<EObject> result = new HashSet<EObject>();
-		for (EObject containee : modelElement.eContents()) {
-			if (!isSingleton(containee) || !containee.eContainingFeature().isTransient()
-				|| includeTransientContainments) {
-				Set<EObject> elements = getAllContainedModelElements(containee, includeTransientContainments);
-				result.add(containee);
-				result.addAll(elements);
+
+		for (EObject modelElement : modelElements) {
+			for (EObject containee : modelElement.eContents()) {
+
+				if (!ignoreSingletonDatatypes && isSingleton(containee)) {
+					continue;
+				}
+
+				if (!containee.eContainingFeature().isTransient() || includeTransientContainments) {
+					Set<EObject> elements = getAllContainedModelElements(containee, includeTransientContainments,
+						ignoreSingletonDatatypes);
+					result.add(containee);
+					result.addAll(elements);
+				}
 			}
 		}
+
 		return result;
 	}
 
@@ -869,11 +923,7 @@ public final class ModelUtil {
 			EObject containee = it.next();
 			if (containee.eContainingFeature() != null && !containee.eContainingFeature().isTransient()
 				|| includeTransientContainments) {
-				List<EObject> elements = getAllContainedModelElementsAsList(containee, includeTransientContainments);
-				if (!result.contains(containee)) {
-					result.add(containee);
-				}
-				result.addAll(elements);
+				result.add(containee);
 			}
 		}
 
@@ -881,9 +931,10 @@ public final class ModelUtil {
 	}
 
 	/**
-	 * Delete all incoming cross references to the given model element from any
+	 * Delete the given incoming cross references to the given model element from any
 	 * other model element in the given project.
 	 * 
+	 * @param inverseReferences a collection of inverse references
 	 * @param modelElement
 	 *            the model element
 	 */
@@ -898,6 +949,7 @@ public final class ModelUtil {
 			}
 
 			EObject opposite = setting.getEObject();
+
 			if (eStructuralFeature.isMany()) {
 				((EList<?>) opposite.eGet(eStructuralFeature)).remove(modelElement);
 			} else {
@@ -907,8 +959,9 @@ public final class ModelUtil {
 	}
 
 	/**
-	 * Delete all outgoing cross references of the given model element.
+	 * Delete all outgoing cross references of the given model element to any element in the given collection.
 	 * 
+	 * @param collection the collection
 	 * @param modelElement
 	 *            the model element
 	 */
@@ -930,12 +983,19 @@ public final class ModelUtil {
 		}
 	}
 
+	/**
+	 * Retrieve all outgoing connections from the model elements to other elements in the collection.
+	 * 
+	 * @param collection the collection
+	 * @param modelElements the model elements
+	 * @return a List of references
+	 */
 	public static List<SettingWithReferencedElement> collectOutgoingCrossReferences(IdEObjectCollection collection,
-		Set<EObject> allModelElements) {
+		Set<EObject> modelElements) {
 		// result object
 		List<SettingWithReferencedElement> settings = new ArrayList<SettingWithReferencedElement>();
 
-		for (EObject currentElement : allModelElements) {
+		for (EObject currentElement : modelElements) {
 
 			for (EReference reference : currentElement.eClass().getEAllReferences()) {
 				EClassifier eType = reference.getEType();
@@ -952,7 +1012,7 @@ public final class ModelUtil {
 					@SuppressWarnings("unchecked")
 					List<EObject> referencedElements = (List<EObject>) currentElement.eGet(reference);
 					for (EObject referencedElement : referencedElements) {
-						if (shouldBeCollected(collection, allModelElements, referencedElement)) {
+						if (shouldBeCollected(collection, modelElements, referencedElement)) {
 							settings.add(new SettingWithReferencedElement(setting, referencedElement));
 						}
 					}
@@ -960,7 +1020,7 @@ public final class ModelUtil {
 					// single references
 
 					EObject referencedElement = (EObject) currentElement.eGet(reference);
-					if (shouldBeCollected(collection, allModelElements, referencedElement)) {
+					if (shouldBeCollected(collection, modelElements, referencedElement)) {
 						settings.add(new SettingWithReferencedElement(setting, referencedElement));
 					}
 
@@ -971,6 +1031,15 @@ public final class ModelUtil {
 		return settings;
 	}
 
+	/**
+	 * Checks if the referenced elements is an element in the given collection which is not a singleton, not an ignored
+	 * data type and not already contained in the given set of elements.
+	 * 
+	 * @param collection the collection
+	 * @param allModelElements the set of model elements
+	 * @param referencedElement the referenced element
+	 * @return true, if the specified conditions are met.
+	 */
 	public static boolean shouldBeCollected(IdEObjectCollection collection, Set<EObject> allModelElements,
 		EObject referencedElement) {
 
@@ -1057,15 +1126,12 @@ public final class ModelUtil {
 		if (singletonIdResolvers == null) {
 			// collect singleton ID resolvers
 			singletonIdResolvers = new HashSet<SingletonIdResolver>();
-			IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				"org.eclipse.emf.emfstore.common.model.singletonidresolver");
 
-			for (IConfigurationElement extension : config) {
-				SingletonIdResolver resolver;
+			for (ExtensionElement element : new ExtensionPoint(
+				"org.eclipse.emf.emfstore.common.model.singletonidresolver").getExtensionElements()) {
 				try {
-					resolver = (SingletonIdResolver) extension.createExecutableExtension("class");
-					singletonIdResolvers.add(resolver);
-				} catch (CoreException e) {
+					singletonIdResolvers.add(element.getClass("class", SingletonIdResolver.class));
+				} catch (ExtensionPointException e) {
 					ModelUtil.logWarning("Couldn't instantiate Singleton ID resolver:" + e.getMessage());
 				}
 			}
@@ -1073,56 +1139,12 @@ public final class ModelUtil {
 	}
 
 	/**
-	 * Checks whether any element within the given {@link Project} has any cross-references to the given {@link EObject}
-	 * .
+	 * Copy an element including its ids from a project.
 	 * 
-	 * @param element a {@link EObject}
-	 * @param project a {@link Project}
-	 * @param cutOffReferences whether cross-references should get cut off
-	 * @return true, if there are any cross-references to the {@link EObject} within the given {@link Project}
+	 * @param originalObject the source
+	 * @param copiedObject the target
+	 * @return a map from copied objects to ids.
 	 */
-	public static boolean handleIncomingCrossReferences(EObject element, Project project, boolean cutOffReferences) {
-		Set<EObject> projectContents = project.getAllModelElements();
-		Set<EObject> elementEObjects = getAllContainedModelElements(element, false);
-		elementEObjects.add(element);
-
-		for (EObject eObject : projectContents) {
-
-			@SuppressWarnings("rawtypes")
-			EContentsEList.FeatureIterator featureIterator = (EContentsEList.FeatureIterator) eObject
-				.eCrossReferences().iterator();
-
-			while (featureIterator.hasNext()) {
-				EObject referencedObject = (EObject) featureIterator.next();
-
-				if (elementEObjects.contains(referencedObject)) {
-					ModelElementId referencedObjectId = project.getModelElementId(referencedObject) == null ? project
-						.getDeletedModelElementId(referencedObject) : project.getModelElementId(referencedObject);
-					ModelElementId elementId = project.getModelElementId(element) == null ? project
-						.getDeletedModelElementId(element) : project.getModelElementId(element);
-					if (cutOffReferences) {
-						EReference eReference = (EReference) featureIterator.feature();
-						if (eReference.isMany()) {
-							@SuppressWarnings("unchecked")
-							List<EObject> eObjects = (List<EObject>) eObject.eGet(eReference);
-							eObjects.remove(referencedObject);
-							logInfo("Cross-reference " + referencedObjectId + " removed from many reference "
-								+ eReference + ".");
-						} else {
-							eObject.eUnset(eReference);
-							logInfo("Cross-reference " + referencedObject + " removed from " + eReference + ".");
-						}
-					} else {
-						throw new IllegalStateException("Cross-reference from " + referencedObject + " to " + elementId
-							+ " detected.");
-					}
-				}
-			}
-		}
-
-		return false;
-	}
-
 	public static Map<EObject, ModelElementId> copyModelElement(EObject originalObject, EObject copiedObject) {
 
 		Map<EObject, ModelElementId> idMap = new HashMap<EObject, ModelElementId>();

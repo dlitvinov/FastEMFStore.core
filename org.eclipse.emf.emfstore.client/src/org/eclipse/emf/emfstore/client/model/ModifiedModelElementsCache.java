@@ -18,7 +18,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.emfstore.client.model.observers.CommitObserver;
-import org.eclipse.emf.emfstore.client.model.observers.OperationListener;
+import org.eclipse.emf.emfstore.client.model.observers.OperationObserver;
 import org.eclipse.emf.emfstore.client.model.observers.ShareObserver;
 import org.eclipse.emf.emfstore.common.model.ModelElementId;
 import org.eclipse.emf.emfstore.server.model.versioning.ChangePackage;
@@ -30,7 +30,7 @@ import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOpera
  * 
  * @author pfeifferc
  */
-public class ModifiedModelElementsCache implements OperationListener,
+public class ModifiedModelElementsCache implements OperationObserver,
 		CommitObserver, ShareObserver {
 
 	/**
@@ -95,7 +95,7 @@ public class ModifiedModelElementsCache implements OperationListener,
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.eclipse.emf.emfstore.client.model.observers.OperationListener#operationExecuted(org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation)
+	 * @see org.eclipse.emf.emfstore.client.model.observers.OperationObserver#operationExecuted(org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation)
 	 */
 	public void operationExecuted(AbstractOperation abstractOperation) {
 		// cache the model element and the operation, as well as the modified
@@ -200,7 +200,7 @@ public class ModifiedModelElementsCache implements OperationListener,
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.eclipse.emf.emfstore.client.model.observers.OperationListener#operationUnDone(org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation)
+	 * @see org.eclipse.emf.emfstore.client.model.observers.OperationObserver#operationUnDone(org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation)
 	 */
 	public void operationUnDone(AbstractOperation operation) {
 		// remove from cache

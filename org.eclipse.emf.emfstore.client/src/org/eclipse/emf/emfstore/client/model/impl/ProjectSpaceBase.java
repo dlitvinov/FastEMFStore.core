@@ -57,9 +57,10 @@ import org.eclipse.emf.emfstore.client.model.util.WorkspaceUtil;
 import org.eclipse.emf.emfstore.client.properties.PropertyManager;
 import org.eclipse.emf.emfstore.common.model.ModelElementId;
 import org.eclipse.emf.emfstore.common.model.Project;
+import org.eclipse.emf.emfstore.common.model.impl.IdEObjectCollectionImpl;
 import org.eclipse.emf.emfstore.common.model.impl.IdentifiableElementImpl;
 import org.eclipse.emf.emfstore.common.model.impl.ProjectImpl;
-import org.eclipse.emf.emfstore.common.model.util.AutoSplitAndSaveResourceContainmentList;
+import org.eclipse.emf.emfstore.common.model.util.EObjectChangeNotifier;
 import org.eclipse.emf.emfstore.common.model.util.FileUtil;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.server.exceptions.EmfStoreException;
@@ -84,6 +85,8 @@ import org.eclipse.emf.emfstore.server.model.versioning.operations.semantic.Sema
 /**
  * Project space base class that contains custom user methods.
  * 
+ * @author koegel
+ * @author wesendon
  * @author emueller
  * 
  */
@@ -506,27 +509,26 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 	 */
 	@SuppressWarnings("unchecked")
 	public void init() {
+
+		EObjectChangeNotifier changeNotifier = getProject().getChangeNotifier();
+
 		initCompleted = true;
+		fileTransferManager = new FileTransferManager(this);
+		operationRecorder = new OperationRecorder((IdEObjectCollectionImpl) this.getProject(), changeNotifier);
+		operationManager = new OperationManager(operationRecorder, this);
+		operationManager.addOperationListener(modifiedModelElementsCache);
+		statePersister = new StatePersister(changeNotifier, ((EMFStoreCommandStack) Configuration.getEditingDomain()
+			.getCommandStack()), (IdEObjectCollectionImpl) this.getProject());
 
-		// getProject().initCaches();
-
-		this.fileTransferManager = new FileTransferManager(this);
-		// EObjectChangeNotifier changeNotifier = new EObjectChangeNotifier(
-		// this.getProject());
-		this.operationRecorder = new OperationRecorder(this.getProject(),
-			((ProjectImpl) this.getProject()).getChangeNotifier());
-		this.operationManager = new OperationManager(operationRecorder, this);
-		this.operationManager.addOperationListener(modifiedModelElementsCache);
-		statePersister = new StatePersister(((ProjectImpl) this.getProject()).getChangeNotifier(),
-			((EMFStoreCommandStack) Configuration.getEditingDomain().getCommandStack()), this.getProject());
-		// TODO: initialization order important
-		this.getProject().addIdEObjectCollectionChangeObserver(this.operationRecorder);
-		this.getProject().addIdEObjectCollectionChangeObserver(statePersister);
+		// initialization order is important!
+		getProject().addIdEObjectCollectionChangeObserver(this.operationRecorder);
+		getProject().addIdEObjectCollectionChangeObserver(statePersister);
 
 		if (getProject() instanceof ProjectImpl) {
 			((ProjectImpl) this.getProject()).setUndetachable(operationRecorder);
 			((ProjectImpl) this.getProject()).setUndetachable(statePersister);
 		}
+
 		if (getUsersession() != null) {
 			WorkspaceManager.getObserverBus().register(this, LoginObserver.class);
 			ACUser acUser = getUsersession().getACUser();
@@ -538,6 +540,7 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 				}
 			}
 		}
+
 		modifiedModelElementsCache.initializeCache();
 		startChangeRecording();
 		cleanCutElements();
@@ -554,6 +557,7 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 	 * @generated NOT
 	 */
 	public void initResources(ResourceSet resourceSet) {
+		this.resourceSet = resourceSet;
 		initCompleted = true;
 		this.resourceSet = resourceSet;
 		String projectSpaceFileNamePrefix = Configuration.getWorkspaceDirectory()
@@ -787,6 +791,12 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 		saveResource(this.eResource());
 	}
 
+	public void save() {
+		saveProjectSpaceOnly();
+		operationsList.save();
+		statePersister.saveDirtyResources(true);
+	}
+
 	/**
 	 * Save the given resource that is part of the project space resource set.
 	 * 
@@ -953,6 +963,21 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 	 * @see org.eclipse.emf.emfstore.client.model.ProjectSpace#undoLastOperation()
 	 */
 	public void undoLastOperation() {
+		undoLastOperations(1);
+	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 * 
+	 * @see org.eclipse.emf.emfstore.client.model.ProjectSpace#undoLastOperation()
+	 */
+	public void undoLastOperations(int numberOfOperations) {
+
+		if (numberOfOperations <= 0) {
+			return;
+		}
+
 		if (!this.getOperations().isEmpty()) {
 			List<AbstractOperation> operations = this.getOperations();
 			AbstractOperation lastOperation = operations.get(operations.size() - 1);
@@ -968,6 +993,7 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 				startChangeRecording();
 			}
 			operations.remove(lastOperation);
+			undoLastOperations(--numberOfOperations);
 		}
 		updateDirtyState();
 	}

@@ -27,15 +27,15 @@ public class IdEObjectCollectionCopier extends Copier {
 	private static final long serialVersionUID = 1L;
 	private Project orgProject;
 	private ProjectImpl copiedProject;
-	private HashMap<EObject, ModelElementId> eObjectToIdMap;
-	private HashMap<ModelElementId, EObject> idToEObjectMap;
+	private HashMap<EObject, String> eObjectToIdMap;
+	private HashMap<String, EObject> idToEObjectMap;
 
 	/**
 	 * Default constructor.
 	 */
 	public IdEObjectCollectionCopier() {
-		eObjectToIdMap = new HashMap<EObject, ModelElementId>();
-		idToEObjectMap = new HashMap<ModelElementId, EObject>();
+		eObjectToIdMap = new HashMap<EObject, String>();
+		idToEObjectMap = new HashMap<String, EObject>();
 	}
 
 	@Override
@@ -53,8 +53,8 @@ public class IdEObjectCollectionCopier extends Copier {
 		}
 
 		ModelElementId eObjectId = orgProject.getModelElementId(eObject);
-		eObjectToIdMap.put(copiedEObject, eObjectId);
-		idToEObjectMap.put(eObjectId, copiedEObject);
+		eObjectToIdMap.put(copiedEObject, eObjectId.getId());
+		idToEObjectMap.put(eObjectId.getId(), copiedEObject);
 
 		return copiedEObject;
 	}

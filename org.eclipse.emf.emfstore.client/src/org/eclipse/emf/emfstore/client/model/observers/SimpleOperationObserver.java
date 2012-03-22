@@ -21,13 +21,12 @@ import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOpera
  * 
  * @author hodaie
  */
-// TODO Chain use ObserverBus and extends IObserver
-public abstract class SimpleOperationListener implements OperationListener, CommitObserver {
+public abstract class SimpleOperationObserver implements OperationObserver, CommitObserver {
 
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.eclipse.emf.emfstore.client.model.observers.OperationListener#operationExecuted(org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation)
+	 * @see org.eclipse.emf.emfstore.client.model.observers.OperationObserver#operationExecuted(org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation)
 	 */
 	public void operationExecuted(AbstractOperation operation) {
 		operationPerformed(operation);
@@ -59,7 +58,7 @@ public abstract class SimpleOperationListener implements OperationListener, Comm
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.eclipse.emf.emfstore.client.model.observers.OperationListener#operationUnDone(org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation)
+	 * @see org.eclipse.emf.emfstore.client.model.observers.OperationObserver#operationUnDone(org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation)
 	 */
 	public void operationUnDone(AbstractOperation operation) {
 		operationPerformed(operation.reverse());

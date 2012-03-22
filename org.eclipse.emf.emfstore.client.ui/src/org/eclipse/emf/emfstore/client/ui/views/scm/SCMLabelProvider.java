@@ -46,10 +46,20 @@ import org.eclipse.swt.widgets.Display;
  */
 public class SCMLabelProvider extends ColumnLabelProvider {
 
-	private Project project;
-	private List<OperationId> highlighted;
 	private static final String ELEMENT_NOT_FOUND = "There is no sufficient information to display this element";
 	private static final String LOCAL_REVISION = "Local revision";
+
+	private Project project;
+	private List<OperationId> highlighted;
+
+	private ChangePackageVisualizationHelper changePackageVisualizationHelper;
+	private Image baseRevision;
+	private Image currentRevision;
+	private Image headRevision;
+
+	private ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(
+		ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
+	private AdapterFactoryLabelProvider adapterFactoryLabelProvider = new AdapterFactoryLabelProvider(adapterFactory);
 
 	/**
 	 * Default constructor.
@@ -66,14 +76,6 @@ public class SCMLabelProvider extends ColumnLabelProvider {
 		currentRevision = Activator.getImageDescriptor("icons/HistoryInfo_current.png").createImage();
 		headRevision = Activator.getImageDescriptor("icons/HistoryInfo_head.png").createImage();
 	}
-
-	private ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(
-		ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
-	private AdapterFactoryLabelProvider adapterFactoryLabelProvider = new AdapterFactoryLabelProvider(adapterFactory);
-	private ChangePackageVisualizationHelper changePackageVisualizationHelper;
-	private Image baseRevision;
-	private Image currentRevision;
-	private Image headRevision;
 
 	/**
 	 * {@inheritDoc}

@@ -23,12 +23,10 @@ public class CommitController extends ServerCall<PrimaryVersionSpec> {
 	private LogMessage logMessage;
 	private CommitCallback callback;
 
-	public CommitController(ProjectSpaceBase projectSpace,
-			LogMessage logMessage, CommitCallback callback,
-			IProgressMonitor monitor) {
+	public CommitController(ProjectSpaceBase projectSpace, LogMessage logMessage, CommitCallback callback,
+		IProgressMonitor monitor) {
 		super(projectSpace);
-		this.logMessage = (logMessage == null) ? createLogMessage()
-				: logMessage;
+		this.logMessage = (logMessage == null) ? createLogMessage() : logMessage;
 		this.callback = callback == null ? CommitCallback.NOCALLBACK : callback;
 		setProgressMonitor(monitor);
 	}
@@ -38,14 +36,14 @@ public class CommitController extends ServerCall<PrimaryVersionSpec> {
 		return commit(this.logMessage);
 	}
 
-	private PrimaryVersionSpec commit(LogMessage logMessage)
-			throws EmfStoreException {
+	private PrimaryVersionSpec commit(LogMessage logMessage) throws EmfStoreException {
 		getProgressMonitor().beginTask("Commiting Changes", 100);
 		getProgressMonitor().worked(1);
 
 		getProgressMonitor().subTask("Checking changes");
 		// check if there are any changes
 		if (!getProjectSpace().isDirty()) {
+			callback.noLocalChanges(getProjectSpace());
 			return getProjectSpace().getBaseVersion();
 		}
 		getProjectSpace().cleanCutElements();
@@ -53,8 +51,7 @@ public class CommitController extends ServerCall<PrimaryVersionSpec> {
 		getProgressMonitor().subTask("Resolving new version");
 
 		// check if we need to update first
-		PrimaryVersionSpec resolvedVersion = getProjectSpace()
-				.resolveVersionSpec(VersionSpec.HEAD_VERSION);
+		PrimaryVersionSpec resolvedVersion = getProjectSpace().resolveVersionSpec(VersionSpec.HEAD_VERSION);
 		if (!getProjectSpace().getBaseVersion().equals(resolvedVersion)) {
 			if (!callback.baseVersionOutOfDate(getProjectSpace())) {
 				throw new BaseVersionOutdatedException();
@@ -63,35 +60,28 @@ public class CommitController extends ServerCall<PrimaryVersionSpec> {
 
 		getProgressMonitor().worked(10);
 		getProgressMonitor().subTask("Gathering changes");
-		ChangePackage changePackage = getProjectSpace().getLocalChangePackage(
-				true);
+		ChangePackage changePackage = getProjectSpace().getLocalChangePackage(true);
 		changePackage.setLogMessage(logMessage);
 		if (changePackage.getOperations().isEmpty()) {
-			for (AbstractOperation operation : getProjectSpace()
-					.getOperations()) {
-				getProjectSpace().getOperationManager().notifyOperationUndone(
-						operation);
+			for (AbstractOperation operation : getProjectSpace().getOperations()) {
+				getProjectSpace().getOperationManager().notifyOperationUndone(operation);
 			}
 			getProjectSpace().getOperations().clear();
 			getProjectSpace().updateDirtyState();
 			// finally, no local changes
 		}
 
-		WorkspaceManager.getObserverBus().notify(CommitObserver.class)
-				.inspectChanges(getProjectSpace(), changePackage);
+		WorkspaceManager.getObserverBus().notify(CommitObserver.class).inspectChanges(getProjectSpace(), changePackage);
 
 		getProgressMonitor().subTask("Presenting Changes");
-		if (!callback.inspectChanges(getProjectSpace(), changePackage)
-				|| getProgressMonitor().isCanceled()) {
+		if (!callback.inspectChanges(getProjectSpace(), changePackage) || getProgressMonitor().isCanceled()) {
 			return getProjectSpace().getBaseVersion();
 		}
 
 		getProgressMonitor().subTask("Sending changes to server");
-		PrimaryVersionSpec newBaseVersion = getConnectionManager()
-				.createVersion(getUsersession().getSessionId(),
-						getProjectSpace().getProjectId(),
-						getProjectSpace().getBaseVersion(), changePackage,
-						changePackage.getLogMessage());
+		PrimaryVersionSpec newBaseVersion = getConnectionManager().createVersion(getUsersession().getSessionId(),
+			getProjectSpace().getProjectId(), getProjectSpace().getBaseVersion(), changePackage,
+			changePackage.getLogMessage());
 
 		getProgressMonitor().worked(75);
 		getProgressMonitor().subTask("Finalizing commit");
@@ -101,10 +91,9 @@ public class CommitController extends ServerCall<PrimaryVersionSpec> {
 		getProjectSpace().saveProjectSpaceOnly();
 
 		// TODO reimplement with ObserverBus and think about subtasks for commit
-		getProjectSpace().getFileTransferManager().uploadQueuedFiles(
-				new NullProgressMonitor());
+		getProjectSpace().getFileTransferManager().uploadQueuedFiles(new NullProgressMonitor());
 		WorkspaceManager.getObserverBus().notify(CommitObserver.class)
-				.commitCompleted(getProjectSpace(), newBaseVersion);
+			.commitCompleted(getProjectSpace(), newBaseVersion);
 
 		getProjectSpace().updateDirtyState();
 		return newBaseVersion;
@@ -113,9 +102,8 @@ public class CommitController extends ServerCall<PrimaryVersionSpec> {
 	private LogMessage createLogMessage() {
 		LogMessage logMessage = VersioningFactory.eINSTANCE.createLogMessage();
 		String commiter = "UNKOWN";
-		if (getProjectSpace().getUsersession() != null
-				&& getProjectSpace().getUsersession().getACUser() != null
-				&& getProjectSpace().getUsersession().getACUser().getName() != null) {
+		if (getProjectSpace().getUsersession() != null && getProjectSpace().getUsersession().getACUser() != null
+			&& getProjectSpace().getUsersession().getACUser().getName() != null) {
 			commiter = getProjectSpace().getUsersession().getACUser().getName();
 		}
 		logMessage.setAuthor(commiter);

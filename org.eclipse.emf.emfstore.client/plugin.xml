@@ -25,6 +25,8 @@
    <extension-point id="org.eclipse.emf.emfstore.client.commitObserver" name="Commit Observer" schema="schema/org.eclipse.emf.emfstore.client.commitObserver.exsd"/>
    <extension-point id="org.eclipse.emf.emfstore.client.updateObserver" name="Update Observer" schema="schema/org.eclipse.emf.emfstore.client.updateObserver.exsd"/>
    <extension-point id="org.eclipse.emf.emfstore.openModelElementObserver" name="Open ModelElement Observer" schema="schema/org.eclipse.emf.emfstore.openModelElementObserver.exsd"/>
+   <extension-point id="org.eclipse.emf.emfstore.client.checkoutObserver" name="Commit Observer" schema="schema/org.eclipse.emf.emfstore.client.checkoutObserver.exsd"/>
+   <extension-point id="org.eclipse.emf.emfstore.client.exceptionObserver" name="Exception Observer" schema="schema/org.eclipse.emf.emfstore.client.exceptionObserver.exsd"/>   
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
        uri = "http://eclipse.org/emf/emfstore/client/model" 
@@ -70,6 +72,20 @@
      <observer
            extensionPointName="org.eclipse.emf.emfstore.client.openModelElementObserver"
            observerAttributeName="openModelElementObserver">
+     </observer>
+  </extension>
+  <extension
+        point="org.eclipse.emf.emfstore.common.observer">
+     <observer
+           extensionPointName="org.eclipse.emf.emfstore.client.checkoutObserver"
+           observerAttributeName="checkoutObserver">
+     </observer>
+  </extension>
+  <extension
+        point="org.eclipse.emf.emfstore.common.observer">
+     <observer
+           extensionPointName="org.eclipse.emf.emfstore.client.exceptionObserver"
+           observerAttributeName="exceptionObserver">
      </observer>
   </extension>
 

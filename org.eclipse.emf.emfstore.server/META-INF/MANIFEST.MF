@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMFStore Server  (Incubation)
 Bundle-SymbolicName: org.eclipse.emf.emfstore.server;singleton:=true
-Bundle-Version: 0.8.9.M923
+Bundle-Version: 0.8.9.qualifier
 Bundle-Activator: org.eclipse.emf.emfstore.server.Activator
 Bundle-Vendor: Eclipse Modeling Project
 Require-Bundle: org.eclipse.emf.emfstore.server.model;visibility:=reexport,
@@ -41,8 +41,6 @@ Export-Package:
  org.eclipse.emf.emfstore.server.exceptions,
  org.eclipse.emf.emfstore.server.filetransfer,
  org.eclipse.emf.emfstore.server.startup,
- org.eclipse.emf.emfstore.server.storage,
- org.eclipse.emf.emfstore.server.taskmanager,
- org.eclipse.emf.emfstore.server.taskmanager.tasks
+ org.eclipse.emf.emfstore.server.storage
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.logging

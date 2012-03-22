@@ -20,7 +20,7 @@ import org.eclipse.emf.emfstore.server.exceptions.AccessControlException;
 import org.eclipse.emf.emfstore.server.exceptions.EmfStoreException;
 
 /**
- * Util class for EMFStore clients to ease connecting to the server.
+ * Utility class for EMFStore clients to ease connecting to the server.
  * 
  * @author koegel
  */
@@ -29,21 +29,21 @@ public final class EMFStoreClientUtil {
 	private static final String LOCALHOST_GENERATED_ENTRY_NAME = "EMFStore (generated entry)";
 
 	/**
-	 * Private constructor for util class.
+	 * Private constructor for utility class.
 	 */
 	private EMFStoreClientUtil() {
 		// do nothing
 	}
 
 	/**
-	 * Gives a server info for a given port and url. Searches first for already existing ones. If the search fails, it
+	 * Gives a server info for a given port and URL. Searches first for already existing ones. If the search fails, it
 	 * creates a new one and registers it for later lookup.
 	 * 
-	 * @param url the server url (e.g. IP address or DNS name)
+	 * @param url the server URL (e.g. IP address or DNS name)
 	 * @param port the server port
 	 * @return a server info
 	 */
-	private static ServerInfo giveServerInfo(String url, int port) {
+	public static ServerInfo giveServerInfo(String url, int port) {
 		Workspace workspace = WorkspaceManager.getInstance().getCurrentWorkspace();
 		for (ServerInfo existingServerInfo : workspace.getServerInfos()) {
 			if (existingServerInfo.getName().equals(LOCALHOST_GENERATED_ENTRY_NAME)) {
@@ -59,14 +59,14 @@ public final class EMFStoreClientUtil {
 	}
 
 	/**
-	 * Create a server info for a given port and url.
+	 * Create a server info for a given port and URL.
 	 * 
-	 * @param url the server url (e.g. IP address or DNS name)
+	 * @param url the server URL (e.g. IP address or DNS name)
 	 * @param port the server port
 	 * @param certificateAlias the certificateAlias (defaults to {@link KeyStoreManager.DEFAULT_CERTIFICATE})
 	 * @return a server info
 	 */
-	private static ServerInfo createServerInfo(String url, int port, String certificateAlias) {
+	public static ServerInfo createServerInfo(String url, int port, String certificateAlias) {
 		ServerInfo serverInfo = ModelFactory.eINSTANCE.createServerInfo();
 		serverInfo.setName(LOCALHOST_GENERATED_ENTRY_NAME);
 		serverInfo.setUrl(url);
@@ -83,18 +83,18 @@ public final class EMFStoreClientUtil {
 	 * Create a default user session with the default super user and password and a server on localhost on the default
 	 * port.
 	 * 
-	 * @return a usersession
+	 * @return a user session
 	 */
 	public static Usersession createUsersession() {
 		return createUsersession("super", "super", "localhost", 8080);
 	}
 
 	/**
-	 * Create a usersession for the given credentials and server info.
+	 * Create a {@link Usersession} for the given credentials and server info.
 	 * 
-	 * @param username the username
+	 * @param username the user name
 	 * @param password the password
-	 * @param serverUrl server url
+	 * @param serverUrl server URL
 	 * @param serverPort server port
 	 * @return a user session
 	 */
@@ -122,12 +122,12 @@ public final class EMFStoreClientUtil {
 	/**
 	 * Checks, if the given credentials can be authenticated at the given server.
 	 * 
-	 * @param username the username
+	 * @param username the user name
 	 * @param password the password
 	 * @param serverUrl server url
 	 * @param serverPort server port
 	 * @param certificateAlias the certificateAlias (defaults to {@link KeyStoreManager.DEFAULT_CERTIFICATE})
-	 * @return true, if username & password are right
+	 * @return true, if user name & password are right
 	 * @throws EmfStoreException Problem with the EMFStore Server
 	 */
 	public static boolean dryLogin(String username, String password, String serverUrl, int serverPort,

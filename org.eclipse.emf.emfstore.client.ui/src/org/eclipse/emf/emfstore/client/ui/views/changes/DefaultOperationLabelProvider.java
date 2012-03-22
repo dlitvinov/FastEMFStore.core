@@ -64,7 +64,7 @@ public class DefaultOperationLabelProvider extends AbstractOperationCustomLabelP
 			}
 		}
 
-		return operation.getName();
+		return adapterFactoryLabelProvider.getText(operation);
 	}
 
 	/**
@@ -128,4 +128,5 @@ public class DefaultOperationLabelProvider extends AbstractOperationCustomLabelP
 			adapterFactoryLabelProvider.dispose();
 		}
 	}
+
 }

@@ -9,6 +9,8 @@ public interface CommitCallback {
 
 	boolean inspectChanges(ProjectSpace projectSpace, ChangePackage changePackage);
 
+	void noLocalChanges(ProjectSpace projectSpace);
+
 	public final CommitCallback NOCALLBACK = new CommitCallback() {
 
 		public boolean inspectChanges(ProjectSpace projectSpace, ChangePackage changePackage) {
@@ -17,6 +19,10 @@ public interface CommitCallback {
 
 		public boolean baseVersionOutOfDate(ProjectSpace projectSpace) {
 			return false;
+		}
+
+		public void noLocalChanges(ProjectSpace projectSpace) {
+			// do nothing
 		}
 	};
 }

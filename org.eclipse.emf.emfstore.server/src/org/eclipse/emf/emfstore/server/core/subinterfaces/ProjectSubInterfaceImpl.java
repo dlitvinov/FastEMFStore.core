@@ -54,8 +54,7 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 	 * @throws FatalEmfStoreException
 	 *             in case of failure
 	 */
-	public ProjectSubInterfaceImpl(AbstractEmfstoreInterface parentInterface)
-			throws FatalEmfStoreException {
+	public ProjectSubInterfaceImpl(AbstractEmfstoreInterface parentInterface) throws FatalEmfStoreException {
 		super(parentInterface);
 	}
 
@@ -68,15 +67,13 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 	 * @throws EmfStoreException
 	 *             if project couldn't be found
 	 */
-	protected ProjectHistory getProject(ProjectId projectId)
-			throws EmfStoreException {
+	protected ProjectHistory getProject(ProjectId projectId) throws EmfStoreException {
 		ProjectHistory projectHistory = getProjectOrNull(projectId);
 		if (projectHistory != null) {
 			return projectHistory;
 		}
-		throw new InvalidProjectIdException("Project with the id:"
-				+ ((projectId == null) ? "null" : projectId)
-				+ " doesn't exist.");
+		throw new InvalidProjectIdException("Project with the id:" + ((projectId == null) ? "null" : projectId)
+			+ " doesn't exist.");
 	}
 
 	private ProjectHistory getProjectOrNull(ProjectId projectId) {
@@ -91,18 +88,14 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Project getProject(ProjectId projectId, VersionSpec versionSpec)
-			throws EmfStoreException {
+	public Project getProject(ProjectId projectId, VersionSpec versionSpec) throws EmfStoreException {
 
 		synchronized (getMonitor()) {
-			PrimaryVersionSpec resolvedVersion = getSubInterface(
-					VersionSubInterfaceImpl.class).resolveVersionSpec(
-					projectId, versionSpec);
-			Version version = getSubInterface(VersionSubInterfaceImpl.class)
-					.getVersion(projectId, resolvedVersion);
+			PrimaryVersionSpec resolvedVersion = getSubInterface(VersionSubInterfaceImpl.class).resolveVersionSpec(
+				projectId, versionSpec);
+			Version version = getSubInterface(VersionSubInterfaceImpl.class).getVersion(projectId, resolvedVersion);
 			if (version.getProjectState() == null) {
-				while (version.getProjectState() == null
-						&& version.getPreviousVersion() != null) {
+				while (version.getProjectState() == null && version.getPreviousVersion() != null) {
 					version = version.getPreviousVersion();
 				}
 				if (version.getProjectState() == null) {
@@ -112,11 +105,9 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 					// the xml files were inconsistent.
 					throw new EmfStoreException("Couldn't find project state.");
 				}
-				Project projectState = ModelUtil.clone(version
-						.getProjectState());
+				Project projectState = ModelUtil.clone(version.getProjectState());
 				for (Version next = version.getNextVersion(); next != null
-						&& next.getPrimarySpec().compareTo(resolvedVersion) < 1; next = next
-						.getNextVersion()) {
+					&& next.getPrimarySpec().compareTo(resolvedVersion) < 1; next = next.getNextVersion()) {
 					next.getChanges().apply(projectState);
 				}
 				return projectState;
@@ -131,14 +122,12 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 	 * @throws EmfStoreException
 	 * @throws AccessControlException
 	 */
-	public List<ProjectInfo> getProjectList(SessionId sessionId)
-			throws EmfStoreException {
+	public List<ProjectInfo> getProjectList(SessionId sessionId) throws EmfStoreException {
 		synchronized (getMonitor()) {
 			List<ProjectInfo> result = new ArrayList<ProjectInfo>();
 			for (ProjectHistory projectHistory : getServerSpace().getProjects()) {
 				try {
-					getAuthorizationControl().checkReadAccess(sessionId,
-							projectHistory.getProjectId(), null);
+					getAuthorizationControl().checkReadAccess(sessionId, projectHistory.getProjectId(), null);
 					result.add(createProjectInfo(projectHistory));
 				} catch (AccessControlException e) {
 					// if this exception occurs, project won't be added to list
@@ -151,18 +140,13 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 	/**
 	 * {@inheritDoc}
 	 */
-	public ProjectInfo createProject(String name, String description,
-			LogMessage logMessage) throws EmfStoreException {
+	public ProjectInfo createProject(String name, String description, LogMessage logMessage) throws EmfStoreException {
 		synchronized (getMonitor()) {
 			ProjectHistory projectHistory = null;
 			try {
 				logMessage.setDate(new Date());
-				projectHistory = createEmptyProject(
-						name,
-						description,
-						logMessage,
-						org.eclipse.emf.emfstore.common.model.ModelFactory.eINSTANCE
-								.createProject());
+				projectHistory = createEmptyProject(name, description, logMessage,
+					org.eclipse.emf.emfstore.common.model.ModelFactory.eINSTANCE.createProject());
 			} catch (FatalEmfStoreException e) {
 				throw new StorageException(StorageException.NOSAVE);
 			}
@@ -173,14 +157,13 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 	/**
 	 * {@inheritDoc}
 	 */
-	public ProjectInfo createProject(String name, String description,
-			LogMessage logMessage, Project project) throws EmfStoreException {
+	public ProjectInfo createProject(String name, String description, LogMessage logMessage, Project project)
+		throws EmfStoreException {
 		synchronized (getMonitor()) {
 			ProjectHistory projectHistory = null;
 			try {
 				logMessage.setDate(new Date());
-				projectHistory = createEmptyProject(name, description,
-						logMessage, project);
+				projectHistory = createEmptyProject(name, description, logMessage, project);
 			} catch (FatalEmfStoreException e) {
 				throw new StorageException(StorageException.NOSAVE);
 			}
@@ -192,8 +175,7 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void deleteProject(ProjectId projectId, boolean deleteFiles)
-			throws EmfStoreException {
+	public void deleteProject(ProjectId projectId, boolean deleteFiles) throws EmfStoreException {
 		deleteProject2(projectId, deleteFiles, true);
 	}
 
@@ -210,8 +192,8 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 	 * @throws EmfStoreException
 	 *             in case of failure
 	 */
-	protected void deleteProject2(ProjectId projectId, boolean deleteFiles,
-			boolean throwInvalidIdException) throws EmfStoreException {
+	protected void deleteProject2(ProjectId projectId, boolean deleteFiles, boolean throwInvalidIdException)
+		throws EmfStoreException {
 		synchronized (getMonitor()) {
 			try {
 				try {
@@ -241,14 +223,12 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 					}
 				}
 				if (deleteFiles) {
-					File projectFolder = new File(getResourceHelper()
-							.getProjectFolder(projectId));
+					File projectFolder = new File(getResourceHelper().getProjectFolder(projectId));
 					try {
 						FileUtil.deleteFolder(projectFolder);
 					} catch (IOException e) {
 						throw new StorageException(
-								"Project files couldn't be deleted, but it was deleted from containment tree.",
-								e);
+							"Project files couldn't be deleted, but it was deleted from containment tree.", e);
 					}
 				}
 			} catch (FatalEmfStoreException e) {
@@ -260,35 +240,27 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 	/**
 	 * {@inheritDoc}
 	 */
-	public ProjectId importProjectHistoryToServer(ProjectHistory projectHistory)
-			throws EmfStoreException {
+	public ProjectId importProjectHistoryToServer(ProjectHistory projectHistory) throws EmfStoreException {
 		synchronized (getMonitor()) {
-			ProjectHistory projectOrNull = getProjectOrNull(projectHistory
-					.getProjectId());
+			ProjectHistory projectOrNull = getProjectOrNull(projectHistory.getProjectId());
 			if (projectOrNull != null) {
 				// if project with same id exists, create a new id.
-				projectHistory.setProjectId(ModelFactory.eINSTANCE
-						.createProjectId());
+				projectHistory.setProjectId(ModelFactory.eINSTANCE.createProjectId());
 			}
 			try {
-				getResourceHelper().createResourceForProjectHistory(
-						projectHistory);
+				getResourceHelper().createResourceForProjectHistory(projectHistory);
 				getServerSpace().getProjects().add(projectHistory);
 				getResourceHelper().save(getServerSpace());
 				for (Version version : projectHistory.getVersions()) {
 					if (version.getChanges() != null) {
-						getResourceHelper().createResourceForChangePackage(
-								version.getChanges(), version.getPrimarySpec(),
-								projectHistory.getProjectId());
+						getResourceHelper().createResourceForChangePackage(version.getChanges(),
+							version.getPrimarySpec(), projectHistory.getProjectId());
 					}
 					if (version.getProjectState() != null) {
-						getResourceHelper().createResourceForProject(
-								version.getProjectState(),
-								version.getPrimarySpec(),
-								projectHistory.getProjectId());
+						getResourceHelper().createResourceForProject(version.getProjectState(),
+							version.getPrimarySpec(), projectHistory.getProjectId());
 					}
-					getResourceHelper().createResourceForVersion(version,
-							projectHistory.getProjectId());
+					getResourceHelper().createResourceForVersion(version, projectHistory.getProjectId());
 				}
 				getResourceHelper().save(projectHistory);
 				getResourceHelper().saveAll();
@@ -304,20 +276,17 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 	/**
 	 * {@inheritDoc}
 	 */
-	public ProjectHistory exportProjectHistoryFromServer(ProjectId projectId)
-			throws EmfStoreException {
+	public ProjectHistory exportProjectHistoryFromServer(ProjectId projectId) throws EmfStoreException {
 		synchronized (getMonitor()) {
 			return ModelUtil.clone(getProject(projectId));
 		}
 	}
 
-	private ProjectHistory createEmptyProject(String name, String description,
-			LogMessage logMessage, Project initialProjectState)
-			throws FatalEmfStoreException {
+	private ProjectHistory createEmptyProject(String name, String description, LogMessage logMessage,
+		Project initialProjectState) throws FatalEmfStoreException {
 
 		// create initial ProjectHistory
-		ProjectHistory projectHistory = ModelFactory.eINSTANCE
-				.createProjectHistory();
+		ProjectHistory projectHistory = ModelFactory.eINSTANCE.createProjectHistory();
 		projectHistory.setProjectName(name);
 		projectHistory.setProjectDescription(description);
 		projectHistory.setProjectId(ModelFactory.eINSTANCE.createProjectId());
@@ -325,8 +294,7 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 		// create a initial version without previous and change package
 		Version firstVersion = VersioningFactory.eINSTANCE.createVersion();
 		firstVersion.setLogMessage(logMessage);
-		PrimaryVersionSpec primary = VersioningFactory.eINSTANCE
-				.createPrimaryVersionSpec();
+		PrimaryVersionSpec primary = VersioningFactory.eINSTANCE.createPrimaryVersionSpec();
 		primary.setIdentifier(0);
 		firstVersion.setPrimarySpec(primary);
 
@@ -335,13 +303,12 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 		// org.eclipse.emf.emfstore.common.model.ModelFactory.eINSTANCE
 		// .createProject();
 		firstVersion.setProjectState(initialProjectState);
-		getResourceHelper().createResourceForProject(initialProjectState,
-				firstVersion.getPrimarySpec(), projectHistory.getProjectId());
+		getResourceHelper().createResourceForProject(initialProjectState, firstVersion.getPrimarySpec(),
+			projectHistory.getProjectId());
 		projectHistory.getVersions().add(firstVersion);
 
 		// add to serverspace and saved
-		getResourceHelper().createResourceForVersion(firstVersion,
-				projectHistory.getProjectId());
+		getResourceHelper().createResourceForVersion(firstVersion, projectHistory.getProjectId());
 		getResourceHelper().createResourceForProjectHistory(projectHistory);
 		getServerSpace().getProjects().add(projectHistory);
 		save(getServerSpace());
@@ -353,8 +320,7 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 		info.setName(project.getProjectName());
 		info.setDescription(project.getProjectDescription());
 		info.setProjectId(ModelUtil.clone(project.getProjectId()));
-		info.setVersion(ModelUtil.clone(project.getLastVersion()
-				.getPrimarySpec()));
+		info.setVersion(ModelUtil.clone(project.getLastVersion().getPrimarySpec()));
 		return info;
 	}
 }

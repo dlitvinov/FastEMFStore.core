@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionElement;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPointException;
 import org.eclipse.emf.emfstore.common.model.ModelElementId;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation;
@@ -72,18 +72,18 @@ public class CustomOperationLabelProviderManager {
 	}
 
 	private void initExtensions() {
-		IConfigurationElement[] attributecontrols = Platform.getExtensionRegistry().getConfigurationElementsFor(
-			"org.eclipse.emf.emfstore.server.model.edit.customOperationLabelProvider");
+
 		list = new ArrayList<AbstractOperationCustomLabelProvider>();
-		for (IConfigurationElement extension : attributecontrols) {
+
+		for (ExtensionElement element : new ExtensionPoint(
+			"org.eclipse.emf.emfstore.server.model.edit.customOperationLabelProvider", true).getExtensionElements()) {
 			try {
-				AbstractOperationCustomLabelProvider provider = (AbstractOperationCustomLabelProvider) extension
-					.createExecutableExtension("class");
+				AbstractOperationCustomLabelProvider provider = element.getClass("class",
+					AbstractOperationCustomLabelProvider.class);
 				provider.setModelElementMap(modelElementMap);
 				list.add(provider);
-			} catch (CoreException exception) {
-				ModelUtil.logException("Exception occured while initializing custom label provider extensions!",
-					exception);
+			} catch (ExtensionPointException e) {
+				ModelUtil.logException("Exception occured while initializing custom label provider extensions!", e);
 			}
 		}
 	}

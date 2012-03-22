@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.emfstore.common.model.NotifiableIdEObjectCollection;
+import org.eclipse.emf.emfstore.common.model.impl.NotifiableIdEObjectCollectionImpl;
 
 /**
  * Notifies a about changes in its containment hierarchy.
@@ -30,7 +31,7 @@ import org.eclipse.emf.emfstore.common.model.NotifiableIdEObjectCollection;
  */
 public class EObjectChangeNotifier extends EContentAdapter {
 
-	private final NotifiableIdEObjectCollection collection;
+	private final NotifiableIdEObjectCollectionImpl collection;
 	private boolean isInitializing;
 	private Set<EObject> removedModelElements;
 	private Stack<Notification> currentNotifications;
@@ -46,7 +47,7 @@ public class EObjectChangeNotifier extends EContentAdapter {
 	 * @param notifier
 	 *            the {@link Notifier} to listen to
 	 */
-	public EObjectChangeNotifier(NotifiableIdEObjectCollection notifiableCollection, Notifier notifier) {
+	public EObjectChangeNotifier(NotifiableIdEObjectCollectionImpl notifiableCollection, Notifier notifier) {
 		this.collection = notifiableCollection;
 		isInitializing = true;
 		currentNotifications = new Stack<Notification>();

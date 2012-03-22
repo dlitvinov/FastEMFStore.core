@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CommandStack;
 import org.eclipse.emf.common.notify.Notification;
@@ -43,15 +41,16 @@ import org.eclipse.emf.emfstore.client.model.changeTracking.commands.EMFStoreCom
 import org.eclipse.emf.emfstore.client.model.changeTracking.notification.NotificationInfo;
 import org.eclipse.emf.emfstore.client.model.changeTracking.notification.filter.FilterStack;
 import org.eclipse.emf.emfstore.client.model.changeTracking.notification.recording.NotificationRecorder;
+import org.eclipse.emf.emfstore.client.model.observers.PostCreationObserver;
 import org.eclipse.emf.emfstore.client.model.util.WorkspaceUtil;
-import org.eclipse.emf.emfstore.common.CommonUtil;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
 import org.eclipse.emf.emfstore.common.model.IdEObjectCollection;
 import org.eclipse.emf.emfstore.common.model.ModelElementId;
+import org.eclipse.emf.emfstore.common.model.impl.IdEObjectCollectionImpl;
 import org.eclipse.emf.emfstore.common.model.util.EObjectChangeNotifier;
 import org.eclipse.emf.emfstore.common.model.util.IdEObjectCollectionChangeObserver;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.common.model.util.SettingWithReferencedElement;
-import org.eclipse.emf.emfstore.common.observer.PostCreationObserver;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.CompositeOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.CreateDeleteOperation;
@@ -88,7 +87,7 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 	private NotificationRecorder notificationRecorder;
 	private boolean isRecording;
 
-	private IdEObjectCollection rootEObject;
+	private IdEObjectCollectionImpl collection;
 
 	private CompositeOperation compositeOperation;
 	private List<OperationRecorderListener> operationRecordedListeners;
@@ -103,11 +102,11 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 	 * @param projectSpace
 	 *            the project space the change tracker is operating on.
 	 */
-	public OperationRecorder(IdEObjectCollection rootEObject, EObjectChangeNotifier changeNotifier) {
+	public OperationRecorder(IdEObjectCollectionImpl collection, EObjectChangeNotifier changeNotifier) {
 		// projectSpace) {
 		// this.projectSpace = projectSpace;
 		// this.isRecording = false;
-		this.rootEObject = rootEObject;
+		this.collection = collection;
 		this.changeNotifier = changeNotifier;
 		this.operations = new ArrayList<AbstractOperation>();
 		operationRecordedListeners = new ArrayList<OperationRecorderListener>();
@@ -125,15 +124,14 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 		}
 
 		removedElements = new ArrayList<EObject>();
-		converter = new NotificationToOperationConverter(rootEObject);
+		converter = new NotificationToOperationConverter(collection);
 		// cut off incoming cross-references by default
 		cutOffIncomingCrossReferences = true;
 
-		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
-			"org.eclipse.emf.emfstore.client.recording.options");
-		if (elements != null && elements.length > 0) {
-			cutOffIncomingCrossReferences = Boolean.parseBoolean(elements[0]
-				.getAttribute("cutOffIncomingCrossReferences"));
+		Boolean cutOff = new ExtensionPoint("org.eclipse.emf.emfstore.client.recording.options")
+			.getBoolean("cutOffIncomingCrossReferences");
+		if (cutOff != null) {
+			cutOffIncomingCrossReferences = cutOff;
 		}
 
 		emitOperationsWhenCommandCompleted = true;
@@ -149,7 +147,7 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 	}
 
 	public IdEObjectCollection getCollection() {
-		return rootEObject;
+		return collection;
 	}
 
 	/**
@@ -193,10 +191,10 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 			allModelElements.addAll(ModelUtil.getAllContainedModelElements(modelElement, false));
 
 			// collect in- and out-going cross-reference for containment tree of modelElement
-			List<SettingWithReferencedElement> crossReferences = ModelUtil.collectOutgoingCrossReferences(rootEObject,
+			List<SettingWithReferencedElement> crossReferences = ModelUtil.collectOutgoingCrossReferences(collection,
 				allModelElements);
 
-			List<SettingWithReferencedElement> ingoingCrossReferences = collectIngoingCrossReferences(rootEObject,
+			List<SettingWithReferencedElement> ingoingCrossReferences = collectIngoingCrossReferences(collection,
 				allModelElements);
 			crossReferences.addAll(ingoingCrossReferences);
 
@@ -256,9 +254,9 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 			EObject referencedElement = setting.getReferencedElement();
 
 			// fetch ID of referenced element
-			ModelElementId newModelElementId = rootEObject.getModelElementId(referencedElement);
+			ModelElementId newModelElementId = collection.getModelElementId(referencedElement);
 			if (newModelElementId == null) {
-				newModelElementId = rootEObject.getDeletedModelElementId(referencedElement);
+				newModelElementId = collection.getDeletedModelElementId(referencedElement);
 			}
 
 			EObject eObject = setting.getSetting().getEObject();
@@ -267,11 +265,11 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 			if (setting.getSetting().getEStructuralFeature().isMany()) {
 				int position = ((List<?>) eObject.eGet(reference)).indexOf(referencedElement);
 				MultiReferenceOperation multiRefOp = NotificationToOperationConverter.createMultiReferenceOperation(
-					rootEObject, eObject, reference, Arrays.asList(referencedElement), true, position);
+					collection, eObject, reference, Arrays.asList(referencedElement), true, position);
 				result.add(multiRefOp);
 			} else {
 				SingleReferenceOperation singleRefOp = NotificationToOperationConverter.createSingleReferenceOperation(
-					rootEObject, null, newModelElementId, reference, eObject);
+					collection, null, newModelElementId, reference, eObject);
 				result.add(singleRefOp);
 			}
 		}
@@ -398,13 +396,13 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 			}
 
 			EObject copiedChild = copiedAllContainedModelElements.get(i);
-			ModelElementId childId = rootEObject.getModelElementId(child);
+			ModelElementId childId = collection.getModelElementId(child);
 
 			((CreateDeleteOperationImpl) createDeleteOperation).getEObjectToIdMap().put(copiedChild, childId);
 		}
 
 		createDeleteOperation.setModelElement(copiedElement);
-		createDeleteOperation.setModelElementId(rootEObject.getModelElementId(modelElement));
+		createDeleteOperation.setModelElementId(collection.getModelElementId(modelElement));
 
 		createDeleteOperation.setClientDate(new Date());
 		return createDeleteOperation;
@@ -437,7 +435,7 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 		List<EObject> deletedElements = new ArrayList<EObject>();
 		for (int i = removedElements.size() - 1; i >= 0; i--) {
 			EObject removedElement = removedElements.get(i);
-			if (!rootEObject.containsInstance(removedElement)) {
+			if (!collection.containsInstance(removedElement)) {
 				if (!deletedElements.contains(removedElement)) {
 					deletedElements.add(0, removedElement);
 				}
@@ -467,111 +465,162 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 
 		// remove all deleted elements
 		newElementsOnClipboardAfterCommand.removeAll(deletedElements);
+
+		collection.clearVolatileCaches();
 	}
 
-	private void deleteOutgoingCrossReferencesOfContainmentTree(EObject modelElement) {
-		deleteOutgoingCrossReferences(modelElement);
-		for (EObject child : ModelUtil.getAllContainedModelElements(modelElement, false)) {
-			deleteOutgoingCrossReferences(child);
-		}
-	}
-
-	private void deleteOutgoingCrossReferences(EObject modelElement) {
+	private void deleteOutgoingCrossReferencesOfContainmentTree(Set<EObject> allEObjects) {
 		// delete all non containment cross references to other elments
-		for (EReference reference : modelElement.eClass().getEAllReferences()) {
-			EClassifier eType = reference.getEType();
+		for (EObject modelElement : allEObjects) {
+			for (EReference reference : modelElement.eClass().getEAllReferences()) {
+				EClassifier eType = reference.getEType();
 
-			// if the reference is a containment map feature and its referenced entries do have at least one
-			// non-containment reference (e.g. key or value)
-			// then delete the map entries
-			// instead of waiting for the referenced element to be cut of from the map entry
-			// in the children recursion
-			// since cutting of a key or value reference will render the map into an invalid state which can result in
-			// unresolved proxies.
-			if (Map.Entry.class.isAssignableFrom(eType.getInstanceClass()) && reference.isContainment()
-				&& reference.isChangeable() && eType instanceof EClass) {
-				EClass mapEntryEClass = (EClass) eType;
-				if (hasOnlyContainmentReferences(mapEntryEClass)) {
-					modelElement.eUnset(reference);
+				if (!(eType instanceof EClass)) {
 					continue;
 				}
-				@SuppressWarnings("unchecked")
-				List<EObject> mapEntriesEList = (List<EObject>) modelElement.eGet(reference);
-				// copy list before clearing reference
-				// TODO is this really the underlying list
-				List<EObject> mapEntries = new ArrayList<EObject>(mapEntriesEList);
-				// TODO: check whether we really have to perform resolveAll
-				EcoreUtil.resolveAll(modelElement);
-				modelElement.eUnset(reference);
-				for (EObject mapEntry : mapEntries) {
-					handleElementDelete(mapEntry);
+
+				if (Map.Entry.class.isAssignableFrom(eType.getInstanceClass()) && reference.isContainment()
+					&& reference.isChangeable()) {
+
+					EClass mapEntryEClass = (EClass) eType;
+					EReference nonContainmentKeyReference = getNonContainmentKeyReference(mapEntryEClass);
+
+					// key references seems to be containment, skip loop
+					if (nonContainmentKeyReference == null) {
+						continue;
+					}
+
+					@SuppressWarnings("unchecked")
+					List<EObject> mapEntriesEList = (List<EObject>) modelElement.eGet(reference);
+					boolean outgoingKeyReferenceFound = false;
+
+					// check key reference of all map entries if they reference one of the objects in the containment
+					// tree
+					for (EObject eObject : mapEntriesEList) {
+
+						Object eGet = eObject.eGet(nonContainmentKeyReference);
+
+						if (!allEObjects.contains(eGet)) {
+							outgoingKeyReferenceFound = true;
+							break;
+						}
+					}
+
+					if (!outgoingKeyReferenceFound) {
+						// no bad reference found, skip special treatment
+						continue;
+					}
+
+					// copy list before clearing reference
+					// TODO is this really the underlying list
+					List<EObject> mapEntries = new ArrayList<EObject>(mapEntriesEList);
+
+					// the reference is a containment map feature and its referenced entries do have at least one
+					// non-containment key crossreference that goes to an element outside of
+					// the containment tree, therefore we
+					// delete the map entries
+					// instead of waiting for the referenced key element to be cut off from the map entry
+					// in the children recursion
+					// since cutting off a key reference will render the map into an invalid state on deserialization
+					// which can
+					// result in unresolved proxies
+					EcoreUtil.resolveAll(modelElement);
+					modelElement.eUnset(reference);
+					for (EObject mapEntry : mapEntries) {
+						handleElementDelete(mapEntry);
+					}
+					continue;
 				}
-				continue;
-			}
 
-			if (reference.isContainer() || reference.isContainment() || !reference.isChangeable()) {
-				continue;
-			}
+				if (reference.isContainer() || reference.isContainment() || !reference.isChangeable()) {
+					continue;
+				}
 
-			if (eType instanceof EClass) {
-				modelElement.eUnset(reference);
+				// remove all (outgoing) references to elements outside of the containment tree of the element to be
+				// deleted
+				if (reference.isMany()) {
+					@SuppressWarnings("unchecked")
+					List<EObject> referencedElements = (List<EObject>) modelElement.eGet(reference);
+					List<EObject> referencesToRemove = new ArrayList<EObject>();
+					for (EObject referencedElement : referencedElements) {
+						if (!allEObjects.contains(referencedElement)) {
+							referencesToRemove.add(referencedElement);
+						}
+					}
+					referencedElements.removeAll(referencesToRemove);
+				} else {
+					EObject referencedElement = (EObject) modelElement.eGet(reference);
+					if (referencedElement != null && !allEObjects.contains(referencedElement)) {
+						modelElement.eSet(reference, null);
+					}
+				}
+
 			}
 		}
 	}
 
-	private boolean hasOnlyContainmentReferences(EClass mapEntryEClass) {
-		for (EReference mapEntryReference : mapEntryEClass.getEAllReferences()) {
-			if (!mapEntryReference.isContainment()) {
-				return false;
+	private EReference getNonContainmentKeyReference(EClass eClass) {
+		for (EReference eRef : eClass.getEReferences()) {
+			if (eRef.getName().equals("key") && !eRef.isContainment()) {
+				return eRef;
+			} else if (eRef.getName().equals("key") && eRef.isContainment()) {
+				return null;
 			}
 		}
-		return true;
+
+		// no key reference found
+		return null;
 	}
 
 	private void handleElementDelete(EObject deletedElement) {
-		deleteOutgoingCrossReferencesOfContainmentTree(deletedElement);
 
-		if (!CommonUtil.isSelfContained(deletedElement, true)) {
-			throw new IllegalStateException(
-				"Element was removed from containment of project but still has cross references!: "
-					+ rootEObject.getDeletedModelElementId(deletedElement).getId());
-			// TODO: EM, remove project cast, if possible
-		} else if (cutOffIncomingCrossReferences) {
+		Set<EObject> allContainedModelElementsSet = ModelUtil.getAllContainedModelElements(deletedElement, false);
+		allContainedModelElementsSet.add(deletedElement);
+		deleteOutgoingCrossReferencesOfContainmentTree(allContainedModelElementsSet);
+		//
+		// if (!CommonUtil.isSelfContained(deletedElement, true)) {
+		// throw new IllegalStateException(
+		// "Element was removed from containment of project but still has cross references!: "
+		// + collection.getDeletedModelElementId(deletedElement).getId());
+		// // TODO: EM, remove project cast, if possible
+		// } else
+		if (cutOffIncomingCrossReferences) {
 
-			// delete incoming cross references
-			Collection<Setting> inverseReferences = WorkspaceManager.getInstance().findInverseCrossReferences(
-				deletedElement);
-			ModelUtil.deleteIncomingCrossReferencesFromParent(inverseReferences, deletedElement);
+			for (EObject eObject : allContainedModelElementsSet) {
+				// delete incoming cross references
+				Collection<Setting> inverseReferences = WorkspaceManager.getInstance().findInverseCrossReferences(
+					eObject);
+				ModelUtil.deleteIncomingCrossReferencesFromParent(inverseReferences, eObject);
 
-			// ModelUtil.handleIncomingCrossReferences(deletedElement, (Project) rootEObject,
-			// cutOffIncomingCrossReferences);
+			}
 		}
 
 		if (!isRecording) {
 			return;
 		}
-
-		CreateDeleteOperation deleteOperation = OperationsFactory.eINSTANCE.createCreateDeleteOperation();
-		deleteOperation.setClientDate(new Date());
-
 		List<EObject> allContainedModelElements = ModelUtil.getAllContainedModelElementsAsList(deletedElement, false);
 		allContainedModelElements.add(deletedElement);
 		EObject copiedElement = ModelUtil.clone(deletedElement);
-		deleteOperation.setModelElement(copiedElement);
-		deleteOperation.setModelElementId(rootEObject.getDeletedModelElementId(deletedElement));
 		List<EObject> copiedAllContainedModelElements = ModelUtil.getAllContainedModelElementsAsList(copiedElement,
 			false);
 		copiedAllContainedModelElements.add(copiedElement);
 
+		CreateDeleteOperation deleteOperation = OperationsFactory.eINSTANCE.createCreateDeleteOperation();
+		deleteOperation.setClientDate(new Date());
+		deleteOperation.setModelElement(copiedElement);
+		deleteOperation.setModelElementId(collection.getDeletedModelElementId(deletedElement));
+
+		// sync IDs into Map
 		for (int i = 0; i < allContainedModelElements.size(); i++) {
 			EObject child = allContainedModelElements.get(i);
 			EObject copiedChild = copiedAllContainedModelElements.get(i);
-			ModelElementId childId = rootEObject.getDeletedModelElementId(child);
+			ModelElementId childId = collection.getDeletedModelElementId(child);
 			((CreateDeleteOperationImpl) deleteOperation).getEObjectToIdMap().put(copiedChild, childId);
 		}
 
 		deleteOperation.setDelete(true);
 
+		// extract all reference ops that belong to the delete
 		List<CompositeOperation> compositeOperationsToDelete = new ArrayList<CompositeOperation>();
 		deleteOperation.getSubOperations().addAll(
 			extractReferenceOperationsForDelete(deletedElement, compositeOperationsToDelete));
@@ -603,10 +652,10 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 		List<CompositeOperation> compositeOperationsToDelete) {
 		Set<ModelElementId> allDeletedElementsIds = new HashSet<ModelElementId>();
 		for (EObject child : ModelUtil.getAllContainedModelElements(deletedElement, false)) {
-			ModelElementId childId = rootEObject.getDeletedModelElementId(child);
+			ModelElementId childId = collection.getDeletedModelElementId(child);
 			allDeletedElementsIds.add(childId);
 		}
-		allDeletedElementsIds.add(rootEObject.getDeletedModelElementId(deletedElement));
+		allDeletedElementsIds.add(collection.getDeletedModelElementId(deletedElement));
 
 		List<ReferenceOperation> referenceOperationsForDelete = new ArrayList<ReferenceOperation>();
 		// if (currentOperationListSize >= operations.size()) {

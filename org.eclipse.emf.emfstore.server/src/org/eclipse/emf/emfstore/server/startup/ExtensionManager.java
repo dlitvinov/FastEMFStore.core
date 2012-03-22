@@ -12,10 +12,10 @@ package org.eclipse.emf.emfstore.server.startup;
 
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionElement;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPointException;
 import org.eclipse.emf.emfstore.server.EmfStoreInterface;
 import org.eclipse.emf.emfstore.server.accesscontrol.AccessControlImpl;
 import org.eclipse.emf.emfstore.server.connection.ConnectionHandler;
@@ -38,19 +38,12 @@ public final class ExtensionManager {
 	 * @param projects list of projects
 	 */
 	public static void notifyStartupListener(EList<ProjectHistory> projects) {
-		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(
-			"org.eclipse.emf.emfstore.server.startuplistener");
-
-		// get all providers from the extension points
-		for (IConfigurationElement e : config) {
+		for (ExtensionElement element : new ExtensionPoint("org.eclipse.emf.emfstore.server.startuplistener", true)
+			.getExtensionElements()) {
 			try {
-				Object o = e.createExecutableExtension("class");
-				if (o instanceof StartupListener) {
-					((StartupListener) o).startedUp(projects);
-				}
-			} catch (CoreException e1) {
+				element.getClass("class", StartupListener.class).startedUp(projects);
+			} catch (ExtensionPointException e) {
 				// fail silently
-				// e1.printStackTrace();
 			}
 		}
 	}
@@ -64,19 +57,13 @@ public final class ExtensionManager {
 	 */
 	public static void notifyPostStartupListener(ServerSpace serverspace, AccessControlImpl accessControl,
 		Set<ConnectionHandler<? extends EmfStoreInterface>> connectionHandlers) {
-		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(
-			"org.eclipse.emf.emfstore.server.poststartuplistener");
-
-		// get all providers from the extension points
-		for (IConfigurationElement e : config) {
+		for (ExtensionElement element : new ExtensionPoint("org.eclipse.emf.emfstore.server.poststartuplistener", true)
+			.getExtensionElements()) {
 			try {
-				Object o = e.createExecutableExtension("class");
-				if (o instanceof PostStartupListener) {
-					((PostStartupListener) o).postStartUp(serverspace, accessControl, connectionHandlers);
-				}
-			} catch (CoreException e1) {
+				element.getClass("class", PostStartupListener.class).postStartUp(serverspace, accessControl,
+					connectionHandlers);
+			} catch (ExtensionPointException e) {
 				// fail silently
-				// e1.printStackTrace();
 			}
 		}
 	}

@@ -42,8 +42,9 @@ import org.eclipse.emf.emfstore.server.exceptions.EmfStoreException;
  * that he has modify is outdated. The caller then should catch the exception and handle it appropriately, e.g. by
  * updating the state of the shared properties and then retransmitting his changes.</li>
  * </ul>
- * Shared and local properties both have their own namespace meaning that a shared property named <code>"foo"</code> has
- * nothing in common with a local property called <code>"foo"</code>.
+ * Shared and local properties both have their own namespace meaning that a
+ * shared property named <code>"foo"</code> has nothing in common with a local
+ * property called <code>"foo"</code>.
  * 
  * @author haunolder
  * @author emueller
@@ -58,7 +59,8 @@ public final class PropertyManager {
 	 * PropertyManager constructor.
 	 * 
 	 * @param projectSpace
-	 *            the project space that should get managed by the property manager
+	 *            the project space that should get managed by the property
+	 *            manager
 	 **/
 	public PropertyManager(ProjectSpace projectSpace) {
 		this.projectSpace = (ProjectSpaceImpl) projectSpace;
@@ -114,6 +116,21 @@ public final class PropertyManager {
 	 **/
 	public EMFStoreProperty getLocalProperty(String propertyName) {
 		return localProperties.get(propertyName);
+	}
+
+	/**
+	 * Retrieves a local string property
+	 * 
+	 * @param propertyName
+	 *            the name of a local string property
+	 * @return the string value if it exists, otherwise <code>null</code>
+	 **/
+	public String getLocalStringProperty(String propertyName) {
+		EMFStoreProperty property = localProperties.get(propertyName);
+		if (property == null || property.getValue() == null) {
+			return null;
+		}
+		return ((PropertyStringValue) property.getValue()).getValue();
 	}
 
 	/**
@@ -201,9 +218,10 @@ public final class PropertyManager {
 	}
 
 	/**
-	 * Updates a shared versioned property within the project space to the one given, i.e.
-	 * the name of the property is first used to look it up within the project space.
-	 * If found, the value and version attributes are updated, otherwise the property will be created.
+	 * Updates a shared versioned property within the project space to the one
+	 * given, i.e. the name of the property is first used to look it up within
+	 * the project space. If found, the value and version attributes are
+	 * updated, otherwise the property will be created.
 	 * 
 	 * @param property
 	 *            the updated property
@@ -231,22 +249,24 @@ public final class PropertyManager {
 	 * 
 	 * @param propertyName
 	 *            the name of the shared property
-	 * @return value
-	 *         the actual value of the shared property
+	 * @return value the actual value of the shared property
 	 **/
 	public EMFStoreProperty getSharedProperty(String propertyName) {
 		return sharedProperties.get(propertyName);
 	}
 
 	/**
-	 * Get shared property.
+	 * Retrieves a shared string property.
 	 * 
-	 * @param key
+	 * @param propertyName
 	 *            of the shared property as String
-	 * @return value of the shared property as EObject
+	 * @return the string value if it exists, otherwise <code>null</code>
 	 **/
-	public String getSharedStringProperty(String key) {
-		EMFStoreProperty property = sharedProperties.get(key);
+	public String getSharedStringProperty(String propertyName) {
+		EMFStoreProperty property = sharedProperties.get(propertyName);
+		if (property == null || property.getValue() == null) {
+			return null;
+		}
 		return ((PropertyStringValue) property.getValue()).getValue();
 	}
 
@@ -258,14 +278,16 @@ public final class PropertyManager {
 	 * @throws AccessControlException
 	 *             if the caller has no write access to the project space
 	 * @throws EmfStoreException
-	 *             if the project space being manipulated is not yet shared or an error occurs within EMFStore
+	 *             if the project space being manipulated is not yet shared or
+	 *             an error occurs within EMFStore
 	 * @throws EMFStorePropertiesOutdatedException
 	 *             if any changed property is outdated
 	 **/
 	public void synchronizeSharedProperties() throws AccessControlException, EmfStoreException,
 		EMFStorePropertiesOutdatedException {
 
-		// check if project is shared, if not throw checked exception if it is shared
+		// check if project is shared, if not throw checked exception if it is
+		// shared
 		if (projectSpace.getUsersession() == null) {
 			throw new EmfStoreException("Project has not been shared yet.");
 		}
@@ -281,7 +303,8 @@ public final class PropertyManager {
 			.setEMFProperties(this.projectSpace.getUsersession().getSessionId(), changedProperties,
 				this.projectSpace.getProjectId());
 
-		// setEMFProperties returns us a list of properties as found one the server,
+		// setEMFProperties returns us a list of properties as found one the
+		// server,
 		// i.e. we have to deal with different object identities
 		List<EMFStoreProperty> nonRejectedProperties = filterNonRejected(changedProperties, rejectedProperties);
 		projectSpace.getChangedSharedProperties().removeAll(nonRejectedProperties);
@@ -300,7 +323,8 @@ public final class PropertyManager {
 	}
 
 	/**
-	 * Filters a list of changed properties to find only those that have not been rejected.
+	 * Filters a list of changed properties to find only those that have not
+	 * been rejected.
 	 * 
 	 * @param changedProperties
 	 *            the list of changed properties
@@ -323,7 +347,8 @@ public final class PropertyManager {
 				}
 			}
 
-			// a found property has been rejected, so we only pay attention to those
+			// a found property has been rejected, so we only pay attention to
+			// those
 			if (isNotRejected) {
 				result.add(changed);
 			}
@@ -336,7 +361,8 @@ public final class PropertyManager {
 	 * Creates a map based on the project properties of the given {@link EMFStorePropertyType}.
 	 * 
 	 * @param type
-	 *            the {@link EMFStorePropertyType} of the properties that should be contained in the map
+	 *            the {@link EMFStorePropertyType} of the properties that should
+	 *            be contained in the map
 	 */
 	private Map<String, EMFStoreProperty> createMap(EMFStorePropertyType type) {
 		Map<String, EMFStoreProperty> map = new HashMap<String, EMFStoreProperty>();
@@ -373,12 +399,13 @@ public final class PropertyManager {
 	}
 
 	/**
-	 * Returns the property with the given name if it is contained in properties map
-	 * of the project space.
+	 * Returns the property with the given name if it is contained in properties
+	 * map of the project space.
 	 * 
 	 * @param propertyName
 	 *            the name of the property
-	 * @return the property or <code>null</code> if no such property has been found
+	 * @return the property or <code>null</code> if no such property has been
+	 *         found
 	 */
 	private EMFStoreProperty findProperty(String propertyName) {
 

@@ -1301,7 +1301,11 @@ public final class IntegrationTestHelper {
 			}
 		}.run(false);
 
-		List<AbstractOperation> operations = WorkspaceManager.getProjectSpace(testProject).getOperations();
+		List<AbstractOperation> operations = WorkspaceManager.getProjectSpace(testProject).getLocalOperations()
+			.getOperations();
+		if (operations.size() == 0) {
+			throw new IllegalStateException("No operations recorded");
+		}
 		final CreateDeleteOperation operation = (CreateDeleteOperation) operations.get(operations.size() - 1);
 
 		new EMFStoreCommand() {
@@ -1311,7 +1315,7 @@ public final class IntegrationTestHelper {
 				CreateDeleteOperation reverse = (CreateDeleteOperation) operation.reverse();
 				reverse.apply(getTestProject());
 			}
-		};
+		}.run(false);
 
 	}
 

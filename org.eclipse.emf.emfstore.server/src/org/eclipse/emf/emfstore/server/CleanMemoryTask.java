@@ -8,11 +8,10 @@
  * 
  * Contributors:
  ******************************************************************************/
-package org.eclipse.emf.emfstore.server.taskmanager.tasks;
+package org.eclipse.emf.emfstore.server;
 
-import java.util.Date;
+import java.util.TimerTask;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -23,20 +22,29 @@ import org.eclipse.emf.emfstore.server.core.MonitorProvider;
 import org.eclipse.emf.emfstore.server.model.ProjectHistory;
 import org.eclipse.emf.emfstore.server.model.versioning.ChangePackage;
 import org.eclipse.emf.emfstore.server.model.versioning.Version;
-import org.eclipse.emf.emfstore.server.taskmanager.Task;
 
 /**
- * This task is used to clean the memory by proxifying the projectstates.
+ * This task is used to clean the memory by proxifying the project states.
  * 
  * @author wesendon
  */
-public class CleanMemoryTask extends Task {
+public class CleanMemoryTask extends TimerTask {
 
-	private static final long PERIOD = 60 * 1000;
-
+	/**
+	 * Whether to log memory cleaning actions.
+	 */
 	private static final boolean LOG_UNLOADING = false;
 
-	// private final ServerSpace serverSpace;
+	/**
+	 * Time the memory task pauses in order to let others acquire the monitor instance.
+	 */
+	private static final Integer PREEMPTION_INTERVAL = 100;
+
+	/**
+	 * Determines how many change packages should be kept, i.e. how many should
+	 * not be unloaded while performing the memory cleaning.
+	 */
+	private static final Integer KEEP_CHANGES_PACKAGES = 0;
 
 	private final ResourceSet resourceSet;
 
@@ -48,8 +56,6 @@ public class CleanMemoryTask extends Task {
 	 * 
 	 */
 	public CleanMemoryTask(ResourceSet resourceSet) {
-		super(new Date(System.currentTimeMillis() + PERIOD), PERIOD);
-		// this.serverSpace = serverSpace;
 		this.resourceSet = resourceSet;
 	}
 
@@ -57,46 +63,54 @@ public class CleanMemoryTask extends Task {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void executeTask() {
+	public void run() {
+		while (unloadSomethingIfRequired()) {
+			try {
+				// enable other participants to acquire the monitor in order to
+				// perform synchronized tasks
+				Thread.sleep(PREEMPTION_INTERVAL);
+			} catch (InterruptedException e) {
+				// continue
+			}
+		}
+	}
+
+	private boolean unloadSomethingIfRequired() {
 		synchronized (MonitorProvider.getInstance().getMonitor()) {
-			boolean unloadedSomething = false;
-			// LOGGER.info("checking whether projectstates have to be unloaded.");
-			// ResourceSet resourceSet =
-			// serverSpace.eResource().getResourceSet();
-			EList<Resource> resources = resourceSet.getResources();
-			for (int i = 0; i < resources.size(); i++) {
-				Resource res = resources.get(i);
+			for (Resource res : resourceSet.getResources()) {
 				if (res.isLoaded()) {
 
-					// unload projecstates except current
+					// unload project states except current one
 					Project project = getElement(res, Project.class);
+
 					if (project != null) {
 						Version version = getParent(project, Version.class);
 						if (version != null && version.getNextVersion() != null) {
 							log("unloading: " + project);
 							unload(res);
-							unloadedSomething = true;
+							return true;
 						}
 					}
 
-					// unload changepackages except last 25
-					int keep = 25;
+					// unload change packages
 					ChangePackage cp = getElement(res, ChangePackage.class);
+
 					if (cp != null) {
 						Version version = getParent(cp, Version.class);
 						ProjectHistory history = getParent(version, ProjectHistory.class);
-						if (version != null && history != null
-							&& version.getPrimarySpec().getIdentifier() > (history.getVersions().size() - keep)) {
+						if (version != null
+							&& history != null
+							&& version.getPrimarySpec().getIdentifier() <= (history.getVersions().size()
+								- KEEP_CHANGES_PACKAGES - 1)) {
 							log("unloading: " + cp);
 							unload(res);
-							unloadedSomething = true;
+							// version.setChanges(null);
+							return true;
 						}
 					}
 				}
 			}
-			if (unloadedSomething) {
-				System.gc();
-			}
+			return false;
 		}
 	}
 
@@ -124,7 +138,7 @@ public class CleanMemoryTask extends Task {
 
 	private void unload(Resource res) {
 		// sanity check: this check is specific to our 1 element per resource
-		// structure for projects and changepackages
+		// structure for projects and change packages
 		if (res.getContents().size() != 1) {
 			return;
 		}
@@ -132,6 +146,12 @@ public class CleanMemoryTask extends Task {
 
 		// unload to proxify
 		res.unload();
+		res.getResourceSet().getResources().remove(res);
+
+		if (eObject instanceof Project) {
+			Project project = (Project) eObject;
+			project.dispose();
+		}
 
 		// sanity check
 		if (!eObject.eIsProxy()) {
@@ -139,9 +159,11 @@ public class CleanMemoryTask extends Task {
 			return;
 		}
 
-		// unset all contained childs.
+		// unset all contained children
 		for (EReference child : eObject.eClass().getEAllContainments()) {
 			eObject.eUnset(child);
 		}
+
+		System.gc();
 	}
 }

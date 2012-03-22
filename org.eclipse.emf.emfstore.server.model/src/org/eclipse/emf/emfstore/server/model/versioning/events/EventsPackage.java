@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EPackage;
  * <li>and each data type</li>
  * </ul>
  * <!-- end-user-doc -->
+ * 
  * @see org.eclipse.emf.emfstore.server.model.versioning.events.EventsFactory
  * @model kind="package"
  * @generated
@@ -31,6 +32,7 @@ public interface EventsPackage extends EPackage {
 	/**
 	 * The package name.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	String eNAME = "events";
@@ -38,6 +40,7 @@ public interface EventsPackage extends EPackage {
 	/**
 	 * The package namespace URI.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	String eNS_URI = "http://eclipse.org/emf/emfstore/server/model/versioning/events";
@@ -45,6 +48,7 @@ public interface EventsPackage extends EPackage {
 	/**
 	 * The package namespace name.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	String eNS_PREFIX = "org.eclipse.emf.emfstore.server.model.versioning.events";
@@ -52,13 +56,16 @@ public interface EventsPackage extends EPackage {
 	/**
 	 * The singleton instance of the package.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	EventsPackage eINSTANCE = org.eclipse.emf.emfstore.server.model.versioning.events.impl.EventsPackageImpl.init();
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.emf.emfstore.server.model.versioning.events.impl.EventImpl <em>Event</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.emf.emfstore.server.model.versioning.events.impl.EventImpl
+	 * <em>Event</em>}' class.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @see org.eclipse.emf.emfstore.server.model.versioning.events.impl.EventImpl
 	 * @see org.eclipse.emf.emfstore.server.model.versioning.events.impl.EventsPackageImpl#getEvent()
 	 * @generated
@@ -68,6 +75,7 @@ public interface EventsPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Timestamp</b></em>' attribute.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 * @ordered
 	 */
@@ -76,14 +84,17 @@ public interface EventsPackage extends EPackage {
 	/**
 	 * The number of structural features of the '<em>Event</em>' class.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 * @ordered
 	 */
 	int EVENT_FEATURE_COUNT = 1;
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.emf.emfstore.server.model.versioning.events.Event <em>Event</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.emf.emfstore.server.model.versioning.events.Event
+	 * <em>Event</em>}'.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @return the meta object for class '<em>Event</em>'.
 	 * @see org.eclipse.emf.emfstore.server.model.versioning.events.Event
 	 * @generated
@@ -105,6 +116,7 @@ public interface EventsPackage extends EPackage {
 	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @return the factory that creates the instances of the model.
 	 * @generated
 	 */
@@ -119,12 +131,15 @@ public interface EventsPackage extends EPackage {
 	 * <li>and each data type</li>
 	 * </ul>
 	 * <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	interface Literals {
 		/**
-		 * The meta object literal for the '{@link org.eclipse.emf.emfstore.server.model.versioning.events.impl.EventImpl <em>Event</em>}' class.
+		 * The meta object literal for the '
+		 * {@link org.eclipse.emf.emfstore.server.model.versioning.events.impl.EventImpl <em>Event</em>}' class.
 		 * <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
 		 * @see org.eclipse.emf.emfstore.server.model.versioning.events.impl.EventImpl
 		 * @see org.eclipse.emf.emfstore.server.model.versioning.events.impl.EventsPackageImpl#getEvent()
 		 * @generated
@@ -135,6 +150,7 @@ public interface EventsPackage extends EPackage {
 		 * The meta object literal for the '<em><b>Timestamp</b></em>' attribute feature.
 		 * <!-- begin-user-doc --> <!--
 		 * end-user-doc -->
+		 * 
 		 * @generated
 		 */
 		EAttribute EVENT__TIMESTAMP = eINSTANCE.getEvent_Timestamp();

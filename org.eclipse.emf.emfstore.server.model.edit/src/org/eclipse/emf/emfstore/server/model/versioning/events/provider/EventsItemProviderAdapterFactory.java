@@ -43,6 +43,7 @@ public class EventsItemProviderAdapterFactory extends EventsAdapterFactory imple
 	 * This keeps track of the root adapter factory that delegates to this adapter factory.
 	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	protected ComposedAdapterFactory parentAdapterFactory;
@@ -51,6 +52,7 @@ public class EventsItemProviderAdapterFactory extends EventsAdapterFactory imple
 	 * This is used to implement {@link org.eclipse.emf.edit.provider.IChangeNotifier}.
 	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	protected IChangeNotifier changeNotifier = new ChangeNotifier();
@@ -66,6 +68,7 @@ public class EventsItemProviderAdapterFactory extends EventsAdapterFactory imple
 	/**
 	 * This constructs an instance.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public EventsItemProviderAdapterFactory() {
@@ -77,8 +80,10 @@ public class EventsItemProviderAdapterFactory extends EventsAdapterFactory imple
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.emf.emfstore.server.model.versioning.events.Event} instances.
+	 * This keeps track of the one adapter used for all
+	 * {@link org.eclipse.emf.emfstore.server.model.versioning.events.Event} instances.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	protected EventItemProvider eventItemProvider;
@@ -87,6 +92,7 @@ public class EventsItemProviderAdapterFactory extends EventsAdapterFactory imple
 	 * This creates an adapter for a {@link org.eclipse.emf.emfstore.server.model.versioning.events.Event}.
 	 * <!-- begin-user-doc
 	 * --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -101,6 +107,7 @@ public class EventsItemProviderAdapterFactory extends EventsAdapterFactory imple
 	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public ComposeableAdapterFactory getRootAdapterFactory() {
@@ -110,6 +117,7 @@ public class EventsItemProviderAdapterFactory extends EventsAdapterFactory imple
 	/**
 	 * This sets the composed adapter factory that contains this factory.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public void setParentAdapterFactory(ComposedAdapterFactory parentAdapterFactory) {
@@ -118,6 +126,7 @@ public class EventsItemProviderAdapterFactory extends EventsAdapterFactory imple
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -129,6 +138,7 @@ public class EventsItemProviderAdapterFactory extends EventsAdapterFactory imple
 	 * This implementation substitutes the factory itself as the key for the adapter.
 	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -138,13 +148,14 @@ public class EventsItemProviderAdapterFactory extends EventsAdapterFactory imple
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public Object adapt(Object object, Object type) {
 		if (isFactoryForType(type)) {
 			Object adapter = super.adapt(object, type);
-			if (!(type instanceof Class<?>) || (((Class<?>)type).isInstance(adapter))) {
+			if (!(type instanceof Class<?>) || (((Class<?>) type).isInstance(adapter))) {
 				return adapter;
 			}
 		}
@@ -155,6 +166,7 @@ public class EventsItemProviderAdapterFactory extends EventsAdapterFactory imple
 	/**
 	 * This adds a listener.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public void addListener(INotifyChangedListener notifyChangedListener) {
@@ -164,6 +176,7 @@ public class EventsItemProviderAdapterFactory extends EventsAdapterFactory imple
 	/**
 	 * This removes a listener.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public void removeListener(INotifyChangedListener notifyChangedListener) {
@@ -174,6 +187,7 @@ public class EventsItemProviderAdapterFactory extends EventsAdapterFactory imple
 	 * This delegates to {@link #changeNotifier} and to {@link #parentAdapterFactory}.
 	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public void fireNotifyChanged(Notification notification) {
@@ -185,12 +199,14 @@ public class EventsItemProviderAdapterFactory extends EventsAdapterFactory imple
 	}
 
 	/**
-	 * This disposes all of the item providers created by this factory. 
+	 * This disposes all of the item providers created by this factory.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public void dispose() {
-		if (eventItemProvider != null) eventItemProvider.dispose();
+		if (eventItemProvider != null)
+			eventItemProvider.dispose();
 	}
 
 }

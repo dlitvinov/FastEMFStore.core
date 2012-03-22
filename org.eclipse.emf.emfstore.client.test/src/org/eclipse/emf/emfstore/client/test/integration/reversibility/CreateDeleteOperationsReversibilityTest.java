@@ -186,10 +186,10 @@ public class CreateDeleteOperationsReversibilityTest extends OperationsReversibi
 		System.out.println("DeleteAndRevertDeleteReversibilityTest");
 
 		final IntegrationTestHelper testHelper = new IntegrationTestHelper(randomSeed, getTestProject());
+		testHelper.doDeleteAndRevert();
 		new EMFStoreCommand() {
 			@Override
 			protected void doRun() {
-				testHelper.doDeleteAndRevert();
 				getTestProjectSpace().revert();
 			}
 		}.run(false);

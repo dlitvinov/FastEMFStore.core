@@ -110,14 +110,13 @@ public class ServerInfoSelectionDialog extends TitleAreaDialog {
 		}
 
 		@Override
-		public String getColumnText(Object object, int columnIndex) {
-			String text = super.getColumnText(object, columnIndex);
+		public String getText(Object object) {
 			if (object instanceof ServerInfo) {
 				ServerInfo server = (ServerInfo) object;
-				text += " [" + server.getUrl() + " : " + server.getPort() + "]";
+				return server.getName() + " [" + server.getUrl() + " : " + server.getPort() + "]";
 			}
-			return text;
+
+			return super.getText(object);
 		}
 	}
-
 }
