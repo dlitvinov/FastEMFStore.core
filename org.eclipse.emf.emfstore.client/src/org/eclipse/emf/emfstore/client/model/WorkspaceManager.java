@@ -37,6 +37,7 @@ import org.eclipse.emf.emfstore.client.model.connectionmanager.KeyStoreManager;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.SessionManager;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.xmlrpc.XmlRpcAdminConnectionManager;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.xmlrpc.XmlRpcConnectionManager;
+import org.eclipse.emf.emfstore.client.model.observers.DeleteProjectSpaceObserver;
 import org.eclipse.emf.emfstore.client.model.util.EMFStoreCommand;
 import org.eclipse.emf.emfstore.client.model.util.EditingDomainProvider;
 import org.eclipse.emf.emfstore.client.model.util.WorkspaceUtil;
@@ -203,6 +204,17 @@ public final class WorkspaceManager {
 		if (useCrossReferenceAdapter) {
 			crossReferenceAdapter = new ECrossReferenceAdapter();
 			resourceSet.eAdapters().add(crossReferenceAdapter);
+			getObserverBus().register(new DeleteProjectSpaceObserver() {
+
+				public void projectDeleted(ProjectSpace projectSpace) {
+					// remove its resource from crossreferenceadapter
+					try {
+						projectSpace.delete();
+					} catch (IOException e) {
+						ModelUtil.logException(e);
+					}
+				}
+			});
 		}
 
 		// register an editing domain on the resource

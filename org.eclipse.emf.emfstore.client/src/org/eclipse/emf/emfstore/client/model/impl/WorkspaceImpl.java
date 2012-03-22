@@ -54,7 +54,6 @@ import org.eclipse.emf.emfstore.client.model.observers.DeleteProjectSpaceObserve
 import org.eclipse.emf.emfstore.client.model.util.ResourceHelper;
 import org.eclipse.emf.emfstore.client.model.util.WorkspaceUtil;
 import org.eclipse.emf.emfstore.common.model.Project;
-import org.eclipse.emf.emfstore.common.model.util.FileUtil;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.server.exceptions.AccessControlException;
 import org.eclipse.emf.emfstore.server.exceptions.EmfStoreException;
@@ -334,9 +333,7 @@ public class WorkspaceImpl extends EObjectImpl implements Workspace {
 		save();
 		projectToProjectSpaceMap.remove(projectSpace.getProject());
 
-		// delete folder of project space
-		String pathToProject = Configuration.getWorkspaceDirectory() + "ps-" + projectSpace.getIdentifier();
-		FileUtil.deleteFolder(new File(pathToProject));
+		projectSpace.delete();
 
 		WorkspaceManager.getObserverBus().notify(DeleteProjectSpaceObserver.class).projectDeleted(projectSpace);
 	}

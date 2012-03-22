@@ -575,6 +575,13 @@ public interface ProjectSpace extends IdentifiableElement {
 	void initResources(ResourceSet resourceSet);
 
 	/**
+	 * Deletes the project space.
+	 * 
+	 * @generated NOT
+	 */
+	public void delete() throws IOException;
+
+	/**
 	 * Returns the value of the '<em><b>Dirty</b></em>' attribute. <!--
 	 * begin-user-doc -->
 	 * <p>
