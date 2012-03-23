@@ -212,7 +212,8 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 							version.eResource().delete(null);
 						}
 					} catch (IOException e) {
-						e.printStackTrace();
+						throw new StorageException("Project resource files couldn't be deleted.", e);
+						// Maybe better to use e.printStackTrace() to not interrupt the function?
 					}
 
 					getServerSpace().getProjects().remove(project);
