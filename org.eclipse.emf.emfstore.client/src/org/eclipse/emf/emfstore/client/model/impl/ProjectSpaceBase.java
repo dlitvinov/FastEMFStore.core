@@ -626,26 +626,31 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 		WorkspaceManager.getObserverBus().unregister(this, LoginObserver.class);
 		WorkspaceManager.getObserverBus().unregister(this);
 
-		Resource psResource = eResource();
-		if (psResource != null) {
-			psResource.delete(null);
-		}
-
 		String pathToProject = Configuration.getWorkspaceDirectory() + Configuration.getProjectSpaceDirectoryPrefix()
 			+ getIdentifier();
-		List<Resource> resources = new ArrayList<Resource>();
+		List<Resource> toDelete = new ArrayList<Resource>();
 		for (Resource resource : resourceSet.getResources()) {
 			if (resource.getURI().toFileString().startsWith(pathToProject)) {
-				resources.add(resource);
+				toDelete.add(resource);
 			}
 		}
-		for (Resource resource : resources) {
+		for (Resource resource : toDelete) {
 			resource.delete(null);
 		}
 
 		// delete folder of project space
 		FileUtil.deleteFolder(new File(pathToProject));
 
+	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 * 
+	 * @see org.eclipse.emf.emfstore.client.model.ProjectSpace#getResourceSet()
+	 */
+	public ResourceSet getResourceSet() {
+		return resourceSet;
 	}
 
 	/**

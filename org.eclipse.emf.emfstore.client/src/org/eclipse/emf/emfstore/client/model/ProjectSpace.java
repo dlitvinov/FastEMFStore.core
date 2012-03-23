@@ -582,6 +582,11 @@ public interface ProjectSpace extends IdentifiableElement {
 	public void delete() throws IOException;
 
 	/**
+	 * Returns the resource set of the ProjectSpace.
+	 */
+	public ResourceSet getResourceSet();
+
+	/**
 	 * Returns the value of the '<em><b>Dirty</b></em>' attribute. <!--
 	 * begin-user-doc -->
 	 * <p>
