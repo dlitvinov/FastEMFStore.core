@@ -31,6 +31,7 @@ import org.eclipse.emf.emfstore.server.model.ProjectHistory;
 import org.eclipse.emf.emfstore.server.model.ProjectId;
 import org.eclipse.emf.emfstore.server.model.ProjectInfo;
 import org.eclipse.emf.emfstore.server.model.SessionId;
+import org.eclipse.emf.emfstore.server.model.versioning.ChangePackage;
 import org.eclipse.emf.emfstore.server.model.versioning.LogMessage;
 import org.eclipse.emf.emfstore.server.model.versioning.PrimaryVersionSpec;
 import org.eclipse.emf.emfstore.server.model.versioning.Version;
@@ -197,6 +198,24 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 			try {
 				try {
 					ProjectHistory project = getProject(projectId);
+					try {
+						project.eResource().delete(null);
+						for (Version version : project.getVersions()) {
+							ChangePackage changes = version.getChanges();
+							if (changes != null) {
+								changes.eResource().delete(null);
+							}
+							Project projectState = version.getProjectState();
+							if (projectState != null) {
+								projectState.eResource().delete(null);
+							}
+							version.eResource().delete(null);
+						}
+					} catch (IOException e) {
+						throw new StorageException("Project resource files couldn't be deleted.", e);
+						// Maybe better to use e.printStackTrace() to not interrupt the function?
+					}
+
 					getServerSpace().getProjects().remove(project);
 					save(getServerSpace());
 				} catch (InvalidProjectIdException e) {

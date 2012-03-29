@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -37,6 +38,7 @@ import org.eclipse.emf.emfstore.client.model.connectionmanager.KeyStoreManager;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.SessionManager;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.xmlrpc.XmlRpcAdminConnectionManager;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.xmlrpc.XmlRpcConnectionManager;
+import org.eclipse.emf.emfstore.client.model.observers.DeleteProjectSpaceObserver;
 import org.eclipse.emf.emfstore.client.model.util.EMFStoreCommand;
 import org.eclipse.emf.emfstore.client.model.util.EditingDomainProvider;
 import org.eclipse.emf.emfstore.client.model.util.WorkspaceUtil;
@@ -71,7 +73,7 @@ public final class WorkspaceManager {
 
 	private ObserverBus observerBus;
 
-	private ECrossReferenceAdapter crossReferenceAdapter;
+	private ExtendedCrossReferenceAdapter crossReferenceAdapter;
 	private ResourceSet resourceSet;
 
 	private SessionManager sessionManager;
@@ -201,8 +203,14 @@ public final class WorkspaceManager {
 		}
 
 		if (useCrossReferenceAdapter) {
-			crossReferenceAdapter = new ECrossReferenceAdapter();
+			crossReferenceAdapter = new ExtendedCrossReferenceAdapter();
 			resourceSet.eAdapters().add(crossReferenceAdapter);
+			getObserverBus().register(new DeleteProjectSpaceObserver() {
+				public void projectDeleted(ProjectSpace projectSpace) {
+					// remove project resourcess from crossreferenceadapter
+					crossReferenceAdapter.unsetTarget(projectSpace);
+				}
+			});
 		}
 
 		// register an editing domain on the resource
@@ -597,5 +605,31 @@ public final class WorkspaceManager {
 	 */
 	public SessionManager getSessionManager() {
 		return sessionManager;
+	}
+
+	static class ExtendedCrossReferenceAdapter extends ECrossReferenceAdapter {
+
+		@Override
+		protected void unsetTarget(EObject target) {
+			super.unsetTarget(target);
+			if (target instanceof ProjectSpace) {
+				ProjectSpace projectSpace = (ProjectSpace) target;
+				String pathToProject = Configuration.getWorkspaceDirectory()
+					+ Configuration.getProjectSpaceDirectoryPrefix() + projectSpace.getIdentifier();
+				List<Resource> toDelete = new ArrayList<Resource>();
+				for (Resource resource : unloadedResources) {
+					if (resource.getURI().toFileString().startsWith(pathToProject)) {
+						toDelete.add(resource);
+					}
+				}
+				unloadedResources.removeAll(toDelete);
+			}
+		}
+
+		@Override
+		protected void removeAdapter(Notifier notifier) {
+			super.removeAdapter(notifier);
+		}
+
 	}
 }

@@ -12,7 +12,6 @@ package org.eclipse.emf.emfstore.server;
 
 import java.util.TimerTask;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -45,7 +44,7 @@ public class CleanMemoryTask extends TimerTask {
 	 * Determines how many change packages should be kept, i.e. how many should
 	 * not be unloaded while performing the memory cleaning.
 	 */
-	private static final Integer KEEP_CHANGES_PACKAGES = 25;
+	private static final Integer KEEP_CHANGES_PACKAGES = 0;
 
 	private final ResourceSet resourceSet;
 
@@ -78,13 +77,7 @@ public class CleanMemoryTask extends TimerTask {
 
 	private boolean unloadSomethingIfRequired() {
 		synchronized (MonitorProvider.getInstance().getMonitor()) {
-
-			EList<Resource> resources = resourceSet.getResources();
-
-			for (int i = 0; i < resources.size(); i++) {
-
-				Resource res = resources.get(i);
-
+			for (Resource res : resourceSet.getResources()) {
 				if (res.isLoaded()) {
 
 					// unload project states except current one
@@ -111,6 +104,7 @@ public class CleanMemoryTask extends TimerTask {
 								- KEEP_CHANGES_PACKAGES - 1)) {
 							log("unloading: " + cp);
 							unload(res);
+							// version.setChanges(null);
 							return true;
 						}
 					}

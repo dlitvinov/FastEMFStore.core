@@ -898,7 +898,9 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 	 * @see org.eclipse.emf.emfstore.common.model.util.IdEObjectCollectionChangeObserver#collectionDeleted(org.eclipse.emf.emfstore.common.model.IdEObjectCollection)
 	 */
 	public void collectionDeleted(IdEObjectCollection collection) {
-		// do nothing
+		if (emfStoreCommandStack != null) {
+			emfStoreCommandStack.removeCommandStackObserver(this);
+		}
 	}
 
 	/**

@@ -13,4 +13,3 @@ Export-Package:
 Require-Bundle: org.eclipse.emf.emfstore.client;visibility:=reexport,
  org.eclipse.emf.emfstore.server.model.edit;visibility:=reexport
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.emf.edit.ui.provider
