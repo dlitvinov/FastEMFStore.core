@@ -124,7 +124,7 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 	}
 
 	/**
-	 * o {@inheritDoc}
+	 * {@inheritDoc}
 	 * 
 	 * @see org.eclipse.emf.emfstore.client.model.ProjectSpace#addFile(java.io.File)
 	 */
@@ -272,7 +272,8 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 	}
 
 	public void cleanCutElements() {
-		for (EObject cutElement : getProject().getCutElements()) {
+		List<EObject> cutElements = new ArrayList<EObject>(getProject().getCutElements());
+		for (EObject cutElement : cutElements) {
 			getProject().deleteModelElement(cutElement);
 		}
 	}
@@ -559,7 +560,6 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 	public void initResources(ResourceSet resourceSet) {
 		this.resourceSet = resourceSet;
 		initCompleted = true;
-		this.resourceSet = resourceSet;
 		String projectSpaceFileNamePrefix = Configuration.getWorkspaceDirectory()
 			+ Configuration.getProjectSpaceDirectoryPrefix() + getIdentifier() + File.separatorChar;
 		String projectSpaceFileName = projectSpaceFileNamePrefix + this.getIdentifier()
@@ -628,15 +628,7 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 
 		String pathToProject = Configuration.getWorkspaceDirectory() + Configuration.getProjectSpaceDirectoryPrefix()
 			+ getIdentifier();
-		List<Resource> toDelete = new ArrayList<Resource>();
-		for (Resource resource : resourceSet.getResources()) {
-			if (resource.getURI().toFileString().startsWith(pathToProject)) {
-				toDelete.add(resource);
-			}
-		}
-		for (Resource resource : toDelete) {
-			resource.delete(null);
-		}
+		ModelUtil.deleteResourcesWithPrefix(resourceSet, pathToProject);
 
 		// delete folder of project space
 		FileUtil.deleteFolder(new File(pathToProject));
