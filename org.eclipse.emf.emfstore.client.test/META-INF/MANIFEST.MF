@@ -30,6 +30,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.emfstore.server.model,
  org.eclipse.emf.emfstore.client,
  org.eclipse.emf.emfstore.client.model.edit,
- org.eclipse.emf.modelmutator
+ org.eclipse.emf.emfstore.modelmutator
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.emf.emfstore.client.test.Activator
