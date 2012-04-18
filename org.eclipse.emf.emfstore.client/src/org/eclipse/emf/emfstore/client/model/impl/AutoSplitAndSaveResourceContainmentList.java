@@ -198,6 +198,11 @@ public class AutoSplitAndSaveResourceContainmentList<T extends EObject> implemen
 	 */
 	public void clear() {
 		list.clear();
+		try {
+			ModelUtil.deleteResourcesWithPrefix(resourceSet, path);
+		} catch (IOException e) {
+			ModelUtil.logException("Error occured while unloading resource " + rootResource, e);
+		}
 		File dir = new File(path);
 		File[] listFiles = dir.listFiles();
 		if (listFiles != null) {
