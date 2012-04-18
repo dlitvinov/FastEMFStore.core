@@ -196,44 +196,44 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 		throws EmfStoreException {
 		synchronized (getMonitor()) {
 			try {
+				ProjectHistory project = getProject(projectId);
+				getServerSpace().getProjects().remove(project);
 				try {
-					ProjectHistory project = getProject(projectId);
-					try {
-						project.eResource().delete(null);
-						for (Version version : project.getVersions()) {
-							ChangePackage changes = version.getChanges();
-							if (changes != null) {
-								changes.eResource().delete(null);
-							}
-							Project projectState = version.getProjectState();
-							if (projectState != null) {
-								projectState.eResource().delete(null);
-							}
-							version.eResource().delete(null);
-						}
-					} catch (IOException e) {
-						throw new StorageException("Project resource files couldn't be deleted.", e);
-						// Maybe better to use e.printStackTrace() to not interrupt the function?
-					}
-
-					getServerSpace().getProjects().remove(project);
 					save(getServerSpace());
-				} catch (InvalidProjectIdException e) {
-					if (throwInvalidIdException) {
-						throw e;
+				} catch (FatalEmfStoreException e) {
+					throw new StorageException(StorageException.NOSAVE);
+				} finally {
+					// delete resources
+					project.eResource().delete(null);
+					for (Version version : project.getVersions()) {
+						ChangePackage changes = version.getChanges();
+						if (changes != null) {
+							changes.eResource().delete(null);
+						}
+						Project projectState = version.getProjectState();
+						if (projectState != null) {
+							projectState.eResource().delete(null);
+						}
+						version.eResource().delete(null);
 					}
 				}
+			} catch (InvalidProjectIdException e) {
+				if (throwInvalidIdException) {
+					throw e;
+				}
+			} catch (IOException e) {
+				throw new StorageException("Project resource files couldn't be deleted.", e);
+			} finally {
+				// delete project files
 				if (deleteFiles) {
 					File projectFolder = new File(getResourceHelper().getProjectFolder(projectId));
 					try {
 						FileUtil.deleteFolder(projectFolder);
 					} catch (IOException e) {
-						throw new StorageException(
+						ModelUtil.logException(
 							"Project files couldn't be deleted, but it was deleted from containment tree.", e);
 					}
 				}
-			} catch (FatalEmfStoreException e) {
-				throw new StorageException(StorageException.NOSAVE);
 			}
 		}
 	}
