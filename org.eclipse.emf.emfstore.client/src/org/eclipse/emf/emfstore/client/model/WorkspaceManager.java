@@ -13,7 +13,6 @@ package org.eclipse.emf.emfstore.client.model;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,12 +21,10 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
-import org.eclipse.emf.ecore.util.EcoreUtil.UsageCrossReferencer;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
@@ -38,7 +35,6 @@ import org.eclipse.emf.emfstore.client.model.connectionmanager.KeyStoreManager;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.SessionManager;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.xmlrpc.XmlRpcAdminConnectionManager;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.xmlrpc.XmlRpcConnectionManager;
-import org.eclipse.emf.emfstore.client.model.observers.DeleteProjectSpaceObserver;
 import org.eclipse.emf.emfstore.client.model.util.EMFStoreCommand;
 import org.eclipse.emf.emfstore.client.model.util.EditingDomainProvider;
 import org.eclipse.emf.emfstore.client.model.util.WorkspaceUtil;
@@ -73,7 +69,7 @@ public final class WorkspaceManager {
 
 	private ObserverBus observerBus;
 
-	private ExtendedCrossReferenceAdapter crossReferenceAdapter;
+	// private ExtendedCrossReferenceAdapter crossReferenceAdapter;
 	private ResourceSet resourceSet;
 
 	private SessionManager sessionManager;
@@ -195,23 +191,24 @@ public final class WorkspaceManager {
 		((ResourceSetImpl) resourceSet).setURIResourceMap(new HashMap<URI, Resource>());
 		resourceSet.getLoadOptions().putAll(ModelUtil.getResourceLoadOptions());
 
-		boolean useCrossReferenceAdapter = false;
-
-		for (ExtensionElement element : new ExtensionPoint("org.eclipse.emf.emfstore.client.inverseCrossReferenceCache")
-			.getExtensionElements()) {
-			useCrossReferenceAdapter |= element.getBoolean("activated");
-		}
-
-		if (useCrossReferenceAdapter) {
-			crossReferenceAdapter = new ExtendedCrossReferenceAdapter();
-			resourceSet.eAdapters().add(crossReferenceAdapter);
-			getObserverBus().register(new DeleteProjectSpaceObserver() {
-				public void projectDeleted(ProjectSpace projectSpace) {
-					// remove project resourcess from crossreferenceadapter
-					crossReferenceAdapter.unsetTarget(projectSpace);
-				}
-			});
-		}
+		// boolean useCrossReferenceAdapter = false;
+		//
+		// for (ExtensionElement element : new
+		// ExtensionPoint("org.eclipse.emf.emfstore.client.inverseCrossReferenceCache")
+		// .getExtensionElements()) {
+		// useCrossReferenceAdapter |= element.getBoolean("activated");
+		// }
+		//
+		// if (useCrossReferenceAdapter) {
+		// crossReferenceAdapter = new ExtendedCrossReferenceAdapter();
+		// resourceSet.eAdapters().add(crossReferenceAdapter);
+		// getObserverBus().register(new DeleteProjectSpaceObserver() {
+		// public void projectDeleted(ProjectSpace projectSpace) {
+		// // remove project resourcess from crossreferenceadapter
+		// crossReferenceAdapter.unsetTarget(projectSpace);
+		// }
+		// });
+		// }
 
 		// register an editing domain on the resource
 		Configuration.setEditingDomain(createEditingDomain(resourceSet));
@@ -476,18 +473,18 @@ public final class WorkspaceManager {
 		}
 	}
 
-	/**
-	 * Returns the {@link ECrossReferenceAdapter}, if available.
-	 * 
-	 * @return the {@link ECrossReferenceAdapter}
-	 */
-	public Collection<Setting> findInverseCrossReferences(EObject modelElement) {
-		if (crossReferenceAdapter != null) {
-			return crossReferenceAdapter.getInverseReferences(modelElement);
-		}
-
-		return UsageCrossReferencer.find(modelElement, resourceSet);
-	}
+	// /**
+	// * Returns the {@link ECrossReferenceAdapter}, if available.
+	// *
+	// * @return the {@link ECrossReferenceAdapter}
+	// */
+	// public Collection<Setting> findInverseCrossReferences(EObject modelElement) {
+	// if (crossReferenceAdapter != null) {
+	// return crossReferenceAdapter.getInverseReferences(modelElement);
+	// }
+	//
+	// return UsageCrossReferencer.find(modelElement, resourceSet);
+	// }
 
 	/**
 	 * Migrate the model instance if neccessary.

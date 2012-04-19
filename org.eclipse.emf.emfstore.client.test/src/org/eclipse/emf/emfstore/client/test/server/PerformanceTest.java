@@ -43,7 +43,7 @@ public class PerformanceTest extends ServerTests {
 	private static final String MODELS_DIR = new File("../../../Models").getAbsolutePath() + '/';
 	private static final String OUTPUT_DIR = "../../TestResults/";
 	private static final String[] MODELS = new String[] { "1000", "10000", "50000", "100000", "200000", "500000" };
-	private static final int NUM_ITERATIONS = 50;
+	private static final int NUM_ITERATIONS = 3;
 
 	private static MemoryMeter memoryMeter;
 	private static FileWriter writer;
@@ -340,6 +340,7 @@ public class PerformanceTest extends ServerTests {
 			long[] memDuringUpdate = new long[NUM_ITERATIONS];
 			long[] memAfterUpdate = new long[NUM_ITERATIONS];
 			for (int i = 0; i < NUM_ITERATIONS; i++) {
+				// readLine();
 				memoryMeter.startMeasurements();
 				memBeforeMut[i] = usedMemory();
 				long time = System.currentTimeMillis();
@@ -467,9 +468,9 @@ public class PerformanceTest extends ServerTests {
 				time = System.currentTimeMillis();
 				modelChanger.createEObjects(10);
 				System.out.println("Create objects: " + (System.currentTimeMillis() - time) / 1000.0 + "sec");
-				time = System.currentTimeMillis();
-				modelChanger.changeAttributes(1000);
-				System.out.println("Change Attributes: " + (System.currentTimeMillis() - time) / 1000.0 + "sec");
+				// time = System.currentTimeMillis();
+				// modelChanger.changeAttributes(1000);
+				// System.out.println("Change Attributes: " + (System.currentTimeMillis() - time) / 1000.0 + "sec");
 				time = System.currentTimeMillis();
 				modelChanger.changeContainmentReferences(1000);
 				System.out.println("Change Containment References: " + (System.currentTimeMillis() - time) / 1000.0
