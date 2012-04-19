@@ -38,7 +38,6 @@ import org.eclipse.emf.emfstore.client.model.connectionmanager.KeyStoreManager;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.SessionManager;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.xmlrpc.XmlRpcAdminConnectionManager;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.xmlrpc.XmlRpcConnectionManager;
-import org.eclipse.emf.emfstore.client.model.observers.DeleteProjectSpaceObserver;
 import org.eclipse.emf.emfstore.client.model.util.EMFStoreCommand;
 import org.eclipse.emf.emfstore.client.model.util.EditingDomainProvider;
 import org.eclipse.emf.emfstore.client.model.util.WorkspaceUtil;
@@ -73,7 +72,6 @@ public final class WorkspaceManager {
 
 	private ObserverBus observerBus;
 
-	private ExtendedCrossReferenceAdapter crossReferenceAdapter;
 	private ResourceSet resourceSet;
 
 	private SessionManager sessionManager;
@@ -194,24 +192,6 @@ public final class WorkspaceManager {
 		resourceSet.setResourceFactoryRegistry(new ResourceFactoryRegistry());
 		((ResourceSetImpl) resourceSet).setURIResourceMap(new HashMap<URI, Resource>());
 		resourceSet.getLoadOptions().putAll(ModelUtil.getResourceLoadOptions());
-
-		boolean useCrossReferenceAdapter = false;
-
-		for (ExtensionElement element : new ExtensionPoint("org.eclipse.emf.emfstore.client.inverseCrossReferenceCache")
-			.getExtensionElements()) {
-			useCrossReferenceAdapter |= element.getBoolean("activated");
-		}
-
-		if (useCrossReferenceAdapter) {
-			crossReferenceAdapter = new ExtendedCrossReferenceAdapter();
-			resourceSet.eAdapters().add(crossReferenceAdapter);
-			getObserverBus().register(new DeleteProjectSpaceObserver() {
-				public void projectDeleted(ProjectSpace projectSpace) {
-					// remove project resourcess from crossreferenceadapter
-					crossReferenceAdapter.unsetTarget(projectSpace);
-				}
-			});
-		}
 
 		// register an editing domain on the resource
 		Configuration.setEditingDomain(createEditingDomain(resourceSet));

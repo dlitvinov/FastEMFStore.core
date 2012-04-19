@@ -25,9 +25,12 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 import org.eclipse.emf.ecore.util.EcoreUtil.UsageCrossReferencer;
 import org.eclipse.emf.ecore.xmi.XMIResource;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionElement;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
 import org.eclipse.emf.emfstore.common.model.IdEObjectCollection;
 import org.eclipse.emf.emfstore.common.model.ModelElementId;
 import org.eclipse.emf.emfstore.common.model.ModelFactory;
@@ -44,6 +47,7 @@ public abstract class IdEObjectCollectionImpl extends EObjectImpl implements IdE
 	private Map<EObject, String> eObjectToIdCache;
 	private Map<String, EObject> idToEObjectCache;
 	private boolean cachesInitialized;
+	private ECrossReferenceAdapter crossReferenceAdapter;
 
 	/**
 	 * Will be used to maintain the {@link ModelElementId}s of deleted {@link EObject}s.
@@ -67,6 +71,25 @@ public abstract class IdEObjectCollectionImpl extends EObjectImpl implements IdE
 		deletedIdMapToEObject = new HashMap<ModelElementId, EObject>();
 		newEObjectToIdMap = new HashMap<EObject, ModelElementId>();
 		newIdMapToEObject = new HashMap<ModelElementId, EObject>();
+
+		boolean useCrossReferenceAdapter = false;
+
+		for (ExtensionElement element : new ExtensionPoint("org.eclipse.emf.emfstore.client.inverseCrossReferenceCache")
+			.getExtensionElements()) {
+			useCrossReferenceAdapter |= element.getBoolean("activated");
+		}
+
+		if (useCrossReferenceAdapter) {
+			crossReferenceAdapter = new ECrossReferenceAdapter();
+			resourceSet.eAdapters().add(crossReferenceAdapter);
+			getObserverBus().register(new DeleteProjectSpaceObserver() {
+				public void projectDeleted(ProjectSpace projectSpace) {
+					// remove project resourcess from crossreferenceadapter
+					crossReferenceAdapter.unsetTarget(projectSpace);
+				}
+			});
+		}
+
 	}
 
 	/**
