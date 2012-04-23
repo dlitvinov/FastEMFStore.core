@@ -13,6 +13,7 @@ package org.eclipse.emf.emfstore.client.model.impl;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -23,9 +24,12 @@ import org.eclipse.emf.common.util.BasicEMap;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
+import org.eclipse.emf.ecore.util.EcoreUtil.UsageCrossReferencer;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.emfstore.client.model.CompositeOperationHandle;
 import org.eclipse.emf.emfstore.client.model.Configuration;
@@ -55,6 +59,8 @@ import org.eclipse.emf.emfstore.client.model.observers.ConflictResolver;
 import org.eclipse.emf.emfstore.client.model.observers.LoginObserver;
 import org.eclipse.emf.emfstore.client.model.util.WorkspaceUtil;
 import org.eclipse.emf.emfstore.client.properties.PropertyManager;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionElement;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
 import org.eclipse.emf.emfstore.common.model.ModelElementId;
 import org.eclipse.emf.emfstore.common.model.Project;
 import org.eclipse.emf.emfstore.common.model.impl.IdEObjectCollectionImpl;
@@ -112,6 +118,7 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 
 	private StatePersister statePersister;
 
+	private ECrossReferenceAdapter crossReferenceAdapter;
 	protected ResourceSet resourceSet;
 
 	/**
@@ -515,7 +522,7 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 
 		initCompleted = true;
 		fileTransferManager = new FileTransferManager(this);
-		operationRecorder = new OperationRecorder((IdEObjectCollectionImpl) this.getProject(), changeNotifier);
+		operationRecorder = new OperationRecorder(this, changeNotifier);
 		operationManager = new OperationManager(operationRecorder, this);
 		operationManager.addOperationListener(modifiedModelElementsCache);
 		statePersister = new StatePersister(changeNotifier, ((EMFStoreCommandStack) Configuration.getEditingDomain()
@@ -558,6 +565,68 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 	 * @generated NOT
 	 */
 	public void initResources(ResourceSet resourceSet) {
+		boolean useCrossReferenceAdapter = false;
+
+		for (ExtensionElement element : new ExtensionPoint("org.eclipse.emf.emfstore.client.inverseCrossReferenceCache")
+			.getExtensionElements()) {
+			useCrossReferenceAdapter |= element.getBoolean("activated");
+		}
+
+		if (useCrossReferenceAdapter) {
+			crossReferenceAdapter = new ECrossReferenceAdapter();
+			getProject().eAdapters().add(crossReferenceAdapter);
+			// WorkspaceManager.getObserverBus().register(new DeleteProjectSpaceObserver() {
+			// public void projectDeleted(ProjectSpace projectSpace) {
+			// // remove project resourcess from crossreferenceadapter
+			// crossReferenceAdapter.unsetTarget(projectSpace);
+			// }
+			// });
+			// WorkspaceManager.getObserverBus().register(new ShareObserver() {
+			// public void shareDone(ProjectSpace projectSpace) {
+			// for (AbstractOperation op : projectSpace.getOperations()) {
+			// crossReferenceAdapter.unsetTarget(op);
+			// }
+			// }
+			// });
+			// WorkspaceManager.getObserverBus().register(new CheckoutObserver() {
+			// public void checkoutDone(ProjectSpace projectSpace) {
+			// for (AbstractOperation op : projectSpace.getOperations()) {
+			// crossReferenceAdapter.unsetTarget(op);
+			// }
+			// }
+			// });
+			// WorkspaceManager.getObserverBus().register(new CommitObserver() {
+			// private ChangePackage changePackage;
+			//
+			// public boolean inspectChanges(ProjectSpace projectSpace, ChangePackage changePackage) {
+			// this.changePackage = changePackage;
+			// return true;
+			// }
+			//
+			// public void commitCompleted(ProjectSpace projectSpace, PrimaryVersionSpec newRevision) {
+			// for (AbstractOperation op : changePackage.getOperations()) {
+			// crossReferenceAdapter.unsetTarget(op);
+			// }
+			// }
+			// });
+			// WorkspaceManager.getObserverBus().register(new UpdateObserver() {
+			// private List<ChangePackage> changePackages;
+			//
+			// public boolean inspectChanges(ProjectSpace projectSpace, List<ChangePackage> changePackages) {
+			// this.changePackages = changePackages;
+			// return true;
+			// }
+			//
+			// public void updateCompleted(ProjectSpace projectSpace) {
+			// for (ChangePackage changePackage : changePackages) {
+			// for (AbstractOperation op : changePackage.getOperations()) {
+			// crossReferenceAdapter.unsetTarget(op);
+			// }
+			// }
+			// }
+			// });
+		}
+
 		this.resourceSet = resourceSet;
 		initCompleted = true;
 		String projectSpaceFileNamePrefix = Configuration.getWorkspaceDirectory()
@@ -633,6 +702,19 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 		// delete folder of project space
 		FileUtil.deleteFolder(new File(pathToProject));
 
+	}
+
+	/**
+	 * Returns the {@link ECrossReferenceAdapter}, if available.
+	 * 
+	 * @return the {@link ECrossReferenceAdapter}
+	 */
+	public Collection<Setting> findInverseCrossReferences(EObject modelElement) {
+		if (crossReferenceAdapter != null) {
+			return crossReferenceAdapter.getInverseReferences(modelElement);
+		}
+
+		return UsageCrossReferencer.find(modelElement, resourceSet);
 	}
 
 	/**

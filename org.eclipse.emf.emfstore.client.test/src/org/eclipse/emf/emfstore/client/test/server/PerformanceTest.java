@@ -340,6 +340,7 @@ public class PerformanceTest extends ServerTests {
 			long[] memDuringUpdate = new long[NUM_ITERATIONS];
 			long[] memAfterUpdate = new long[NUM_ITERATIONS];
 			for (int i = 0; i < NUM_ITERATIONS; i++) {
+				// readLine();
 				memoryMeter.startMeasurements();
 				memBeforeMut[i] = usedMemory();
 				long time = System.currentTimeMillis();
@@ -467,9 +468,9 @@ public class PerformanceTest extends ServerTests {
 				time = System.currentTimeMillis();
 				modelChanger.createEObjects(10);
 				System.out.println("Create objects: " + (System.currentTimeMillis() - time) / 1000.0 + "sec");
-				time = System.currentTimeMillis();
-				modelChanger.changeAttributes(1000);
-				System.out.println("Change Attributes: " + (System.currentTimeMillis() - time) / 1000.0 + "sec");
+				// time = System.currentTimeMillis();
+				// modelChanger.changeAttributes(1000);
+				// System.out.println("Change Attributes: " + (System.currentTimeMillis() - time) / 1000.0 + "sec");
 				time = System.currentTimeMillis();
 				modelChanger.changeContainmentReferences(1000);
 				System.out.println("Change Containment References: " + (System.currentTimeMillis() - time) / 1000.0

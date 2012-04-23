@@ -87,6 +87,7 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 	private NotificationRecorder notificationRecorder;
 	private CompositeOperation compositeOperation;
 
+	private ProjectSpaceBase projectSpace;
 	private IdEObjectCollectionImpl collection;
 	private EObjectChangeNotifier changeNotifier;
 
@@ -103,8 +104,9 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 	 * @param changeNotifier
 	 *            a change notifier that informs clients about changes in the collection
 	 */
-	public OperationRecorder(IdEObjectCollectionImpl collection, EObjectChangeNotifier changeNotifier) {
-		this.collection = collection;
+	public OperationRecorder(ProjectSpaceBase projectSpace, EObjectChangeNotifier changeNotifier) {
+		this.projectSpace = projectSpace;
+		this.collection = (IdEObjectCollectionImpl) projectSpace.getProject();
 		this.changeNotifier = changeNotifier;
 		operations = new ArrayList<AbstractOperation>();
 		editingDomain = Configuration.getEditingDomain();
@@ -226,12 +228,13 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 		}
 	}
 
-	private static List<SettingWithReferencedElement> collectIngoingCrossReferences(IdEObjectCollection collection,
+	private List<SettingWithReferencedElement> collectIngoingCrossReferences(IdEObjectCollection collection,
 		Set<EObject> allModelElements) {
 		List<SettingWithReferencedElement> settings = new ArrayList<SettingWithReferencedElement>();
 		for (EObject modelElement : allModelElements) {
-			Collection<Setting> inverseReferences = WorkspaceManager.getInstance().findInverseCrossReferences(
-				modelElement);
+			// Collection<Setting> inverseReferences0 = WorkspaceManager.getInstance().findInverseCrossReferences(
+			// modelElement);
+			Collection<Setting> inverseReferences = projectSpace.findInverseCrossReferences(modelElement);
 
 			for (Setting setting : inverseReferences) {
 				if (!ModelUtil.shouldBeCollected(collection, allModelElements, setting.getEObject())) {
@@ -611,8 +614,9 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 
 			for (EObject eObject : allContainedModelElementsSet) {
 				// delete incoming cross references
-				Collection<Setting> inverseReferences = WorkspaceManager.getInstance().findInverseCrossReferences(
-					eObject);
+				// Collection<Setting> inverseReferences0 = WorkspaceManager.getInstance().findInverseCrossReferences(
+				// eObject);
+				Collection<Setting> inverseReferences = projectSpace.findInverseCrossReferences(eObject);
 				ModelUtil.deleteIncomingCrossReferencesFromParent(inverseReferences, eObject);
 
 			}
