@@ -43,7 +43,7 @@ public class PerformanceTest extends ServerTests {
 	private static final String MODELS_DIR = new File("../../../Models").getAbsolutePath() + '/';
 	private static final String OUTPUT_DIR = "../../TestResults/";
 	private static final String[] MODELS = new String[] { "1000", "10000", "50000", "100000", "200000", "500000" };
-	private static final int NUM_ITERATIONS = 3;
+	private static final int NUM_ITERATIONS = 50;
 
 	private static MemoryMeter memoryMeter;
 	private static FileWriter writer;

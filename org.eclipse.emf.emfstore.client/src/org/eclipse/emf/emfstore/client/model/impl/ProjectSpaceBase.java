@@ -574,7 +574,57 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 
 		if (useCrossReferenceAdapter) {
 			crossReferenceAdapter = new ECrossReferenceAdapter();
-			resourceSet.eAdapters().add(crossReferenceAdapter);
+			getProject().eAdapters().add(crossReferenceAdapter);
+			// WorkspaceManager.getObserverBus().register(new DeleteProjectSpaceObserver() {
+			// public void projectDeleted(ProjectSpace projectSpace) {
+			// // remove project resourcess from crossreferenceadapter
+			// crossReferenceAdapter.unsetTarget(projectSpace);
+			// }
+			// });
+			// WorkspaceManager.getObserverBus().register(new ShareObserver() {
+			// public void shareDone(ProjectSpace projectSpace) {
+			// for (AbstractOperation op : projectSpace.getOperations()) {
+			// crossReferenceAdapter.unsetTarget(op);
+			// }
+			// }
+			// });
+			// WorkspaceManager.getObserverBus().register(new CheckoutObserver() {
+			// public void checkoutDone(ProjectSpace projectSpace) {
+			// for (AbstractOperation op : projectSpace.getOperations()) {
+			// crossReferenceAdapter.unsetTarget(op);
+			// }
+			// }
+			// });
+			// WorkspaceManager.getObserverBus().register(new CommitObserver() {
+			// private ChangePackage changePackage;
+			//
+			// public boolean inspectChanges(ProjectSpace projectSpace, ChangePackage changePackage) {
+			// this.changePackage = changePackage;
+			// return true;
+			// }
+			//
+			// public void commitCompleted(ProjectSpace projectSpace, PrimaryVersionSpec newRevision) {
+			// for (AbstractOperation op : changePackage.getOperations()) {
+			// crossReferenceAdapter.unsetTarget(op);
+			// }
+			// }
+			// });
+			// WorkspaceManager.getObserverBus().register(new UpdateObserver() {
+			// private List<ChangePackage> changePackages;
+			//
+			// public boolean inspectChanges(ProjectSpace projectSpace, List<ChangePackage> changePackages) {
+			// this.changePackages = changePackages;
+			// return true;
+			// }
+			//
+			// public void updateCompleted(ProjectSpace projectSpace) {
+			// for (ChangePackage changePackage : changePackages) {
+			// for (AbstractOperation op : changePackage.getOperations()) {
+			// crossReferenceAdapter.unsetTarget(op);
+			// }
+			// }
+			// }
+			// });
 		}
 
 		this.resourceSet = resourceSet;
