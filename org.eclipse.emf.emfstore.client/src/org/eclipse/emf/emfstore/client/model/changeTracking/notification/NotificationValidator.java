@@ -22,7 +22,12 @@ import org.eclipse.emf.ecore.EObject;
  */
 final class NotificationValidator {
 
-	private static NotificationValidator instance;
+	/**
+	 * Initializes the singleton statically.
+	 */
+	private static class SingletonHolder {
+		public static final NotificationValidator INSTANCE = new NotificationValidator();
+	}
 
 	/**
 	 * Singleton access.
@@ -30,12 +35,12 @@ final class NotificationValidator {
 	 * @return the validator instance
 	 */
 	public static NotificationValidator getInstance() {
-		if (instance == null) {
-			instance = new NotificationValidator();
-		}
-		return instance;
+		return SingletonHolder.INSTANCE;
 	}
 
+	/**
+	 * Private constructor.
+	 */
 	private NotificationValidator() {
 
 	}

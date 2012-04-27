@@ -23,7 +23,6 @@ import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOpera
 import org.eclipse.emf.emfstore.server.model.versioning.operations.AttributeOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.CompositeOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.CreateDeleteOperation;
-import org.eclipse.emf.emfstore.server.model.versioning.operations.DiagramLayoutOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.FeatureOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.ModelElementGroup;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.MultiAttributeMoveOperation;
@@ -156,11 +155,6 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 		@Override
 		public Adapter caseReferenceOperation(ReferenceOperation object) {
 			return createReferenceOperationAdapter();
-		}
-
-		@Override
-		public Adapter caseDiagramLayoutOperation(DiagramLayoutOperation object) {
-			return createDiagramLayoutOperationAdapter();
 		}
 
 		@Override
@@ -411,22 +405,6 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createReferenceOperationAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '
-	 * {@link org.eclipse.emf.emfstore.server.model.versioning.operations.DiagramLayoutOperation
-	 * <em>Diagram Layout Operation</em>}'.
-	 * <!-- begin-user-doc --> This default implementation returns null so that we
-	 * can easily ignore cases; it's useful to ignore a case when inheritance will catch all the cases anyway. <!--
-	 * end-user-doc -->
-	 * 
-	 * @return the new adapter.
-	 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.DiagramLayoutOperation
-	 * @generated
-	 */
-	public Adapter createDiagramLayoutOperationAdapter() {
 		return null;
 	}
 

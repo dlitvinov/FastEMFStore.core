@@ -197,6 +197,7 @@ public class ProjectSpaceItemProvider extends IdentifiableElementItemProvider im
 	 * This adds a property descriptor for the Changed Shared Properties feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	protected void addChangedSharedPropertiesPropertyDescriptor(Object object) {
@@ -214,6 +215,7 @@ public class ProjectSpaceItemProvider extends IdentifiableElementItemProvider im
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -232,6 +234,7 @@ public class ProjectSpaceItemProvider extends IdentifiableElementItemProvider im
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override

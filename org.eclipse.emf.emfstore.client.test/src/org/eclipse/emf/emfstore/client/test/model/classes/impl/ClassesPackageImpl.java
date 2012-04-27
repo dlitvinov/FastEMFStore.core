@@ -5,8 +5,6 @@
  */
 package org.eclipse.emf.emfstore.client.test.model.classes.impl;
 
-import static org.eclipse.emf.emfstore.client.test.model.classes.ClassesPackage.CLASS;
-
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;

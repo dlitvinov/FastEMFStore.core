@@ -222,9 +222,7 @@ public class AttributeOperationTest extends WorkspaceTest {
 		AttributeOperation cmpOperation = (AttributeOperation) attributeOperation.reverse().reverse();
 
 		assertEquals(attributeOperation.getFeatureName(), cmpOperation.getFeatureName());
-		assertEquals(attributeOperation.getDescription(), cmpOperation.getDescription());
 		assertEquals(attributeOperation.getModelElementId(), cmpOperation.getModelElementId());
-		assertEquals(attributeOperation.getName(), cmpOperation.getName());
 		assertEquals(attributeOperation.getNewValue(), cmpOperation.getNewValue());
 		assertEquals(attributeOperation.getOldValue(), cmpOperation.getOldValue());
 

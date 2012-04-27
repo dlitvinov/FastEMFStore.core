@@ -133,15 +133,23 @@ public interface ProjectSpace extends IdentifiableElement {
 	CompositeOperationHandle beginCompositeOperation();
 
 	/**
-	 * TODO
+	 * Commits all pending changes of the project space.
 	 * 
 	 * @param logMessage
+	 *            a log message describing the changes to be committed
 	 * @param callback
+	 *            an optional callback method to be performed while the commit is in progress, may be <code>null</code>
 	 * @param monitor
+	 *            an optional progress monitor to be used while the commit is in progress, may be <code>null</code>
+	 * 
+	 * @return the current version spec
+	 * 
+	 * @throws EmfStoreException
+	 *             in case the commit went wrong
 	 * 
 	 * @generated NOT
 	 */
-	public PrimaryVersionSpec commit(LogMessage logMessage, CommitCallback callback, IProgressMonitor monitor)
+	PrimaryVersionSpec commit(LogMessage logMessage, CommitCallback callback, IProgressMonitor monitor)
 		throws EmfStoreException;
 
 	/**
@@ -317,9 +325,13 @@ public interface ProjectSpace extends IdentifiableElement {
 	/**
 	 * Gets a list of history infos.
 	 * 
+	 * @param query
+	 *            the query to be performed in order to fetch the history information
+	 * 
 	 * @see Workspace
 	 * @return a list of history infos
-	 * @throws EmfStoreException if server throws an exception
+	 * @throws EmfStoreException
+	 *             if server the throws an exception
 	 * @generated NOT
 	 */
 	List<HistoryInfo> getHistoryInfo(HistoryQuery query) throws EmfStoreException;
@@ -578,6 +590,8 @@ public interface ProjectSpace extends IdentifiableElement {
 	 * Deletes the project space.
 	 * 
 	 * @generated NOT
+	 * @throws IOException
+	 *             in case the project space could not be deleted
 	 */
 	public void delete() throws IOException;
 
@@ -640,8 +654,11 @@ public interface ProjectSpace extends IdentifiableElement {
 	 * @param conflictResolver
 	 *            a conflict resolver that will actually perform the conflict
 	 *            resolution
+	 * 
+	 * @return whether the merge could be proceed
+	 * 
 	 * @throws EmfStoreException
-	 *             if the conncection to the server fails
+	 *             if the connection to the server fails
 	 * 
 	 * @generated NOT
 	 */
@@ -877,7 +894,8 @@ public interface ProjectSpace extends IdentifiableElement {
 	/**
 	 * Undo the last operation <em>n</em> operations of the projectSpace.
 	 * 
-	 * @param the number of operations to be undone
+	 * @param nrOperations
+	 *            the number of operations to be undone
 	 * 
 	 * @generated NOT
 	 */
@@ -914,7 +932,12 @@ public interface ProjectSpace extends IdentifiableElement {
 	 *            the {@link VersionSpec} to update to
 	 * @param callback
 	 *            the {@link UpdateCallback} that will be called when the update has been performed
-	 * @param progress an {@link IProgressMonitor} instance
+	 * @param progress
+	 *            an {@link IProgressMonitor} instance
+	 * @return the current version spec
+	 * 
+	 * @throws EmfStoreException
+	 *             in case the update went wrong
 	 * @see UpdateCallback#updateCompleted(ProjectSpace, PrimaryVersionSpec, PrimaryVersionSpec)
 	 * @generated NOT
 	 */

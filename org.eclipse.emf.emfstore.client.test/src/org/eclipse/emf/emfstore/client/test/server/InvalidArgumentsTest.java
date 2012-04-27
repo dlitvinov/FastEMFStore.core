@@ -5,12 +5,16 @@
  */
 package org.eclipse.emf.emfstore.client.test.server;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.eclipse.emf.emfstore.client.model.Configuration;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.xmlrpc.XmlRpcClientManager;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.xmlrpc.XmlRpcConnectionManager;
+import org.eclipse.emf.emfstore.client.test.SetupHelper;
 import org.eclipse.emf.emfstore.common.model.Project;
+import org.eclipse.emf.emfstore.server.ServerConfiguration;
 import org.eclipse.emf.emfstore.server.exceptions.EmfStoreException;
 import org.eclipse.emf.emfstore.server.exceptions.InvalidInputException;
 import org.eclipse.emf.emfstore.server.exceptions.UnknownSessionException;
@@ -37,9 +41,23 @@ public class InvalidArgumentsTest extends ServerTests {
 	 * {@inheritDoc}
 	 * 
 	 * @throws EmfStoreException in case of failure
+	 * @throws IOException
 	 */
 	@BeforeClass
-	public static void setUpBeforeClass() throws EmfStoreException {
+	public static void setUpBeforeClass() throws EmfStoreException, IOException {
+		ServerConfiguration.setTesting(true);
+		Configuration.setTesting(true);
+
+		// delete all data before test start
+		SetupHelper.removeServerTestProfile();
+
+		SetupHelper.addUserFileToServer(false);
+
+		// setConnectionManager(WorkspaceManager.getInstance().getConnectionManager());
+		setServerInfo(SetupHelper.getServerInfo());
+		// login();
+		initArguments();
+
 		setConnectionManager(new XmlRpcConnectionManager() {
 			@Override
 			protected XmlRpcClientManager getConnectionProxy(SessionId sessionId) throws UnknownSessionException {
@@ -50,6 +68,8 @@ public class InvalidArgumentsTest extends ServerTests {
 
 			}
 		});
+
+		SetupHelper.startSever();
 		ServerTests.login();
 	}
 

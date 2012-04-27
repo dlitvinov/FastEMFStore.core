@@ -76,7 +76,7 @@ public class SemanticCompositeOperationItemProvider extends CompositeOperationIt
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((SemanticCompositeOperation) object).getName();
+		String label = ((SemanticCompositeOperation) object).getCompositeName();
 		return label == null || label.length() == 0 ? getString("_UI_SemanticCompositeOperation_type")
 			: getString("_UI_SemanticCompositeOperation_type") + " " + label;
 	}

@@ -71,8 +71,14 @@ public class IsServerAdminTester extends PropertyTester {
 
 	private ServerInfo findServerInfo(ProjectInfo projectInfo) {
 		for (ServerInfo serverInfo : WorkspaceManager.getInstance().getCurrentWorkspace().getServerInfos()) {
-			if (projectInfo.eContainer().equals(serverInfo)) {
+			if (projectInfo.eContainer() != null && projectInfo.eContainer().equals(serverInfo)) {
 				return serverInfo;
+			} else {
+				for (ProjectInfo info : serverInfo.getProjectInfos()) {
+					if (info.getProjectId().equals(projectInfo.getProjectId())) {
+						return serverInfo;
+					}
+				}
 			}
 		}
 

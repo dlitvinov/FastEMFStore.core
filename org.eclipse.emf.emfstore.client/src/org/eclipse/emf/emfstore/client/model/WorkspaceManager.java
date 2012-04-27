@@ -17,14 +17,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
@@ -64,15 +62,13 @@ public final class WorkspaceManager {
 	private static WorkspaceManager instance;
 
 	private Workspace currentWorkspace;
+	private SessionManager sessionManager;
+	private ObserverBus observerBus;
+
 	private ConnectionManager connectionManager;
 	private AdminConnectionManager adminConnectionManager;
 
-	private ObserverBus observerBus;
-
-	// private ExtendedCrossReferenceAdapter crossReferenceAdapter;
 	private ResourceSet resourceSet;
-
-	private SessionManager sessionManager;
 
 	/**
 	 * Get an instance of the workspace manager. Will create an instance if no
@@ -191,25 +187,6 @@ public final class WorkspaceManager {
 		((ResourceSetImpl) resourceSet).setURIResourceMap(new HashMap<URI, Resource>());
 		resourceSet.getLoadOptions().putAll(ModelUtil.getResourceLoadOptions());
 
-		// boolean useCrossReferenceAdapter = false;
-		//
-		// for (ExtensionElement element : new
-		// ExtensionPoint("org.eclipse.emf.emfstore.client.inverseCrossReferenceCache")
-		// .getExtensionElements()) {
-		// useCrossReferenceAdapter |= element.getBoolean("activated");
-		// }
-		//
-		// if (useCrossReferenceAdapter) {
-		// crossReferenceAdapter = new ExtendedCrossReferenceAdapter();
-		// resourceSet.eAdapters().add(crossReferenceAdapter);
-		// getObserverBus().register(new DeleteProjectSpaceObserver() {
-		// public void projectDeleted(ProjectSpace projectSpace) {
-		// // remove project resourcess from crossreferenceadapter
-		// crossReferenceAdapter.unsetTarget(projectSpace);
-		// }
-		// });
-		// }
-
 		// register an editing domain on the resource
 		Configuration.setEditingDomain(createEditingDomain(resourceSet));
 		// enable auto-save by default
@@ -243,7 +220,7 @@ public final class WorkspaceManager {
 		}
 
 		workspace.setConnectionManager(this.connectionManager);
-		workspace.setWorkspaceResourceSet(resourceSet);
+		workspace.setResourceSet(resourceSet);
 
 		new EMFStoreCommand() {
 			@Override
@@ -473,19 +450,6 @@ public final class WorkspaceManager {
 		}
 	}
 
-	// /**
-	// * Returns the {@link ECrossReferenceAdapter}, if available.
-	// *
-	// * @return the {@link ECrossReferenceAdapter}
-	// */
-	// public Collection<Setting> findInverseCrossReferences(EObject modelElement) {
-	// if (crossReferenceAdapter != null) {
-	// return crossReferenceAdapter.getInverseReferences(modelElement);
-	// }
-	//
-	// return UsageCrossReferencer.find(modelElement, resourceSet);
-	// }
-
 	/**
 	 * Migrate the model instance if neccessary.
 	 * 
@@ -602,31 +566,5 @@ public final class WorkspaceManager {
 	 */
 	public SessionManager getSessionManager() {
 		return sessionManager;
-	}
-
-	static class ExtendedCrossReferenceAdapter extends ECrossReferenceAdapter {
-
-		@Override
-		protected void unsetTarget(EObject target) {
-			super.unsetTarget(target);
-			if (target instanceof ProjectSpace) {
-				ProjectSpace projectSpace = (ProjectSpace) target;
-				String pathToProject = Configuration.getWorkspaceDirectory()
-					+ Configuration.getProjectSpaceDirectoryPrefix() + projectSpace.getIdentifier();
-				List<Resource> toDelete = new ArrayList<Resource>();
-				for (Resource resource : unloadedResources) {
-					if (resource.getURI().toFileString().startsWith(pathToProject)) {
-						toDelete.add(resource);
-					}
-				}
-				unloadedResources.removeAll(toDelete);
-			}
-		}
-
-		@Override
-		protected void removeAdapter(Notifier notifier) {
-			super.removeAdapter(notifier);
-		}
-
 	}
 }

@@ -40,7 +40,22 @@ import org.eclipse.emf.emfstore.server.exceptions.ServerKeyStoreException;
  */
 public final class XmlRpcWebserverManager {
 
-	private static XmlRpcWebserverManager instance;
+	/**
+	 * Initializes the singleton instance statically.
+	 */
+	private static class SingletonHolder {
+		public static final XmlRpcWebserverManager INSTANCE = new XmlRpcWebserverManager();
+	}
+
+	/**
+	 * Returns an instance of the webserver manager.
+	 * 
+	 * @return instance of websever manager.
+	 */
+	public static XmlRpcWebserverManager getInstance() {
+		return SingletonHolder.INSTANCE;
+	}
+
 	private WebServer webServer;
 	private final int port;
 
@@ -52,18 +67,6 @@ public final class XmlRpcWebserverManager {
 			tmp = Integer.valueOf(ServerConfiguration.XML_RPC_PORT_DEFAULT);
 		}
 		port = tmp;
-	}
-
-	/**
-	 * Returns instance of the webserver manager.
-	 * 
-	 * @return instance of websever manager.
-	 */
-	public static XmlRpcWebserverManager getInstance() {
-		if (instance == null) {
-			instance = new XmlRpcWebserverManager();
-		}
-		return instance;
 	}
 
 	/**

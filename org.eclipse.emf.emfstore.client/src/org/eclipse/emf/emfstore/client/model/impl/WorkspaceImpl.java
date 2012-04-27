@@ -275,7 +275,7 @@ public class WorkspaceImpl extends EObjectImpl implements Workspace {
 		projectSpace.setProjectDescription(projectDescription);
 		projectSpace.setLocalOperations(ModelFactory.eINSTANCE.createOperationComposite());
 
-		projectSpace.initResources(this.getWorkspaceResourceSet());
+		projectSpace.initResources(getResourceSet());
 
 		this.addProjectSpace(projectSpace);
 		this.save();
@@ -335,7 +335,7 @@ public class WorkspaceImpl extends EObjectImpl implements Workspace {
 
 		projectSpace.delete();
 
-		WorkspaceManager.getObserverBus().notify(DeleteProjectSpaceObserver.class).projectDeleted(projectSpace);
+		WorkspaceManager.getObserverBus().notify(DeleteProjectSpaceObserver.class).projectSpaceDeleted(projectSpace);
 	}
 
 	public void deleteRemoteProject(ServerInfo serverInfo, final ProjectId projectId, final boolean deleteFiles)
@@ -725,7 +725,7 @@ public class WorkspaceImpl extends EObjectImpl implements Workspace {
 	/**
 	 * {@inheritDoc}
 	 */
-	public ResourceSet getWorkspaceResourceSet() {
+	public ResourceSet getResourceSet() {
 		return this.workspaceResourceSet;
 	}
 
@@ -895,7 +895,7 @@ public class WorkspaceImpl extends EObjectImpl implements Workspace {
 	 * 
 	 * @see org.eclipse.emf.emfstore.client.model.Workspace#setWorkspaceResourceSet(org.eclipse.emf.ecore.resource.ResourceSet)
 	 */
-	public void setWorkspaceResourceSet(ResourceSet resourceSet) {
+	public void setResourceSet(ResourceSet resourceSet) {
 		this.workspaceResourceSet = resourceSet;
 	}
 

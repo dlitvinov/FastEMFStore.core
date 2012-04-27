@@ -84,24 +84,6 @@ public interface SemanticPackage extends EPackage {
 	int SEMANTIC_COMPOSITE_OPERATION__IDENTIFIER = OperationsPackage.COMPOSITE_OPERATION__IDENTIFIER;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int SEMANTIC_COMPOSITE_OPERATION__NAME = OperationsPackage.COMPOSITE_OPERATION__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int SEMANTIC_COMPOSITE_OPERATION__DESCRIPTION = OperationsPackage.COMPOSITE_OPERATION__DESCRIPTION;
-
-	/**
 	 * The feature id for the '<em><b>Model Element Id</b></em>' containment reference.
 	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->

@@ -1,0 +1,67 @@
+<project default="create.javadoc" name="EMFStore" basedir=".">
+
+	<target name="create.javadoc" description="Create Javadocs for EMFStore / EMF Client Platform">
+		<!-- timestamp documentation -->
+		<tstamp>
+			<format property="current.time" pattern="MM/dd/yyyy hh:mm:ss aa" />
+		</tstamp>
+
+		<!-- prefix for environment variables -->
+		<property environment="env" />
+
+		<!-- debug output -->
+		<echo message="JAVA_HOME ${env.JAVA_HOME}"/>
+		
+		<!-- set target platform as classpath -->
+		<path id="files-classpath">
+			<fileset dir="${target.platform}">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+
+		<!-- clean and create output location -->
+		<delete dir="${basedir}/javadoc/" />
+		<mkdir dir="${basedir}/javadoc/" />
+		<javadoc destdir="${basedir}/javadoc/" executable="${env.JAVA_HOME}/bin/javadoc" classpathref="files-classpath" maxmemory="1024m" source="1.6" useexternalfile="true" author="true" version="true" use="true" windowtitle="EMFStore / EMF Client Platform">
+			<!-- link external APIs -->
+			<link offline="false" href="http://java.sun.com/javase/6/docs/api/" />
+			<link offline="false" href="http://download.eclipse.org/modeling/emf/emf/javadoc/2.5.0/" />
+			
+			<fileset dir="${source}/" defaultexcludes="true">
+				<!-- EMFStore -->
+				<include name="*emfstore.core/**/*.java" />
+				<include name="*emfstore.other/org.eclipse.emf.emfstore.*.backchannel/**/*.java" />
+				<include name="*emfstore.other/org.eclipse.emf.emfstore.examplemodel/**/*.java" />
+				<include name="*emfstore.other/org.eclipse.emf.emfstore.migration.edapt/**/*.java" />
+				<include name="*emfstore.other/org.eclipse.emf.emfstore.client.transaction/**/*.java" />
+
+				<!-- EMF Client Platform -->
+				<include name="*ecp.core/**/*.java" />
+
+				<!-- do not generate JavaDoc for tests -->
+				<exclude name="**/test/**" />
+			</fileset>
+
+			<!-- header and footer -->
+			<doctitle>
+				<![CDATA[<h1>EMFStore / EMF Client Platform</h1>]]>
+			</doctitle>
+			<bottom>
+				<![CDATA[Timestamp: ${current.time}<br />
+				<i>Copyright 2012 EclipseSource Munich. All Rights Reserved.</i>]]>
+			</bottom>
+	
+			<!-- EMF tags -->
+			<tag name="generated" scope="all" description="EMF Generated:" />
+			<tag name="ordered" scope="all" description="EMF Ordered:" />
+			<tag name="model" scope="all" description="EMF Model:" />
+			<tag name="implements" scope="all" description="EMF Implements:" />
+			<tag name="extends" scope="all" description="EMF Extends:" />
+	
+			<!-- grouping in package overview -->
+			<group title="EMFStore" packages="org.eclipse.emf.emfstore.*" />
+			<group title="EMF Client Platform" packages="org.eclipse.emf.ecp.*" />
+		</javadoc>
+	</target>
+
+</project>

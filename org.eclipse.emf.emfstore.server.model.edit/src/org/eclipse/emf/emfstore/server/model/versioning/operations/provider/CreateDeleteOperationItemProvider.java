@@ -283,9 +283,6 @@ public class CreateDeleteOperationItemProvider extends AbstractOperationItemProv
 			OperationsFactory.eINSTANCE.createMultiReferenceMoveOperation()));
 
 		newChildDescriptors.add(createChildParameter(OperationsPackage.Literals.CREATE_DELETE_OPERATION__MODEL_ELEMENT,
-			OperationsFactory.eINSTANCE.createDiagramLayoutOperation()));
-
-		newChildDescriptors.add(createChildParameter(OperationsPackage.Literals.CREATE_DELETE_OPERATION__MODEL_ELEMENT,
 			OperationsFactory.eINSTANCE.createOperationId()));
 
 		newChildDescriptors.add(createChildParameter(OperationsPackage.Literals.CREATE_DELETE_OPERATION__MODEL_ELEMENT,

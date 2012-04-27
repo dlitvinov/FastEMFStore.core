@@ -129,18 +129,6 @@ public class CreateDeleteOperationImpl extends AbstractOperationImpl implements 
 	}
 
 	@Override
-	public boolean canApply(Project project) {
-		// TODO: see comment in checkValidity
-		// checkValidity();
-		// if (isDelete()) {
-		// return project.contains(getModelElementId());
-		// } else {
-		// return !project.contains(getModelElementId());
-		// }
-		return true;
-	}
-
-	@Override
 	public AbstractOperation reverse() {
 		// TODO: see comment in checkValidity
 		// checkValidity();
@@ -498,37 +486,6 @@ public class CreateDeleteOperationImpl extends AbstractOperationImpl implements 
 		result.append(delete);
 		result.append(')');
 		return result.toString();
-	}
-
-	@Override
-	public String getDescription() {
-		StringBuilder stringBuilder = new StringBuilder();
-		if (isDelete()) {
-			stringBuilder.append("Deleted  ");
-		} else {
-			stringBuilder.append("Created ");
-		}
-		stringBuilder.append(getModelElement().eClass().getName());
-		stringBuilder.append(" ");
-		stringBuilder.append(getModelElementId().getId());
-		// stringBuilder.append(".");
-		return stringBuilder.toString();
-	}
-
-	@Override
-	public String getName() {
-		StringBuilder stringBuilder = new StringBuilder();
-		if (isDelete()) {
-			stringBuilder.append("Deleted  ");
-			stringBuilder.append(getModelElement().eClass().getName());
-			stringBuilder.append(" \"");
-			stringBuilder.append(getModelElementId().getId());
-			stringBuilder.append("\"");
-		} else {
-			stringBuilder.append("Created ");
-			stringBuilder.append(getModelElement().eClass().getName());
-		}
-		return stringBuilder.toString();
 	}
 
 	/**

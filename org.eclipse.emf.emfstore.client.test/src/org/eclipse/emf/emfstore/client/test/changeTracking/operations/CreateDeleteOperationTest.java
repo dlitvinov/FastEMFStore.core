@@ -1313,7 +1313,6 @@ public class CreateDeleteOperationTest extends WorkspaceTest {
 		TestElement copiedNewTestElement = (TestElement) createDeleteOperation.getModelElement();
 		TestElement copiedNewChildElement1 = copiedNewTestElement.getContainedElements().get(0);
 		TestElement copiedNewChildElement2 = copiedNewTestElement.getContainedElements().get(1);
-		TestElement copiedNewChildElement3 = copiedNewTestElement.getContainedElements().get(2);
 
 		assertEquals(3, copiedNewTestElement.getContainedElements().size());
 		assertEquals(copiedNewTestElement, copiedNewChildElement1.getReferences().get(0));
@@ -1484,9 +1483,6 @@ public class CreateDeleteOperationTest extends WorkspaceTest {
 				testElement.getContainedElements().clear();
 			}
 		}.run(false);
-
-		List<AbstractOperation> operations = getProjectSpace().getOperations();
-		// assertEquals(4, operations.size());
 
 		new EMFStoreCommand() {
 

@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<cq:componentQuery xmlns:cq="http://www.eclipse.org/buckminster/CQuery-1.0" resourceMap="build.rmap" properties="buckminster.properties">
+<cq:componentQuery xmlns:cq="http://www.eclipse.org/buckminster/CQuery-1.0" resourceMap="build.rmap">
     <cq:rootRequest name="org.eclipse.emf.emfstore.site" componentType="eclipse.feature"/>
-    
-    <!--cq:advisorNode namePattern="^org\.eclipse\.emf\.ecp(?:\..+)?$" branchTagPath="ECP_materialization,main"/>
-    <cq:advisorNode namePattern="^org\.eclipse\.emf\.emfstore(?:\..+)?$" branchTagPath="ECP_materialization,main"/>
-    <cq:advisorNode namePattern="^EMFStore.*?$" branchTagPath="ECP_materialization,main"/>
-    <cq:advisorNode namePattern="^ECP.*?$" branchTagPath="ECP_materialization,main"/-->
-    
     <cq:advisorNode namePattern="^org\.eclipse\.emf$" versionOverride="[2.5.0.v200906151043,2.5.0.v200906151043]"/>
     <cq:advisorNode namePattern="^org\.eclipse\.emf\.(?:ant|common|ecore|converter|doc|edit|example|importer|mapping)(?:\..+)?$" versionOverride="[2.5.0.v200906151043,2.5.0.v200906151043]"/>
     <cq:advisorNode namePattern="^org\.eclipse\.emf\.databinding(?:\..+)?$" versionOverride="[1.1.0.v200906151043,1.1.0.v200906151043]"/>

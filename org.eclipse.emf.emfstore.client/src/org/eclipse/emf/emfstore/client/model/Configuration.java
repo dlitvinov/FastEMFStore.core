@@ -91,14 +91,16 @@ public final class Configuration {
 	 */
 	public static LocationProvider getLocationProvider() {
 		if (locationProvider == null) {
+
 			try {
 				// TODO EXPT PRIO
 				locationProvider = new ExtensionPoint("org.eclipse.emf.emfstore.client.workspaceLocationProvider")
 					.setThrowException(true).getClass("providerClass", LocationProvider.class);
 			} catch (ExtensionPointException e) {
-				String message = "Error while instantiating location provider, switching to default location!";
-				ModelUtil.logWarning(message, e);
+				String message = "Error while instantiating location provider or none configured, switching to default location!";
+				ModelUtil.logInfo(message);
 			}
+
 			if (locationProvider == null) {
 				locationProvider = new DefaultWorkspaceLocationProvider();
 			}
@@ -217,6 +219,7 @@ public final class Configuration {
 		clientVersionInfo.setName(CLIENT_NAME);
 
 		Bundle emfStoreBundle = Platform.getBundle("org.eclipse.emf.emfstore.client");
+		@SuppressWarnings("cast")
 		String emfStoreVersionString = (String) emfStoreBundle.getHeaders().get(
 			org.osgi.framework.Constants.BUNDLE_VERSION);
 

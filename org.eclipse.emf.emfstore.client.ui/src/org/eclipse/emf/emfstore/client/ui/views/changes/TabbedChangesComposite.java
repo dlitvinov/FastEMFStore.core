@@ -34,9 +34,7 @@ import org.eclipse.swt.widgets.TabItem;
 public class TabbedChangesComposite extends Composite {
 
 	private TabFolder folder;
-	private List<ChangePackage> changePackages;
 	private Composite tabComposite;
-	private TreeViewer compactTabTreeViewer;
 	private TreeViewer tabTreeViewer;
 	private SCMContentProvider contentProvider;
 

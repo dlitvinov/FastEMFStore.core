@@ -166,9 +166,6 @@ public class MergingSolutionItemProvider extends SolutionItemProvider implements
 
 		newChildDescriptors.add(createChildParameter(ChangePackage.Literals.MERGING_SOLUTION__APPLIED_OPERATIONS,
 			OperationsFactory.eINSTANCE.createMultiReferenceMoveOperation()));
-
-		newChildDescriptors.add(createChildParameter(ChangePackage.Literals.MERGING_SOLUTION__APPLIED_OPERATIONS,
-			OperationsFactory.eINSTANCE.createDiagramLayoutOperation()));
 	}
 
 	/**

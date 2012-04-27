@@ -65,6 +65,12 @@ import org.eclipse.equinox.app.IApplicationContext;
  */
 public class EmfStoreController implements IApplication, Runnable {
 
+	/**
+	 * The period of time in seconds between executing the clean memory task.
+	 */
+	private static final int CLEAN_MEMORY_TASK_PERIOD = 60;
+	private static EmfStoreController instance;
+
 	private EmfStore emfStore;
 	private AdminEmfStore adminEmfStore;
 	private AccessControlImpl accessControl;
@@ -72,15 +78,7 @@ public class EmfStoreController implements IApplication, Runnable {
 	private Properties properties;
 	private ServerSpace serverSpace;
 	private Resource resource;
-
-	private static EmfStoreController instance;
-
 	private HistoryCache historyCache;
-
-	/**
-	 * The period of time in seconds between executing the clean memory task.
-	 */
-	private static final int CLEAN_MEMORY_TASK_PERIOD = 10;
 
 	/**
 	 * {@inheritDoc}
@@ -103,7 +101,7 @@ public class EmfStoreController implements IApplication, Runnable {
 	 * @throws FatalEmfStoreException
 	 *             if the server fails fatally
 	 */
-	public void run(boolean waitForTermination) throws FatalEmfStoreException {
+	public synchronized void run(boolean waitForTermination) throws FatalEmfStoreException {
 		if (instance != null) {
 			throw new FatalEmfStoreException("Another EmfStore Controller seems to be running already!");
 		}

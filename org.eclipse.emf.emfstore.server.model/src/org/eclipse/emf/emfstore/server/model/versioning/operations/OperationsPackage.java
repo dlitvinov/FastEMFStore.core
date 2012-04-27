@@ -87,24 +87,6 @@ public interface OperationsPackage extends EPackage {
 	int ABSTRACT_OPERATION__IDENTIFIER = ModelPackage.IDENTIFIABLE_ELEMENT__IDENTIFIER;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int ABSTRACT_OPERATION__NAME = ModelPackage.IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int ABSTRACT_OPERATION__DESCRIPTION = ModelPackage.IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 1;
-
-	/**
 	 * The feature id for the '<em><b>Model Element Id</b></em>' containment reference.
 	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
@@ -112,7 +94,7 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_OPERATION__MODEL_ELEMENT_ID = ModelPackage.IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 2;
+	int ABSTRACT_OPERATION__MODEL_ELEMENT_ID = ModelPackage.IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Accepted</b></em>' attribute.
@@ -121,7 +103,7 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_OPERATION__ACCEPTED = ModelPackage.IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 3;
+	int ABSTRACT_OPERATION__ACCEPTED = ModelPackage.IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Client Date</b></em>' attribute.
@@ -130,7 +112,7 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_OPERATION__CLIENT_DATE = ModelPackage.IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 4;
+	int ABSTRACT_OPERATION__CLIENT_DATE = ModelPackage.IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of structural features of the '<em>Abstract Operation</em>' class.
@@ -140,7 +122,7 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_OPERATION_FEATURE_COUNT = ModelPackage.IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 5;
+	int ABSTRACT_OPERATION_FEATURE_COUNT = ModelPackage.IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The meta object id for the '
@@ -162,24 +144,6 @@ public interface OperationsPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPOSITE_OPERATION__IDENTIFIER = ABSTRACT_OPERATION__IDENTIFIER;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int COMPOSITE_OPERATION__NAME = ABSTRACT_OPERATION__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int COMPOSITE_OPERATION__DESCRIPTION = ABSTRACT_OPERATION__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Model Element Id</b></em>' containment reference.
@@ -288,24 +252,6 @@ public interface OperationsPackage extends EPackage {
 	int FEATURE_OPERATION__IDENTIFIER = ABSTRACT_OPERATION__IDENTIFIER;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int FEATURE_OPERATION__NAME = ABSTRACT_OPERATION__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int FEATURE_OPERATION__DESCRIPTION = ABSTRACT_OPERATION__DESCRIPTION;
-
-	/**
 	 * The feature id for the '<em><b>Model Element Id</b></em>' containment reference.
 	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
@@ -372,24 +318,6 @@ public interface OperationsPackage extends EPackage {
 	 * @ordered
 	 */
 	int CREATE_DELETE_OPERATION__IDENTIFIER = ABSTRACT_OPERATION__IDENTIFIER;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int CREATE_DELETE_OPERATION__NAME = ABSTRACT_OPERATION__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int CREATE_DELETE_OPERATION__DESCRIPTION = ABSTRACT_OPERATION__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Model Element Id</b></em>' containment reference.
@@ -489,24 +417,6 @@ public interface OperationsPackage extends EPackage {
 	int ATTRIBUTE_OPERATION__IDENTIFIER = FEATURE_OPERATION__IDENTIFIER;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int ATTRIBUTE_OPERATION__NAME = FEATURE_OPERATION__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int ATTRIBUTE_OPERATION__DESCRIPTION = FEATURE_OPERATION__DESCRIPTION;
-
-	/**
 	 * The feature id for the '<em><b>Model Element Id</b></em>' containment reference.
 	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
@@ -591,24 +501,6 @@ public interface OperationsPackage extends EPackage {
 	 * @ordered
 	 */
 	int MULTI_ATTRIBUTE_OPERATION__IDENTIFIER = FEATURE_OPERATION__IDENTIFIER;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_ATTRIBUTE_OPERATION__NAME = FEATURE_OPERATION__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_ATTRIBUTE_OPERATION__DESCRIPTION = FEATURE_OPERATION__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Model Element Id</b></em>' containment reference.
@@ -707,24 +599,6 @@ public interface OperationsPackage extends EPackage {
 	int MULTI_ATTRIBUTE_SET_OPERATION__IDENTIFIER = FEATURE_OPERATION__IDENTIFIER;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_ATTRIBUTE_SET_OPERATION__NAME = FEATURE_OPERATION__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_ATTRIBUTE_SET_OPERATION__DESCRIPTION = FEATURE_OPERATION__DESCRIPTION;
-
-	/**
 	 * The feature id for the '<em><b>Model Element Id</b></em>' containment reference.
 	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
@@ -818,24 +692,6 @@ public interface OperationsPackage extends EPackage {
 	 * @ordered
 	 */
 	int MULTI_ATTRIBUTE_MOVE_OPERATION__IDENTIFIER = FEATURE_OPERATION__IDENTIFIER;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_ATTRIBUTE_MOVE_OPERATION__NAME = FEATURE_OPERATION__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_ATTRIBUTE_MOVE_OPERATION__DESCRIPTION = FEATURE_OPERATION__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Model Element Id</b></em>' containment reference.
@@ -933,24 +789,6 @@ public interface OperationsPackage extends EPackage {
 	int REFERENCE_OPERATION__IDENTIFIER = FEATURE_OPERATION__IDENTIFIER;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE_OPERATION__NAME = FEATURE_OPERATION__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE_OPERATION__DESCRIPTION = FEATURE_OPERATION__DESCRIPTION;
-
-	/**
 	 * The feature id for the '<em><b>Model Element Id</b></em>' containment reference.
 	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
@@ -1045,24 +883,6 @@ public interface OperationsPackage extends EPackage {
 	 * @ordered
 	 */
 	int SINGLE_REFERENCE_OPERATION__IDENTIFIER = REFERENCE_OPERATION__IDENTIFIER;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int SINGLE_REFERENCE_OPERATION__NAME = REFERENCE_OPERATION__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int SINGLE_REFERENCE_OPERATION__DESCRIPTION = REFERENCE_OPERATION__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Model Element Id</b></em>' containment reference.
@@ -1193,24 +1013,6 @@ public interface OperationsPackage extends EPackage {
 	int MULTI_REFERENCE_SET_OPERATION__IDENTIFIER = REFERENCE_OPERATION__IDENTIFIER;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_REFERENCE_SET_OPERATION__NAME = REFERENCE_OPERATION__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_REFERENCE_SET_OPERATION__DESCRIPTION = REFERENCE_OPERATION__DESCRIPTION;
-
-	/**
 	 * The feature id for the '<em><b>Model Element Id</b></em>' containment reference.
 	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
@@ -1322,24 +1124,6 @@ public interface OperationsPackage extends EPackage {
 	 * @ordered
 	 */
 	int MULTI_REFERENCE_OPERATION__IDENTIFIER = REFERENCE_OPERATION__IDENTIFIER;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_REFERENCE_OPERATION__NAME = REFERENCE_OPERATION__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_REFERENCE_OPERATION__DESCRIPTION = REFERENCE_OPERATION__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Model Element Id</b></em>' containment reference.
@@ -1465,24 +1249,6 @@ public interface OperationsPackage extends EPackage {
 	int MULTI_REFERENCE_MOVE_OPERATION__IDENTIFIER = FEATURE_OPERATION__IDENTIFIER;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_REFERENCE_MOVE_OPERATION__NAME = FEATURE_OPERATION__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_REFERENCE_MOVE_OPERATION__DESCRIPTION = FEATURE_OPERATION__DESCRIPTION;
-
-	/**
 	 * The feature id for the '<em><b>Model Element Id</b></em>' containment reference.
 	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
@@ -1559,110 +1325,6 @@ public interface OperationsPackage extends EPackage {
 
 	/**
 	 * The meta object id for the '
-	 * {@link org.eclipse.emf.emfstore.server.model.versioning.operations.impl.DiagramLayoutOperationImpl
-	 * <em>Diagram Layout Operation</em>}' class.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.impl.DiagramLayoutOperationImpl
-	 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.impl.OperationsPackageImpl#getDiagramLayoutOperation()
-	 * @generated
-	 */
-	int DIAGRAM_LAYOUT_OPERATION = 13;
-
-	/**
-	 * The feature id for the '<em><b>Identifier</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int DIAGRAM_LAYOUT_OPERATION__IDENTIFIER = ATTRIBUTE_OPERATION__IDENTIFIER;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int DIAGRAM_LAYOUT_OPERATION__NAME = ATTRIBUTE_OPERATION__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int DIAGRAM_LAYOUT_OPERATION__DESCRIPTION = ATTRIBUTE_OPERATION__DESCRIPTION;
-
-	/**
-	 * The feature id for the '<em><b>Model Element Id</b></em>' containment reference.
-	 * <!-- begin-user-doc --> <!--
-	 * end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int DIAGRAM_LAYOUT_OPERATION__MODEL_ELEMENT_ID = ATTRIBUTE_OPERATION__MODEL_ELEMENT_ID;
-
-	/**
-	 * The feature id for the '<em><b>Accepted</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int DIAGRAM_LAYOUT_OPERATION__ACCEPTED = ATTRIBUTE_OPERATION__ACCEPTED;
-
-	/**
-	 * The feature id for the '<em><b>Client Date</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int DIAGRAM_LAYOUT_OPERATION__CLIENT_DATE = ATTRIBUTE_OPERATION__CLIENT_DATE;
-
-	/**
-	 * The feature id for the '<em><b>Feature Name</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int DIAGRAM_LAYOUT_OPERATION__FEATURE_NAME = ATTRIBUTE_OPERATION__FEATURE_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Old Value</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int DIAGRAM_LAYOUT_OPERATION__OLD_VALUE = ATTRIBUTE_OPERATION__OLD_VALUE;
-
-	/**
-	 * The feature id for the '<em><b>New Value</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int DIAGRAM_LAYOUT_OPERATION__NEW_VALUE = ATTRIBUTE_OPERATION__NEW_VALUE;
-
-	/**
-	 * The number of structural features of the '<em>Diagram Layout Operation</em>' class.
-	 * <!-- begin-user-doc --> <!--
-	 * end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	int DIAGRAM_LAYOUT_OPERATION_FEATURE_COUNT = ATTRIBUTE_OPERATION_FEATURE_COUNT + 0;
-
-	/**
-	 * The meta object id for the '
 	 * {@link org.eclipse.emf.emfstore.server.model.versioning.operations.impl.OperationIdImpl <em>Operation Id</em>}'
 	 * class.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -1671,7 +1333,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.impl.OperationsPackageImpl#getOperationId()
 	 * @generated
 	 */
-	int OPERATION_ID = 14;
+	int OPERATION_ID = 13;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1701,7 +1363,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.impl.OperationsPackageImpl#getOperationGroup()
 	 * @generated
 	 */
-	int OPERATION_GROUP = 15;
+	int OPERATION_GROUP = 14;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1741,7 +1403,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.impl.OperationsPackageImpl#getModelElementGroup()
 	 * @generated
 	 */
-	int MODEL_ELEMENT_GROUP = 16;
+	int MODEL_ELEMENT_GROUP = 15;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1781,7 +1443,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.impl.OperationsPackageImpl#getEObjectToModelElementIdMap()
 	 * @generated
 	 */
-	int EOBJECT_TO_MODEL_ELEMENT_ID_MAP = 17;
+	int EOBJECT_TO_MODEL_ELEMENT_ID_MAP = 16;
 
 	/**
 	 * The feature id for the '<em><b>Key</b></em>' reference.
@@ -1820,7 +1482,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.impl.OperationsPackageImpl#getContainmentType()
 	 * @generated
 	 */
-	int CONTAINMENT_TYPE = 18;
+	int CONTAINMENT_TYPE = 17;
 
 	/**
 	 * Returns the meta object for class '
@@ -1833,32 +1495,6 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getAbstractOperation();
-
-	/**
-	 * Returns the meta object for the attribute '
-	 * {@link org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation#getName <em>Name</em>}'.
-	 * <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation#getName()
-	 * @see #getAbstractOperation()
-	 * @generated
-	 */
-	EAttribute getAbstractOperation_Name();
-
-	/**
-	 * Returns the meta object for the attribute '
-	 * {@link org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation#getDescription
-	 * <em>Description</em>}'.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @return the meta object for the attribute '<em>Description</em>'.
-	 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation#getDescription()
-	 * @see #getAbstractOperation()
-	 * @generated
-	 */
-	EAttribute getAbstractOperation_Description();
 
 	/**
 	 * Returns the meta object for the containment reference '
@@ -2499,18 +2135,6 @@ public interface OperationsPackage extends EPackage {
 
 	/**
 	 * Returns the meta object for class '
-	 * {@link org.eclipse.emf.emfstore.server.model.versioning.operations.DiagramLayoutOperation
-	 * <em>Diagram Layout Operation</em>}'.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @return the meta object for class '<em>Diagram Layout Operation</em>'.
-	 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.DiagramLayoutOperation
-	 * @generated
-	 */
-	EClass getDiagramLayoutOperation();
-
-	/**
-	 * Returns the meta object for class '
 	 * {@link org.eclipse.emf.emfstore.server.model.versioning.operations.OperationId <em>Operation Id</em>}'.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -2673,24 +2297,6 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EClass ABSTRACT_OPERATION = eINSTANCE.getAbstractOperation();
-
-		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc --> <!--
-		 * end-user-doc -->
-		 * 
-		 * @generated
-		 */
-		EAttribute ABSTRACT_OPERATION__NAME = eINSTANCE.getAbstractOperation_Name();
-
-		/**
-		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
-		 * <!-- begin-user-doc --> <!--
-		 * end-user-doc -->
-		 * 
-		 * @generated
-		 */
-		EAttribute ABSTRACT_OPERATION__DESCRIPTION = eINSTANCE.getAbstractOperation_Description();
 
 		/**
 		 * The meta object literal for the '<em><b>Model Element Id</b></em>' containment reference feature. <!--
@@ -3169,18 +2775,6 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute REFERENCE_OPERATION__CONTAINMENT_TYPE = eINSTANCE.getReferenceOperation_ContainmentType();
-
-		/**
-		 * The meta object literal for the '
-		 * {@link org.eclipse.emf.emfstore.server.model.versioning.operations.impl.DiagramLayoutOperationImpl
-		 * <em>Diagram Layout Operation</em>}' class.
-		 * <!-- begin-user-doc --> <!-- end-user-doc -->
-		 * 
-		 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.impl.DiagramLayoutOperationImpl
-		 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.impl.OperationsPackageImpl#getDiagramLayoutOperation()
-		 * @generated
-		 */
-		EClass DIAGRAM_LAYOUT_OPERATION = eINSTANCE.getDiagramLayoutOperation();
 
 		/**
 		 * The meta object literal for the '

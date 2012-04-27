@@ -37,7 +37,6 @@ import org.eclipse.emf.emfstore.server.model.versioning.operations.AttributeOper
 import org.eclipse.emf.emfstore.server.model.versioning.operations.CompositeOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.ContainmentType;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.CreateDeleteOperation;
-import org.eclipse.emf.emfstore.server.model.versioning.operations.DiagramLayoutOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.FeatureOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.ModelElementGroup;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.MultiAttributeMoveOperation;
@@ -151,13 +150,6 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * @generated
 	 */
 	private EClass referenceOperationEClass = null;
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	private EClass diagramLayoutOperationEClass = null;
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -314,26 +306,8 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * 
 	 * @generated
 	 */
-	public EAttribute getAbstractOperation_Name() {
-		return (EAttribute) abstractOperationEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	public EAttribute getAbstractOperation_Description() {
-		return (EAttribute) abstractOperationEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
 	public EReference getAbstractOperation_ModelElementId() {
-		return (EReference) abstractOperationEClass.getEStructuralFeatures().get(2);
+		return (EReference) abstractOperationEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -342,7 +316,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * @generated
 	 */
 	public EAttribute getAbstractOperation_Accepted() {
-		return (EAttribute) abstractOperationEClass.getEStructuralFeatures().get(3);
+		return (EAttribute) abstractOperationEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -351,7 +325,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * @generated
 	 */
 	public EAttribute getAbstractOperation_ClientDate() {
-		return (EAttribute) abstractOperationEClass.getEStructuralFeatures().get(4);
+		return (EAttribute) abstractOperationEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -782,15 +756,6 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * 
 	 * @generated
 	 */
-	public EClass getDiagramLayoutOperation() {
-		return diagramLayoutOperationEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
 	public EClass getOperationId() {
 		return operationIdEClass;
 	}
@@ -915,8 +880,6 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 
 		// Create classes and their features
 		abstractOperationEClass = createEClass(ABSTRACT_OPERATION);
-		createEAttribute(abstractOperationEClass, ABSTRACT_OPERATION__NAME);
-		createEAttribute(abstractOperationEClass, ABSTRACT_OPERATION__DESCRIPTION);
 		createEReference(abstractOperationEClass, ABSTRACT_OPERATION__MODEL_ELEMENT_ID);
 		createEAttribute(abstractOperationEClass, ABSTRACT_OPERATION__ACCEPTED);
 		createEAttribute(abstractOperationEClass, ABSTRACT_OPERATION__CLIENT_DATE);
@@ -979,8 +942,6 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		createEAttribute(referenceOperationEClass, REFERENCE_OPERATION__BIDIRECTIONAL);
 		createEAttribute(referenceOperationEClass, REFERENCE_OPERATION__OPPOSITE_FEATURE_NAME);
 		createEAttribute(referenceOperationEClass, REFERENCE_OPERATION__CONTAINMENT_TYPE);
-
-		diagramLayoutOperationEClass = createEClass(DIAGRAM_LAYOUT_OPERATION);
 
 		operationIdEClass = createEClass(OPERATION_ID);
 
@@ -1050,18 +1011,11 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		multiReferenceOperationEClass.getESuperTypes().add(this.getReferenceOperation());
 		multiReferenceMoveOperationEClass.getESuperTypes().add(this.getFeatureOperation());
 		referenceOperationEClass.getESuperTypes().add(this.getFeatureOperation());
-		diagramLayoutOperationEClass.getESuperTypes().add(this.getAttributeOperation());
 		operationIdEClass.getESuperTypes().add(theModelPackage.getUniqueIdentifier());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(abstractOperationEClass, AbstractOperation.class, "AbstractOperation", IS_ABSTRACT, !IS_INTERFACE,
 			IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getAbstractOperation_Name(), ecorePackage.getEString(), "name", null, 0, 1,
-			AbstractOperation.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
-			IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAbstractOperation_Description(), ecorePackage.getEString(), "description", "", 0, 1,
-			AbstractOperation.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
-			IS_DERIVED, IS_ORDERED);
 		initEReference(getAbstractOperation_ModelElementId(), theModelPackage.getModelElementId(), null,
 			"modelElementId", null, 0, 1, AbstractOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
 			IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1213,9 +1167,6 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEAttribute(getReferenceOperation_ContainmentType(), this.getContainmentType(), "containmentType", null, 0,
 			1, ReferenceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
 			!IS_DERIVED, IS_ORDERED);
-
-		initEClass(diagramLayoutOperationEClass, DiagramLayoutOperation.class, "DiagramLayoutOperation", !IS_ABSTRACT,
-			!IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(operationIdEClass, OperationId.class, "OperationId", !IS_ABSTRACT, !IS_INTERFACE,
 			IS_GENERATED_INSTANCE_CLASS);

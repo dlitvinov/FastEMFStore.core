@@ -146,7 +146,13 @@ public class StatePersister implements CommandObserver, IdEObjectCollectionChang
 	}
 
 	/**
-	 * Save all dirty resources to disk now if autosave is active.
+	 * Save all dirty resources to disk now if auto-save is active.
+	 * If auto-save is disabled, clients have to programatically
+	 * save the dirty resource set by setting the <code>force</code> parameter
+	 * to true.
+	 * 
+	 * @param force
+	 *            whether to force the saving of resources
 	 */
 	public void saveDirtyResources(boolean force) {
 		if (force || Configuration.isAutoSaveEnabled()) {

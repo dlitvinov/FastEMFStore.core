@@ -23,7 +23,6 @@ import org.eclipse.emf.emfstore.server.model.versioning.operations.AttributeOper
 import org.eclipse.emf.emfstore.server.model.versioning.operations.CompositeOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.ContainmentType;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.CreateDeleteOperation;
-import org.eclipse.emf.emfstore.server.model.versioning.operations.DiagramLayoutOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.ModelElementGroup;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.MultiAttributeMoveOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.MultiAttributeOperation;
@@ -100,8 +99,6 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 			return createMultiReferenceOperation();
 		case OperationsPackage.MULTI_REFERENCE_MOVE_OPERATION:
 			return createMultiReferenceMoveOperation();
-		case OperationsPackage.DIAGRAM_LAYOUT_OPERATION:
-			return createDiagramLayoutOperation();
 		case OperationsPackage.OPERATION_ID:
 			return createOperationId();
 		case OperationsPackage.OPERATION_GROUP:
@@ -243,16 +240,6 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	public MultiReferenceMoveOperation createMultiReferenceMoveOperation() {
 		MultiReferenceMoveOperationImpl multiReferenceMoveOperation = new MultiReferenceMoveOperationImpl();
 		return multiReferenceMoveOperation;
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	public DiagramLayoutOperation createDiagramLayoutOperation() {
-		DiagramLayoutOperationImpl diagramLayoutOperation = new DiagramLayoutOperationImpl();
-		return diagramLayoutOperation;
 	}
 
 	/**

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.emf.emfstore.site"
-      label="EMF Store Site"
+      label="EMF Store Site (Incubation)"
       version="0.8.9.qualifier"
       provider-name="EMFT"
       image="eclipse_update_120.jpg"

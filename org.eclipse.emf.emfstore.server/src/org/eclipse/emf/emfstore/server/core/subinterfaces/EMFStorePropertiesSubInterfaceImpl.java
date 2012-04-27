@@ -61,6 +61,8 @@ public class EMFStorePropertiesSubInterfaceImpl extends AbstractSubEmfstoreInter
 	 *            Project where the properties should be saved
 	 * @throws EmfStoreException
 	 *             if the specified project does not exist
+	 * 
+	 * @return a list of properties that could not be updated since they are outdated
 	 */
 	public List<EMFStoreProperty> setProperties(List<EMFStoreProperty> properties, ProjectId projectId)
 		throws EmfStoreException {

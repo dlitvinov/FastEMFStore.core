@@ -256,41 +256,4 @@ public class AttributeOperationImpl extends FeatureOperationImpl implements Attr
 		return attributeOperation;
 	}
 
-	@Override
-	public String getDescription() {
-		StringBuilder stringBuilder = new StringBuilder();
-		if (getOldValue() == null) {
-			stringBuilder.append("Set ");
-			stringBuilder.append(getFeatureName());
-			stringBuilder.append(" to ");
-			stringBuilder.append("\"");
-			stringBuilder.append(getNewValue());
-			stringBuilder.append("\"");
-		} else {
-			stringBuilder.append("Changed ");
-			stringBuilder.append(getFeatureName());
-			stringBuilder.append(" from ");
-			stringBuilder.append("\"");
-			stringBuilder.append(getOldValue());
-			stringBuilder.append("\"");
-			stringBuilder.append(" to ");
-			stringBuilder.append("\"");
-			stringBuilder.append(getNewValue());
-			stringBuilder.append("\"");
-		}
-		// stringBuilder.append(".");
-		String name = stringBuilder.toString();
-		return name;
-	}
-
-	@Override
-	public String getName() {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("Set ");
-		stringBuilder.append(getFeatureName());
-		stringBuilder.append(" attribute");
-		String name = stringBuilder.toString();
-		return name;
-	}
-
 } // AttributeOperationImpl

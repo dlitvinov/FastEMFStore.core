@@ -133,7 +133,7 @@ public class ReferenceOperationItemProvider extends FeatureOperationItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((ReferenceOperation) object).getName();
+		String label = ((ReferenceOperation) object).getFeatureName();
 		return label == null || label.length() == 0 ? getString("_UI_ReferenceOperation_type")
 			: getString("_UI_ReferenceOperation_type") + " " + label;
 	}

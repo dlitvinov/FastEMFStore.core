@@ -361,47 +361,6 @@ public class MultiReferenceOperationImpl extends ReferenceOperationImpl implemen
 	}
 
 	@Override
-	public String getDescription() {
-		StringBuilder stringBuilder = new StringBuilder();
-
-		if (isAdd()) {
-			stringBuilder.append("Added ");
-			stringBuilder.append(getMiddleDescription());
-			stringBuilder.append(" to ");
-		} else {
-			stringBuilder.append("Removed ");
-			stringBuilder.append(getMiddleDescription());
-			stringBuilder.append(" from ");
-		}
-		stringBuilder.append(featureName);
-		// stringBuilder.append(".");
-		return stringBuilder.toString();
-	}
-
-	private String getMiddleDescription() {
-		String featureName = getFeatureName();
-		StringBuilder stringBuilder = new StringBuilder();
-
-		if (getReferencedModelElements().size() > 1) {
-			stringBuilder.append(getReferencedModelElements().size());
-			stringBuilder.append(" ");
-			stringBuilder.append(featureName);
-		} else {
-			String singular = featureName.substring(0, featureName.length() - 1);
-			stringBuilder.append(singular);
-		}
-		return stringBuilder.toString();
-	}
-
-	@Override
-	public String getName() {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("Changed ");
-		stringBuilder.append(getFeatureName());
-		return stringBuilder.toString();
-	}
-
-	@Override
 	public AbstractOperation reverse() {
 		MultiReferenceOperation multiReferenceOperation = OperationsFactory.eINSTANCE.createMultiReferenceOperation();
 		super.reverse(multiReferenceOperation);

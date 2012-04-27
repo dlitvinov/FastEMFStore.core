@@ -257,11 +257,7 @@ public final class NotificationToOperationConverter {
 		if (!n.getAttribute().isMany()) {
 			AttributeOperation op = null;
 			// special handling for diagram layout changes
-			if (isDiagramLayoutAttribute(n.getAttribute(), n.getNotifierModelElement())) {
-				op = OperationsFactory.eINSTANCE.createDiagramLayoutOperation();
-			} else {
-				op = OperationsFactory.eINSTANCE.createAttributeOperation();
-			}
+			op = OperationsFactory.eINSTANCE.createAttributeOperation();
 
 			setCommonValues(project, op, n.getNotifierModelElement());
 			op.setFeatureName(n.getAttribute().getName());

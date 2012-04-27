@@ -99,45 +99,11 @@ public class AbstractOperationItemProvider extends IdentifiableElementItemProvid
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addNamePropertyDescriptor(object);
-			addDescriptionPropertyDescriptor(object);
 			addModelElementIdPropertyDescriptor(object);
 			addAcceptedPropertyDescriptor(object);
 			addClientDatePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
-	}
-
-	/**
-	 * This adds a property descriptor for the Name feature.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	protected void addNamePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add(createItemPropertyDescriptor(
-			((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
-			getResourceLocator(),
-			getString("_UI_AbstractOperation_name_feature"),
-			getString("_UI_PropertyDescriptor_description", "_UI_AbstractOperation_name_feature",
-				"_UI_AbstractOperation_type"), OperationsPackage.Literals.ABSTRACT_OPERATION__NAME, true, false, false,
-			ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Description feature.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	protected void addDescriptionPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add(createItemPropertyDescriptor(
-			((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
-			getResourceLocator(),
-			getString("_UI_AbstractOperation_description_feature"),
-			getString("_UI_PropertyDescriptor_description", "_UI_AbstractOperation_description_feature",
-				"_UI_AbstractOperation_type"), OperationsPackage.Literals.ABSTRACT_OPERATION__DESCRIPTION, true, false,
-			false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
 	}
 
 	/**
@@ -207,7 +173,7 @@ public class AbstractOperationItemProvider extends IdentifiableElementItemProvid
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((AbstractOperation) object).getName();
+		String label = ((AbstractOperation) object).getIdentifier();
 		return label == null || label.length() == 0 ? getString("_UI_AbstractOperation_type")
 			: getString("_UI_AbstractOperation_type") + " " + label;
 	}
@@ -224,8 +190,6 @@ public class AbstractOperationItemProvider extends IdentifiableElementItemProvid
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(AbstractOperation.class)) {
-		case OperationsPackage.ABSTRACT_OPERATION__NAME:
-		case OperationsPackage.ABSTRACT_OPERATION__DESCRIPTION:
 		case OperationsPackage.ABSTRACT_OPERATION__ACCEPTED:
 		case OperationsPackage.ABSTRACT_OPERATION__CLIENT_DATE:
 			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));

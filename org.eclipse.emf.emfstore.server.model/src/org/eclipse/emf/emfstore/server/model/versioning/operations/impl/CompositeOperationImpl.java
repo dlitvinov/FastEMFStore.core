@@ -27,7 +27,6 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.emf.emfstore.common.model.IdEObjectCollection;
 import org.eclipse.emf.emfstore.common.model.ModelElementId;
-import org.eclipse.emf.emfstore.common.model.Project;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.CompositeOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.OperationsFactory;
@@ -465,37 +464,6 @@ public class CompositeOperationImpl extends AbstractOperationImpl implements Com
 		for (AbstractOperation abstractOperation : getSubOperations()) {
 			abstractOperation.apply(project);
 		}
-	}
-
-	@Override
-	public boolean canApply(Project project) {
-		for (AbstractOperation abstractOperation : getSubOperations()) {
-			if (!abstractOperation.canApply(project)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	@Override
-	public String getDescription() {
-		StringBuilder stringBuilder = new StringBuilder();
-		if (isReversed()) {
-			stringBuilder.append("Undo of ");
-		}
-		stringBuilder.append(getCompositeDescription());
-		stringBuilder.append(".");
-		return stringBuilder.toString();
-	}
-
-	@Override
-	public String getName() {
-		StringBuilder stringBuilder = new StringBuilder();
-		if (isReversed()) {
-			stringBuilder.append("Undo of ");
-		}
-		stringBuilder.append(getCompositeName());
-		return stringBuilder.toString();
 	}
 
 	@Override

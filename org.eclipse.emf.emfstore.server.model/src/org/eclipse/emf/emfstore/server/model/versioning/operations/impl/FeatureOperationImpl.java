@@ -19,7 +19,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.emfstore.common.model.ModelElementId;
 import org.eclipse.emf.emfstore.common.model.Project;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.FeatureOperation;
@@ -40,25 +39,6 @@ import org.eclipse.emf.emfstore.server.model.versioning.operations.UnkownFeature
  * @generated
  */
 public abstract class FeatureOperationImpl extends AbstractOperationImpl implements FeatureOperation {
-
-	@Override
-	public boolean canApply(Project project) {
-		if (!super.canApply(project)) {
-			return false;
-		}
-		EObject element = project.getModelElement(getModelElementId());
-		try {
-			getFeature(element);
-		} catch (UnkownFeatureException e) {
-			return false;
-		}
-		for (ModelElementId otherElementId : getOtherInvolvedModelElements()) {
-			if (!project.contains(otherElementId)) {
-				return false;
-			}
-		}
-		return true;
-	}
 
 	@Override
 	protected void reverse(AbstractOperation abstractOperation) {
@@ -219,27 +199,6 @@ public abstract class FeatureOperationImpl extends AbstractOperationImpl impleme
 			throw new IllegalArgumentException("Model Element is not in the given project");
 		}
 		return getFeature(modelElement);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.impl.AbstractOperationImpl#getDescription()
-	 */
-	@Override
-	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.impl.AbstractOperationImpl#getName()
-	 */
-	@Override
-	public String getName() {
-		return "Unknown Operation";
 	}
 
 	/**

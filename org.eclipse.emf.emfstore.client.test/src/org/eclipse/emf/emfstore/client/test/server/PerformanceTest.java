@@ -403,7 +403,7 @@ public class PerformanceTest extends ServerTests {
 				}.run(false);
 				updateTimes[i] = (System.currentTimeMillis() - time) / 1000.0;
 				CleanMemoryTask task = new CleanMemoryTask(WorkspaceManager.getInstance().getCurrentWorkspace()
-					.getWorkspaceResourceSet());
+					.getResourceSet());
 				task.run();
 				memDuringUpdate[i] = memoryMeter.stopMeasurements();
 				memAfterUpdate[i] = usedMemory();

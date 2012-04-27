@@ -188,9 +188,6 @@ public class ChangePackageItemProvider extends ItemProviderAdapter implements IE
 		newChildDescriptors.add(createChildParameter(VersioningPackage.Literals.CHANGE_PACKAGE__OPERATIONS,
 			OperationsFactory.eINSTANCE.createMultiReferenceMoveOperation()));
 
-		newChildDescriptors.add(createChildParameter(VersioningPackage.Literals.CHANGE_PACKAGE__OPERATIONS,
-			OperationsFactory.eINSTANCE.createDiagramLayoutOperation()));
-
 		newChildDescriptors.add(createChildParameter(VersioningPackage.Literals.CHANGE_PACKAGE__EVENTS,
 			EventsFactory.eINSTANCE.createEvent()));
 

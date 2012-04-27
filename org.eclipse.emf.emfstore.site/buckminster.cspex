@@ -12,4 +12,18 @@
 		
 		<dependency name="org.eclipse.emf.emfstore.client.test"/>
 	</dependencies>
+
+	<actions>
+		<public name="create.javadoc" actor="ant">
+			<actorProperties>
+				<property key="buildFile" value="javadoc.ant"/>
+				<property key="targets" value="create.javadoc"/>
+			</actorProperties>
+			<properties>
+				<property key="source" value="../../"/>
+      			<property key="javadoc.output" value="${buckminster.output.root}/javadoc"/>
+            </properties>
+		</public>
+	
+	</actions>
 </cspecExtension>

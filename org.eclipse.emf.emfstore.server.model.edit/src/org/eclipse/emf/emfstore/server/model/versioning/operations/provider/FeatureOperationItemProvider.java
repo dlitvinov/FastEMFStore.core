@@ -97,7 +97,7 @@ public class FeatureOperationItemProvider extends AbstractOperationItemProvider 
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((FeatureOperation) object).getName();
+		String label = ((FeatureOperation) object).getFeatureName();
 		return label == null || label.length() == 0 ? getString("_UI_FeatureOperation_type")
 			: getString("_UI_FeatureOperation_type") + " " + label;
 	}

@@ -210,20 +210,6 @@ public class CompositeOperationItemProvider extends AbstractOperationItemProvide
 	// end of custom code
 
 	/**
-	 * {@inheritDoc} This returns the label text for the adapted class. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated NOT
-	 */
-	@Override
-	public String getText(Object object) {
-		if (object instanceof CompositeOperation) {
-			CompositeOperation compositeOperation = (CompositeOperation) object;
-			return compositeOperation.getDescription();
-		}
-		return super.getText(object);
-	}
-
-	/**
 	 * This handles model notifications by calling {@link #updateChildren} to update any cached children and by creating
 	 * a viewer notification, which it passes to {@link #fireNotifyChanged}. <!-- begin-user-doc --> <!-- end-user-doc
 	 * -->
@@ -287,9 +273,6 @@ public class CompositeOperationItemProvider extends AbstractOperationItemProvide
 
 		newChildDescriptors.add(createChildParameter(OperationsPackage.Literals.COMPOSITE_OPERATION__SUB_OPERATIONS,
 			OperationsFactory.eINSTANCE.createMultiReferenceMoveOperation()));
-
-		newChildDescriptors.add(createChildParameter(OperationsPackage.Literals.COMPOSITE_OPERATION__SUB_OPERATIONS,
-			OperationsFactory.eINSTANCE.createDiagramLayoutOperation()));
 	}
 
 }

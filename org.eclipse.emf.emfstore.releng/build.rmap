@@ -34,6 +34,8 @@
 	<locator pattern="^ECPTargetPlatform$" searchPathRef="remoteecp"/>
 	<locator pattern="^ECPDeveloper$" searchPathRef="remoteecp"/>
 	
+	<locator pattern="^org\.eclipse\.emf\.edapt(?:\..+)?$" searchPathRef="p2"/>
+	<locator pattern="^org\.eclipse\.ocl(?:\..+)?$" searchPathRef="p2"/>
 	
 	<locator pattern="^org\.eclipse\.(?:emf|xsd)(?:\..+)?$" searchPathRef="emf"/>
 	<locator searchPathRef="p2"/>
@@ -170,6 +172,24 @@
 			<uri format="{0}/eclipse/updates/{1}">
 				<bc:propertyRef key="eclipse.downloads"/>
 				<bc:propertyRef key="platform.version"/>
+			</uri>
+		</provider>
+		
+		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="p2" source="false"
+			mutable="false">
+			<property key="buckminster.source" value="false"/>
+			<property key="buckminster.mutable" value="false"/>
+			<uri format="{0}/edapt/update-site/">
+				<bc:propertyRef key="eclipse.downloads"/>
+			</uri>
+		</provider>
+		
+		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="p2" source="false"
+			mutable="false">
+			<property key="buckminster.source" value="false"/>
+			<property key="buckminster.mutable" value="false"/>
+			<uri format="{0}/modeling/mdt/ocl/updates/">
+				<bc:propertyRef key="eclipse.downloads"/>
 			</uri>
 		</provider>
 	</searchPath>

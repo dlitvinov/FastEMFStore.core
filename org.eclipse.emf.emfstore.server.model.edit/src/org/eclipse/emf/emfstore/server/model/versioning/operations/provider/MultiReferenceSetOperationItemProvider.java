@@ -134,7 +134,7 @@ public class MultiReferenceSetOperationItemProvider extends ReferenceOperationIt
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MultiReferenceSetOperation) object).getName();
+		String label = ((MultiReferenceSetOperation) object).getFeatureName();
 		return label == null || label.length() == 0 ? getString("_UI_MultiReferenceSetOperation_type")
 			: getString("_UI_MultiReferenceSetOperation_type") + " " + label;
 	}

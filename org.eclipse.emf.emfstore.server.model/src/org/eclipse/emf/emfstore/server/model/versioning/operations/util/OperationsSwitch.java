@@ -22,7 +22,6 @@ import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOpera
 import org.eclipse.emf.emfstore.server.model.versioning.operations.AttributeOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.CompositeOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.CreateDeleteOperation;
-import org.eclipse.emf.emfstore.server.model.versioning.operations.DiagramLayoutOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.FeatureOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.ModelElementGroup;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.MultiAttributeMoveOperation;
@@ -271,21 +270,6 @@ public class OperationsSwitch<T> {
 				result = defaultCase(theEObject);
 			return result;
 		}
-		case OperationsPackage.DIAGRAM_LAYOUT_OPERATION: {
-			DiagramLayoutOperation diagramLayoutOperation = (DiagramLayoutOperation) theEObject;
-			T result = caseDiagramLayoutOperation(diagramLayoutOperation);
-			if (result == null)
-				result = caseAttributeOperation(diagramLayoutOperation);
-			if (result == null)
-				result = caseFeatureOperation(diagramLayoutOperation);
-			if (result == null)
-				result = caseAbstractOperation(diagramLayoutOperation);
-			if (result == null)
-				result = caseIdentifiableElement(diagramLayoutOperation);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
 		case OperationsPackage.OPERATION_ID: {
 			OperationId operationId = (OperationId) theEObject;
 			T result = caseOperationId(operationId);
@@ -501,20 +485,6 @@ public class OperationsSwitch<T> {
 	 * @generated
 	 */
 	public T caseReferenceOperation(ReferenceOperation object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Diagram Layout Operation</em>'. <!--
-	 * begin-user-doc --> This implementation returns null; returning a non-null result will terminate the switch. <!--
-	 * end-user-doc -->
-	 * 
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Diagram Layout Operation</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseDiagramLayoutOperation(DiagramLayoutOperation object) {
 		return null;
 	}
 

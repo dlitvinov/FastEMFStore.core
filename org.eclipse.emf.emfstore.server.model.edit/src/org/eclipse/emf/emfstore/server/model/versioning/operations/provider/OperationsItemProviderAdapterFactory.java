@@ -340,32 +340,6 @@ public class OperationsItemProviderAdapterFactory extends OperationsAdapterFacto
 
 	/**
 	 * This keeps track of the one adapter used for all
-	 * {@link org.eclipse.emf.emfstore.server.model.versioning.operations.DiagramLayoutOperation} instances.
-	 * <!-- begin-user-doc
-	 * --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	protected DiagramLayoutOperationItemProvider diagramLayoutOperationItemProvider;
-
-	/**
-	 * This creates an adapter for a
-	 * {@link org.eclipse.emf.emfstore.server.model.versioning.operations.DiagramLayoutOperation}.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public Adapter createDiagramLayoutOperationAdapter() {
-		if (diagramLayoutOperationItemProvider == null) {
-			diagramLayoutOperationItemProvider = new DiagramLayoutOperationItemProvider(this);
-		}
-
-		return diagramLayoutOperationItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all
 	 * {@link org.eclipse.emf.emfstore.server.model.versioning.operations.OperationId} instances.
 	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
@@ -587,8 +561,6 @@ public class OperationsItemProviderAdapterFactory extends OperationsAdapterFacto
 			multiReferenceOperationItemProvider.dispose();
 		if (multiReferenceMoveOperationItemProvider != null)
 			multiReferenceMoveOperationItemProvider.dispose();
-		if (diagramLayoutOperationItemProvider != null)
-			diagramLayoutOperationItemProvider.dispose();
 		if (operationIdItemProvider != null)
 			operationIdItemProvider.dispose();
 		if (operationGroupItemProvider != null)

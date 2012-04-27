@@ -28,8 +28,8 @@ import org.eclipse.emf.emfstore.server.ServerConfiguration;
  * 
  * @author wesendon
  */
-public class DefaultWorkspaceLocationProvider extends
-		DefaultServerWorkspaceLocationProvider implements LocationProvider {
+public class DefaultWorkspaceLocationProvider extends DefaultServerWorkspaceLocationProvider implements
+	LocationProvider {
 
 	/**
 	 * {@inheritDoc}

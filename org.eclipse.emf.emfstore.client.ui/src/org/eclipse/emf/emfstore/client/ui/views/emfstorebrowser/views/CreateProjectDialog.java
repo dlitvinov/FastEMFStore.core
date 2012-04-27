@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.client.ui.views.emfstorebrowser.views;
 
-import org.eclipse.emf.emfstore.client.model.Usersession;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -32,7 +31,6 @@ public class CreateProjectDialog extends TitleAreaDialog {
 
 	private Text txtProjectName;
 	private Text txtProjectDesc;
-	private Usersession session;
 
 	private String name;
 	private String description;
@@ -42,8 +40,6 @@ public class CreateProjectDialog extends TitleAreaDialog {
 	 * 
 	 * @param parent
 	 *            the parent shell
-	 * @param session
-	 *            the target usersession
 	 */
 	public CreateProjectDialog(Shell parent) {
 		super(parent);

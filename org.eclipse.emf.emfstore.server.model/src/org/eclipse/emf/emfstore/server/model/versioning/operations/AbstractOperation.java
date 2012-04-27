@@ -17,7 +17,6 @@ import java.util.Set;
 import org.eclipse.emf.emfstore.common.model.IdEObjectCollection;
 import org.eclipse.emf.emfstore.common.model.IdentifiableElement;
 import org.eclipse.emf.emfstore.common.model.ModelElementId;
-import org.eclipse.emf.emfstore.common.model.Project;
 
 /**
  * <!-- begin-user-doc --> A representation of the model object ' <em><b>Abstract Operation</b></em>'. <!-- end-user-doc
@@ -43,38 +42,6 @@ import org.eclipse.emf.emfstore.common.model.Project;
  * @generated
  */
 public interface AbstractOperation extends IdentifiableElement {
-	/**
-	 * Returns the value of the '<em><b>Name</b></em>' attribute. <!--
-	 * begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Name</em>' attribute isn't clear, there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * 
-	 * @return the value of the '<em>Name</em>' attribute.
-	 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.OperationsPackage#getAbstractOperation_Name()
-	 * @model transient="true" changeable="false" volatile="true" derived="true"
-	 * @generated
-	 */
-	String getName();
-
-	/**
-	 * Returns the value of the '<em><b>Description</b></em>' attribute.
-	 * The default value is <code>""</code>.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Description</em>' attribute isn't clear, there really should be more of a description
-	 * here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * 
-	 * @return the value of the '<em>Description</em>' attribute.
-	 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.OperationsPackage#getAbstractOperation_Description()
-	 * @model default="" transient="true" changeable="false" volatile="true" derived="true"
-	 * @generated
-	 */
-	String getDescription();
-
 	/**
 	 * Returns the value of the '<em><b>Model Element Id</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
@@ -175,17 +142,6 @@ public interface AbstractOperation extends IdentifiableElement {
 	 *            the project
 	 */
 	void apply(IdEObjectCollection project);
-
-	/**
-	 * Determine if the operation can be applied to a given project. Can be used
-	 * before apply to make sure that an operation can be applied, since apply()
-	 * will just fail silently.
-	 * 
-	 * @param project
-	 *            the project
-	 * @return true if it can be applied
-	 */
-	boolean canApply(Project project);
 
 	/**
 	 * Reverse the operation. The reversed operation is build such that applying

@@ -176,7 +176,7 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 	 * {@inheritDoc}
 	 */
 	public void deleteProject(ProjectId projectId, boolean deleteFiles) throws EmfStoreException {
-		deleteProject2(projectId, deleteFiles, true);
+		deleteProject(projectId, deleteFiles, true);
 	}
 
 	/**
@@ -192,7 +192,7 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 	 * @throws EmfStoreException
 	 *             in case of failure
 	 */
-	protected void deleteProject2(ProjectId projectId, boolean deleteFiles, boolean throwInvalidIdException)
+	protected void deleteProject(ProjectId projectId, boolean deleteFiles, boolean throwInvalidIdException)
 		throws EmfStoreException {
 		synchronized (getMonitor()) {
 			try {
@@ -267,7 +267,7 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 				getResourceHelper().saveAll();
 			} catch (FatalEmfStoreException e) {
 				// roll back
-				deleteProject2(projectHistory.getProjectId(), true, false);
+				deleteProject(projectHistory.getProjectId(), true, false);
 				throw new StorageException(StorageException.NOSAVE);
 			}
 			return ModelUtil.clone(projectHistory.getProjectId());

@@ -73,6 +73,7 @@ public class ServerInfoItemProvider extends ItemProviderAdapter implements IEdit
 	 * This adds a property descriptor for the Name feature.
 	 * <!-- begin-user-doc
 	 * --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	protected void addNamePropertyDescriptor(Object object) {
@@ -88,6 +89,7 @@ public class ServerInfoItemProvider extends ItemProviderAdapter implements IEdit
 	 * This adds a property descriptor for the Url feature.
 	 * <!-- begin-user-doc
 	 * --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	protected void addUrlPropertyDescriptor(Object object) {
@@ -103,6 +105,7 @@ public class ServerInfoItemProvider extends ItemProviderAdapter implements IEdit
 	 * This adds a property descriptor for the Port feature.
 	 * <!-- begin-user-doc
 	 * --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	protected void addPortPropertyDescriptor(Object object) {
@@ -151,6 +154,7 @@ public class ServerInfoItemProvider extends ItemProviderAdapter implements IEdit
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -164,6 +168,7 @@ public class ServerInfoItemProvider extends ItemProviderAdapter implements IEdit
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -189,6 +194,7 @@ public class ServerInfoItemProvider extends ItemProviderAdapter implements IEdit
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc
 	 * --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -203,6 +209,7 @@ public class ServerInfoItemProvider extends ItemProviderAdapter implements IEdit
 	 * children and by creating a viewer notification, which it passes to {@link #fireNotifyChanged}.
 	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override

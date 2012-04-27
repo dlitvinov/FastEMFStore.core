@@ -20,26 +20,33 @@ import java.util.HashMap;
 public final class MonitorProvider {
 
 	private static final String MAIN_MONITOR = "mainMonitor";
-	private static MonitorProvider instance;
+
+	/**
+	 * Initializes the singleton instance statically.
+	 */
+	private static class SingletonHolder {
+		public static final MonitorProvider INSTANCE = new MonitorProvider();
+	}
+
+	/**
+	 * Returns an singleton instance of the monitor provider.
+	 * 
+	 * @return the singleton instance
+	 */
+	public static MonitorProvider getInstance() {
+		return SingletonHolder.INSTANCE;
+	}
+
 	private Object monitor;
 	private HashMap<String, Object> monitors;
 
+	/**
+	 * Private constructor.
+	 */
 	private MonitorProvider() {
 		monitors = new HashMap<String, Object>();
 		monitor = new Object();
 		monitors.put(MAIN_MONITOR, monitor);
-	}
-
-	/**
-	 * Returns the instance of this singleton.
-	 * 
-	 * @return the instance
-	 */
-	public static MonitorProvider getInstance() {
-		if (instance == null) {
-			instance = new MonitorProvider();
-		}
-		return instance;
 	}
 
 	/**

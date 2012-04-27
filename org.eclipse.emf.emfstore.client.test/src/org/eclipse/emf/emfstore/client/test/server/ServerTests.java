@@ -57,7 +57,6 @@ public class ServerTests extends WorkspaceTest {
 	private int projectsOnServerBeforeTest;
 	private static HashMap<Class<?>, Object> arguments;
 	private static ServerInfo serverInfo;
-	private ProjectInfo projectInfo = null;
 
 	public static void setServerInfo(ServerInfo server_Info) {
 		serverInfo = server_Info;
@@ -152,7 +151,7 @@ public class ServerTests extends WorkspaceTest {
 			serverInfo, Configuration.getClientVersion());
 	}
 
-	private static void initArguments() {
+	protected static void initArguments() {
 		arguments = new HashMap<Class<?>, Object>();
 		arguments.put(boolean.class, false);
 		arguments.put(String.class, new String());

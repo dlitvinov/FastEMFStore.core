@@ -17,7 +17,6 @@ import org.eclipse.emf.emfstore.client.ui.views.changes.TabbedChangesComposite;
 import org.eclipse.emf.emfstore.server.model.versioning.ChangePackage;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -56,7 +55,7 @@ public class UpdateDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite contents = new Composite(parent, SWT.NONE);
 		contents.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		contents.setLayout(new GridLayout(2, false));
+		contents.setLayout(new GridLayout(1, false));
 
 		// changes tree
 		if (changes != null) {
@@ -79,11 +78,6 @@ public class UpdateDialog extends TitleAreaDialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Update");
-
-		Rectangle area = newShell.getShell().getParent().getClientArea();
-		int width = area.width * 2 / 3;
-		int height = area.height * 2 / 3;
-		newShell.setBounds((area.width - width) / 2, (area.height - height) / 2, width, height);
 	}
 
 	/**

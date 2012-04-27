@@ -111,7 +111,7 @@ public class SetupHelper {
 		}
 		try {
 			// give the server some time to unbind from it's ips. Not the nicest solution ...
-			Thread.sleep(1000);
+			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 		}
 	}

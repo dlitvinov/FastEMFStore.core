@@ -31,8 +31,6 @@ public class NewRepositoryWizard extends Wizard implements INewWizard {
 
 	private NewRepositoryWizardPageOne mainPage;
 
-	private boolean edit;
-
 	/**
 	 * Default constructor.
 	 */
@@ -93,7 +91,6 @@ public class NewRepositoryWizard extends Wizard implements INewWizard {
 	 */
 	public void setServerInfo(ServerInfo serverInfo) {
 		this.serverInfo = serverInfo;
-		this.edit = true;
 	}
 
 	/**

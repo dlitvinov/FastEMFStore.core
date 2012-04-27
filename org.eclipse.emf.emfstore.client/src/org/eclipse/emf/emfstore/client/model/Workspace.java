@@ -507,8 +507,9 @@ public interface Workspace extends EObject, IAdaptable {
 	 * 
 	 * @return
 	 *         The resource set of the workspace
+	 * @generated NOT
 	 */
-	public ResourceSet getWorkspaceResourceSet();
+	ResourceSet getResourceSet();
 
 	/**
 	 * Set the workspace resource set.
@@ -517,7 +518,7 @@ public interface Workspace extends EObject, IAdaptable {
 	 *            The resource set to be set.
 	 * @generated NOT
 	 */
-	void setWorkspaceResourceSet(ResourceSet resourceSet);
+	void setResourceSet(ResourceSet resourceSet);
 
 	/**
 	 * Updates the ACUser and it roles.
@@ -562,17 +563,17 @@ public interface Workspace extends EObject, IAdaptable {
 	void updateProjectInfos(Usersession session) throws EmfStoreException;
 
 	/**
-	 * Adds an serverinfo and saves.
+	 * Adds an server info and saves.
 	 * 
-	 * @param serverInfo server info
+	 * @param serverInfo the server info to be added
 	 */
-	public void addServerInfo(ServerInfo serverInfo);
+	void addServerInfo(ServerInfo serverInfo);
 
 	/**
-	 * Removes an serverinfo and saves.
+	 * Removes an server info and saves.
 	 * 
-	 * @param serverInfo server info
+	 * @param serverInfo the server info to be removed
 	 */
-	public void removeServerInfo(ServerInfo serverInfo);
+	void removeServerInfo(ServerInfo serverInfo);
 
 } // Workspace

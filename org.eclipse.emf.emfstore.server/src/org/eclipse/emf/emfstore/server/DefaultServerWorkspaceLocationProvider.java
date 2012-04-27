@@ -16,6 +16,9 @@ import static org.eclipse.emf.emfstore.server.ServerConfiguration.isReleaseVersi
 import static org.eclipse.emf.emfstore.server.ServerConfiguration.isTesting;
 
 import java.io.File;
+import java.io.IOException;
+
+import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 
 /**
  * This is the default workspace location provider. If no other location provider is registered, this provider is used.
@@ -45,7 +48,25 @@ public class DefaultServerWorkspaceLocationProvider implements LocationProvider 
 	 * @see org.eclipse.emf.emfstore.server.LocationProvider#getWorkspaceDirectory()
 	 */
 	public String getWorkspaceDirectory() {
-		return addFolders(getRootDirectory(), "profiles", getSelectedProfile());
+		String rootDirectory = getRootDirectory();
+		File file = new File(rootDirectory);
+
+		if (!file.isAbsolute()) {
+			String currentDir = new File(".").getAbsolutePath();
+			// strip last dot away from path
+			currentDir = currentDir.substring(0, currentDir.length() - 1);
+			String absolutePath = currentDir + getRootDirectory();
+			try {
+				// convert to canonical path, since absolutePath still may contain '.' or '..' references
+				rootDirectory = new File(absolutePath).getCanonicalPath();
+			} catch (IOException e) {
+				// fall back to user home as default if path is invalid
+				rootDirectory = getUserHome();
+				ModelUtil.logWarning("Invalid root directory specified.  Using default " + getUserHome() + ".", e);
+			}
+		}
+
+		return addFolders(rootDirectory, "profiles", getSelectedProfile());
 	}
 
 	/**

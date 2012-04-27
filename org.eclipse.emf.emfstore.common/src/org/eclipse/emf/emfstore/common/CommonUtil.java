@@ -230,9 +230,11 @@ public final class CommonUtil {
 	}
 	
 	/**
-	 * Check if containment tree is in given resource
+	 * Check if containment tree is in given resource.
+	 * 
 	 * @param root the root of the tree
 	 * @param resource the resource to check for
+	 * 
 	 * @return true iff all contents of the containment tree of root are in the given resource
 	 */
 	public static boolean isContainedInResource(EObject root, Resource resource) {

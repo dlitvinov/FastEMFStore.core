@@ -23,7 +23,6 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.emfstore.common.model.IdEObjectCollection;
 import org.eclipse.emf.emfstore.common.model.ModelElementId;
-import org.eclipse.emf.emfstore.common.model.Project;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.MultiReferenceMoveOperation;
@@ -383,55 +382,6 @@ public class MultiReferenceMoveOperationImpl extends FeatureOperationImpl implem
 			return;
 		}
 		list.move(getNewIndex(), referencedModelElement);
-	}
-
-	/**
-	 * @see org.eclipse.emf.emfstore.server.model.versioning.operations.impl.FeatureOperationImpl#canApply(org.eclipse.emf.emfstore.common.model.Project)
-	 */
-	@Override
-	public boolean canApply(Project project) {
-		if (!super.canApply(project)) {
-			return false;
-		}
-		EObject modelElement = project.getModelElement(getModelElementId());
-		if (modelElement == null) {
-			return false;
-		}
-		EReference reference;
-		try {
-			reference = (EReference) this.getFeature(modelElement);
-		} catch (UnkownFeatureException e) {
-			// fail silently
-			return false;
-		}
-		Object object = modelElement.eGet(reference);
-		@SuppressWarnings("unchecked")
-		EList<EObject> list = (EList<EObject>) object;
-		if (getNewIndex() >= list.size() || getNewIndex() < 0) {
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public String getDescription() {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("Moved ");
-		stringBuilder.append(getFeatureName().substring(0, getFeatureName().length() - 1));
-		stringBuilder.append(" from position ");
-		stringBuilder.append(getOldIndex() + 1);
-		stringBuilder.append(" to ");
-		stringBuilder.append(getNewIndex() + 1);
-		stringBuilder.append(".");
-		return stringBuilder.toString();
-	}
-
-	@Override
-	public String getName() {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("Changed order of ");
-		stringBuilder.append(getFeatureName());
-		return stringBuilder.toString();
 	}
 
 	@Override

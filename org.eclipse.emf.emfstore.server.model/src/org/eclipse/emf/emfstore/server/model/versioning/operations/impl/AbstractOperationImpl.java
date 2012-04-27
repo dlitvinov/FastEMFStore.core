@@ -20,7 +20,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.emfstore.common.model.ModelElementId;
-import org.eclipse.emf.emfstore.common.model.Project;
 import org.eclipse.emf.emfstore.common.model.impl.IdentifiableElementImpl;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation;
@@ -50,25 +49,6 @@ import org.eclipse.emf.emfstore.server.model.versioning.operations.OperationsPac
  * @generated
  */
 public abstract class AbstractOperationImpl extends IdentifiableElementImpl implements AbstractOperation {
-	/**
-	 * The default value of the '{@link #getName() <em>Name</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc
-	 * -->
-	 * 
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String NAME_EDEFAULT = null;
-	/**
-	 * The default value of the '{@link #getDescription() <em>Description</em>}' attribute.
-	 * <!-- begin-user-doc --> <!--
-	 * end-user-doc -->
-	 * 
-	 * @see #getDescription()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String DESCRIPTION_EDEFAULT = "";
 	/**
 	 * The cached value of the '{@link #getModelElementId() <em>Model Element Id</em>}' containment reference. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
@@ -139,40 +119,6 @@ public abstract class AbstractOperationImpl extends IdentifiableElementImpl impl
 	protected EClass eStaticClass() {
 		return OperationsPackage.Literals.ABSTRACT_OPERATION;
 	}
-
-	// begin of custom code
-	/**
-	 * <!-- begin-user-doc --> Return the operations name.
-	 * 
-	 * @return the name <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public abstract String getName();
-
-	/**
-	 * <!-- begin-user-doc --> Return the operations description.
-	 * 
-	 * @return the description <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public abstract String getDescription();
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @generated NOT
-	 */
-	public boolean canApply(Project project) {
-		if (getModelElementId() == null) {
-			return true;
-		}
-		if (!project.contains(getModelElementId())) {
-			return false;
-		}
-		return true;
-	}
-
-	// end of custom code
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -337,10 +283,6 @@ public abstract class AbstractOperationImpl extends IdentifiableElementImpl impl
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-		case OperationsPackage.ABSTRACT_OPERATION__NAME:
-			return getName();
-		case OperationsPackage.ABSTRACT_OPERATION__DESCRIPTION:
-			return getDescription();
 		case OperationsPackage.ABSTRACT_OPERATION__MODEL_ELEMENT_ID:
 			if (resolve)
 				return getModelElementId();
@@ -403,11 +345,6 @@ public abstract class AbstractOperationImpl extends IdentifiableElementImpl impl
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-		case OperationsPackage.ABSTRACT_OPERATION__NAME:
-			return NAME_EDEFAULT == null ? getName() != null : !NAME_EDEFAULT.equals(getName());
-		case OperationsPackage.ABSTRACT_OPERATION__DESCRIPTION:
-			return DESCRIPTION_EDEFAULT == null ? getDescription() != null : !DESCRIPTION_EDEFAULT
-				.equals(getDescription());
 		case OperationsPackage.ABSTRACT_OPERATION__MODEL_ELEMENT_ID:
 			return modelElementId != null;
 		case OperationsPackage.ABSTRACT_OPERATION__ACCEPTED:

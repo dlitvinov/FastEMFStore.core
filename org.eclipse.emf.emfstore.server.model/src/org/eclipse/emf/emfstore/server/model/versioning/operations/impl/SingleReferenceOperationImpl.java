@@ -369,26 +369,6 @@ public class SingleReferenceOperationImpl extends ReferenceOperationImpl impleme
 	}
 
 	@Override
-	public String getDescription() {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(getName());
-		// stringBuilder.append(".");
-		return stringBuilder.toString();
-	}
-
-	@Override
-	public String getName() {
-		StringBuilder stringBuilder = new StringBuilder();
-		if (getNewValue() != null) {
-			stringBuilder.append("Set ");
-		} else {
-			stringBuilder.append("Removed ");
-		}
-		stringBuilder.append(featureName);
-		return stringBuilder.toString();
-	}
-
-	@Override
 	public AbstractOperation reverse() {
 		SingleReferenceOperation singleReferenceOperation = OperationsFactory.eINSTANCE
 			.createSingleReferenceOperation();

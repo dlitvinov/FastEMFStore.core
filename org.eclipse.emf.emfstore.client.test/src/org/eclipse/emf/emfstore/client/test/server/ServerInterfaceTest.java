@@ -16,7 +16,6 @@ import org.eclipse.emf.emfstore.client.model.WorkspaceManager;
 import org.eclipse.emf.emfstore.client.model.util.EMFStoreCommand;
 import org.eclipse.emf.emfstore.client.model.util.EMFStoreCommandWithResult;
 import org.eclipse.emf.emfstore.client.test.SetupHelper;
-import org.eclipse.emf.emfstore.common.model.Project;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.common.model.util.SerializationException;
 import org.eclipse.emf.emfstore.server.exceptions.EmfStoreException;
@@ -54,6 +53,9 @@ public class ServerInterfaceTest extends ServerTests {
 	 * 
 	 * @throws EmfStoreException in case of failure
 	 */
+	/**
+	 * @throws EmfStoreException
+	 */
 	@Test
 	public void getProjectTest() throws EmfStoreException {
 		ProjectSpace projectSpace2 = new EMFStoreCommandWithResult<ProjectSpace>() {
@@ -79,6 +81,9 @@ public class ServerInterfaceTest extends ServerTests {
 	 *      org.eclipse.emf.emfstore.server.model.versioning.LogMessage)
 	 * @see org.unicase.emfstore.EmfStore#getProjectList(org.eclipse.emf.emfstore.server.model.SessionId)
 	 * @throws EmfStoreException in case of failure.
+	 */
+	/**
+	 * @throws EmfStoreException
 	 */
 	@Test
 	public void createEmptyProjectTest() throws EmfStoreException {
@@ -108,6 +113,9 @@ public class ServerInterfaceTest extends ServerTests {
 	 *      org.eclipse.emf.emfstore.server.model.versioning.LogMessage, Project)
 	 * @see org.unicase.emfstore.EmfStore#getProjectList(org.eclipse.emf.emfstore.server.model.SessionId)
 	 * @throws EmfStoreException in case of failure.
+	 */
+	/**
+	 * @throws EmfStoreException
 	 */
 	@Test
 	public void shareProjectTest() throws EmfStoreException {
@@ -139,6 +147,9 @@ public class ServerInterfaceTest extends ServerTests {
 	 * 
 	 * @throws EmfStoreException in case of failure
 	 */
+	/**
+	 * @throws EmfStoreException
+	 */
 	@Test
 	public void deleteProjectTest() throws EmfStoreException {
 		assertTrue(WorkspaceManager.getInstance().getCurrentWorkspace().getRemoteProjectList(getServerInfo()).size() == getProjectsOnServerBeforeTest());
@@ -165,6 +176,9 @@ public class ServerInterfaceTest extends ServerTests {
 	 * 
 	 * @throws EmfStoreException in case of failure.
 	 */
+	/**
+	 * @throws EmfStoreException
+	 */
 	@Test
 	public void resolveVersionSpecTest() throws EmfStoreException {
 		List<ProjectInfo> remoteProjectList = WorkspaceManager.getInstance().getCurrentWorkspace()
@@ -188,6 +202,9 @@ public class ServerInterfaceTest extends ServerTests {
 	 * Creates a version.
 	 * 
 	 * @throws EmfStoreException in case of failure
+	 */
+	/**
+	 * @throws EmfStoreException
 	 */
 	@Test
 	public void createVersionTest() throws EmfStoreException {
@@ -219,6 +236,9 @@ public class ServerInterfaceTest extends ServerTests {
 	 * 
 	 * @throws EmfStoreException in case of failure
 	 */
+	/**
+	 * @throws EmfStoreException
+	 */
 	@Test
 	public void getEmptyChangesTest() throws EmfStoreException {
 		List<ChangePackage> changes = getProjectSpace().getChanges(SetupHelper.createPrimaryVersionSpec(0),
@@ -231,6 +251,10 @@ public class ServerInterfaceTest extends ServerTests {
 	 * 
 	 * @throws EmfStoreException in case of failure
 	 * @throws SerializationException in case of failure
+	 */
+	/**
+	 * @throws EmfStoreException
+	 * @throws SerializationException
 	 */
 	@Test
 	public void getChangesTest() throws EmfStoreException, SerializationException {
@@ -280,6 +304,9 @@ public class ServerInterfaceTest extends ServerTests {
 	 * Gets a historyInfo.
 	 * 
 	 * @throws EmfStoreException in case of failure
+	 */
+	/**
+	 * @throws EmfStoreException
 	 */
 	@Test
 	public void getHistoryInfoTest() throws EmfStoreException {
@@ -337,6 +364,9 @@ public class ServerInterfaceTest extends ServerTests {
 	 * 
 	 * @throws EmfStoreException in case of failure.
 	 */
+	/**
+	 * @throws EmfStoreException
+	 */
 	@Test
 	public void removeTagTest() throws EmfStoreException {
 		String tagName = "testValue";
@@ -364,6 +394,9 @@ public class ServerInterfaceTest extends ServerTests {
 	 * @throws EmfStoreException in case of failure
 	 */
 	// @Test
+	/**
+	 * @throws EmfStoreException
+	 */
 	public void logOutTest() throws EmfStoreException {
 
 		Assert.assertNotNull(getConnectionManager().resolveUser(getSessionId(), null));

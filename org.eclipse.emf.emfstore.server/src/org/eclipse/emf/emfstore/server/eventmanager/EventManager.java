@@ -21,23 +21,20 @@ import org.eclipse.emf.emfstore.server.model.versioning.events.server.ServerProj
 
 /**
  * EventManager accepts events and distributes them to the listeners.
- * EventManger runs in it's own thread. -TODO: Enable listener to listen to
- * specified events only. - TODO: Don't allow listeners to block eventmanager
- * (e.g. connection timeout)
+ * EventManger runs in it's own thread.<br />
+ * <br />
+ * <b>TODO</b>: Enable listener to listen to specified events only.<br/>
+ * <b>TODO</b>: Don't allow listeners to block eventmanager (e.g. connection timeout)
  * 
  * @author wesendon
  */
 public final class EventManager extends Thread {
 
-	private static EventManager instance;
-	private LinkedBlockingQueue<ServerEvent> queue;
-	private ArrayList<ListenerContainer> listeners;
-
-	private EventManager() {
-		super("EventManager");
-		queue = new LinkedBlockingQueue<ServerEvent>();
-		listeners = new ArrayList<ListenerContainer>();
-		start();
+	/**
+	 * Initializes the singleton instance statically.
+	 */
+	private static class SingletonHolder {
+		public static final EventManager INSTANCE = new EventManager();
 	}
 
 	/**
@@ -46,10 +43,20 @@ public final class EventManager extends Thread {
 	 * @return instance
 	 */
 	public static EventManager getInstance() {
-		if (instance == null) {
-			instance = new EventManager();
-		}
-		return instance;
+		return SingletonHolder.INSTANCE;
+	}
+
+	private LinkedBlockingQueue<ServerEvent> queue;
+	private ArrayList<ListenerContainer> listeners;
+
+	/**
+	 * Private constructor.
+	 */
+	private EventManager() {
+		super("EventManager");
+		queue = new LinkedBlockingQueue<ServerEvent>();
+		listeners = new ArrayList<ListenerContainer>();
+		start();
 	}
 
 	/**

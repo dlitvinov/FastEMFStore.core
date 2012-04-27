@@ -163,7 +163,5 @@ public class CleanMemoryTask extends TimerTask {
 		for (EReference child : eObject.eClass().getEAllContainments()) {
 			eObject.eUnset(child);
 		}
-
-		System.gc();
 	}
 }

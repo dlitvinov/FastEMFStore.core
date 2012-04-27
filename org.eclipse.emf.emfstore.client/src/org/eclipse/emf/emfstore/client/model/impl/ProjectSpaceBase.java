@@ -689,19 +689,30 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 	 * @see org.eclipse.emf.emfstore.client.model.ProjectSpace#delete()
 	 * @generated NOT
 	 */
-	@SuppressWarnings("unchecked")
 	public void delete() throws IOException {
+		operationManager.removeOperationListener(modifiedModelElementsCache);
+		operationManager.dispose();
 		WorkspaceManager.getObserverBus().unregister(modifiedModelElementsCache);
-		WorkspaceManager.getObserverBus().unregister(this, LoginObserver.class);
 		WorkspaceManager.getObserverBus().unregister(this);
 
 		String pathToProject = Configuration.getWorkspaceDirectory() + Configuration.getProjectSpaceDirectoryPrefix()
 			+ getIdentifier();
-		ModelUtil.deleteResourcesWithPrefix(resourceSet, pathToProject);
+		List<Resource> toDelete = new ArrayList<Resource>();
+
+		for (Resource resource : resourceSet.getResources()) {
+			if (resource.getURI().toFileString().startsWith(pathToProject)) {
+				toDelete.add(resource);
+			}
+		}
+
+		for (Resource resource : toDelete) {
+			resource.delete(null);
+		}
+
+		resourceSet.getResources().clear();
 
 		// delete folder of project space
 		FileUtil.deleteFolder(new File(pathToProject));
-
 	}
 
 	/**
@@ -870,6 +881,9 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 		saveResource(this.eResource());
 	}
 
+	/**
+	 * Saves the project space.
+	 */
 	public void save() {
 		saveProjectSpaceOnly();
 		operationsList.save();

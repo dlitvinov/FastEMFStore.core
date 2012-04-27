@@ -166,9 +166,6 @@ public class MergingProposalItemProvider extends ProposalItemProvider implements
 
 		newChildDescriptors.add(createChildParameter(ChangePackage.Literals.MERGING_PROPOSAL__PENDING_OPERATIONS,
 			OperationsFactory.eINSTANCE.createMultiReferenceMoveOperation()));
-
-		newChildDescriptors.add(createChildParameter(ChangePackage.Literals.MERGING_PROPOSAL__PENDING_OPERATIONS,
-			OperationsFactory.eINSTANCE.createDiagramLayoutOperation()));
 	}
 
 	/**

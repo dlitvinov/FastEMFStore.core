@@ -81,9 +81,13 @@ import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPointException;
  * @author wesendon
  */
 public class ObserverBus {
-
-	private static ObserverBus instance;
-	private HashMap<Class<? extends IObserver>, List<IObserver>> observerMap;
+	
+	/**
+	 * Initializes the singleton instance statically.
+	 */
+	private static class SingletonHolder {
+		public static final ObserverBus INSTANCE = new ObserverBus();
+	}
 
 	/**
 	 * Static ObserverBus singleton. Use of singleton is optional, for that reason the constructor is public.
@@ -91,12 +95,10 @@ public class ObserverBus {
 	 * @return Static instance of the observerbus
 	 */
 	public static ObserverBus getInstance() {
-		if (instance == null) {
-			instance = new ObserverBus();
-		}
-
-		return instance;
+		return SingletonHolder.INSTANCE;
 	}
+	
+	private HashMap<Class<? extends IObserver>, List<IObserver>> observerMap;
 
 	/**
 	 * Default constructor.
@@ -113,7 +115,6 @@ public class ObserverBus {
 	 * @param clazz class of observer
 	 * @return call object
 	 */
-	@SuppressWarnings("unchecked")
 	public <T extends IObserver> T notify(Class<T> clazz) {
 		if (clazz == null) {
 			return null;

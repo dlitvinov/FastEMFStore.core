@@ -134,7 +134,7 @@ public class MultiAttributeOperationItemProvider extends FeatureOperationItemPro
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MultiAttributeOperation) object).getName();
+		String label = ((MultiAttributeOperation) object).getFeatureName();
 		return label == null || label.length() == 0 ? getString("_UI_MultiAttributeOperation_type")
 			: getString("_UI_MultiAttributeOperation_type") + " " + label;
 	}
