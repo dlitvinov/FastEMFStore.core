@@ -931,7 +931,7 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 		}
 
 		try {
-			resource.save(ModelUtil.getResourceSaveOptions());
+			resource.save(ModelUtil.getResourceBinarySaveOptions());
 		} catch (IOException e) {
 			String message = String.format("Resource {0} could not be saved!", resource.getURI());
 			WorkspaceUtil.logWarning(message, null);

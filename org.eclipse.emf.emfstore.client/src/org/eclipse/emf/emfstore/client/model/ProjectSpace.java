@@ -597,6 +597,8 @@ public interface ProjectSpace extends IdentifiableElement {
 
 	/**
 	 * Returns the resource set of the ProjectSpace.
+	 * 
+	 * @return the resource set, used by the ProjectSpace
 	 */
 	public ResourceSet getResourceSet();
 

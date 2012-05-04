@@ -97,6 +97,8 @@ public final class ModelUtil {
 
 	private static HashMap<Object, Object> resourceSaveOptions;
 
+	private static HashMap<Object, Object> resourceBinarySaveOptions;
+
 	/**
 	 * Private constructor.
 	 */
@@ -141,16 +143,16 @@ public final class ModelUtil {
 	}
 
 	/**
-	 * Compares two EObject by checking whether the string representations of
+	 * Compares two lists of EObject by checking whether the string representations of
 	 * the EObjects are equal.
 	 * 
-	 * @param eobjectA
-	 *            the first EObject
-	 * @param eobjectB
-	 *            the second EObject
-	 * @return true if the two objects are equal
+	 * @param listA
+	 *            the first list of EObject
+	 * @param listB
+	 *            the second list of EObject
+	 * @return true if the two lists are equal
 	 */
-	public static boolean areEqual(EList<EObject> listA, EList<EObject> listB) {
+	public static boolean areEqual(EList<? extends EObject> listA, EList<? extends EObject> listB) {
 		if (listA == listB) {
 			return true;
 		}
@@ -162,7 +164,7 @@ public final class ModelUtil {
 		for (int i = 0; i < listA.size(); ++i) {
 			EObject o1 = listA.get(i);
 			EObject o2 = listB.get(i);
-			if (o1 == null ? o2 != null : !areEqual(o1, o2)) {
+			if (!areEqual(o1, o2)) {
 				return false;
 			}
 		}
@@ -195,7 +197,7 @@ public final class ModelUtil {
 		String res = eObjectToString(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
 		// String oldRes = eObjectToString_old(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
 		// if (res == null && oldRes != null || !res.equals(oldRes)) {
-		// System.err.println("The result is DIFFERENT!!");
+		// System.err.println("The results are DIFFERENT!!");
 		// }
 		return res;
 	}
@@ -218,10 +220,11 @@ public final class ModelUtil {
 		res = new BinaryResourceImpl();
 		((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
 		res.getContents().add(object);
+		// res.getContents().add()
 		// }
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(initialSize);
 		try {
-			res.save(outputStream, getResourceSaveOptions());
+			res.save(outputStream, getResourceBinarySaveOptions());
 			// if (before != null && !before.equals(asString(res.getURI().toFileString()))) {
 			// System.err.println("The file is changed!");
 			// }
@@ -279,16 +282,23 @@ public final class ModelUtil {
 		// } catch (IOException e1) {
 		// e1.printStackTrace();
 		// }
-		StringWriter stringWriter = new StringWriter(initialSize);
+		// StringWriter stringWriter = new StringWriter(initialSize);
+		// try {
+		// res.save(stringWriter, getResourceSaveOptions());
+		// // if (before != null && !before.equals(asString(res.getURI().toFileString()))) {
+		// // System.err.println("The file is changed!");
+		// // }
+		// } catch (IOException e) {
+		// throw new SerializationException(e);
+		// }
+		// String result = stringWriter.toString();
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(initialSize);
 		try {
-			res.save(stringWriter, getResourceSaveOptions());
-			// if (before != null && !before.equals(asString(res.getURI().toFileString()))) {
-			// System.err.println("The file is changed!");
-			// }
+			res.save(outputStream, getResourceBinarySaveOptions());
 		} catch (IOException e) {
 			throw new SerializationException(e);
 		}
-		String result = stringWriter.toString();
+		String result = outputStream.toString();
 
 		if (!overrideHrefCheck) {
 			hrefCheck(result);
@@ -448,7 +458,10 @@ public final class ModelUtil {
 		XMIResource res = (XMIResource) (new ResourceSetImpl()).createResource(VIRTUAL_URI);
 		((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
 		try {
-			res.load(new InputSource(new StringReader(object)), getResourceLoadOptions());
+			Map<Object, Object> newOptions = new HashMap<Object, Object>(ModelUtil.getResourceLoadOptions());
+			newOptions.put(XMLResource.OPTION_BINARY, Boolean.TRUE);
+			res.load(new InputSource(new StringReader(object)), newOptions);
+			// res.load(new InputSource(new StringReader(object)), getResourceLoadOptions());
 			// res.load(new ByteArrayInputStream(object.getBytes()), getResourceLoadOptions());
 		} catch (UnsupportedEncodingException e) {
 			throw new SerializationException(e);
@@ -522,9 +535,21 @@ public final class ModelUtil {
 			resourceSaveOptions = new HashMap<Object, Object>();
 			resourceSaveOptions.put(XMLResource.OPTION_USE_ENCODED_ATTRIBUTE_STYLE, Boolean.TRUE);
 			resourceSaveOptions.put(XMLResource.OPTION_USE_CACHED_LOOKUP_TABLE, new ArrayList<Object>());
-			resourceSaveOptions.put(XMLResource.OPTION_BINARY, Boolean.TRUE);
 		}
 		return resourceSaveOptions;
+	}
+
+	/**
+	 * Delivers a map of mandatory options for saving resources in binary mode.
+	 * 
+	 * @return map of options for {@link XMIResource} or {@link XMLResource}.
+	 */
+	public static Map<Object, Object> getResourceBinarySaveOptions() {
+		if (resourceBinarySaveOptions == null) {
+			resourceBinarySaveOptions = new HashMap<Object, Object>(resourceSaveOptions);
+			resourceBinarySaveOptions.put(XMLResource.OPTION_BINARY, Boolean.TRUE);
+		}
+		return resourceBinarySaveOptions;
 	}
 
 	private static boolean canHaveInstances(EClass eClass) {

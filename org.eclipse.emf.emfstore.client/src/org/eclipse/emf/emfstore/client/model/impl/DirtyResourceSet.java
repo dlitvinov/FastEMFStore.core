@@ -81,7 +81,7 @@ public class DirtyResourceSet {
 			}
 
 			try {
-				resource.save(ModelUtil.getResourceSaveOptions());
+				resource.save(ModelUtil.getResourceBinarySaveOptions());
 				resourcesToRemove.add(resource);
 			} catch (IOException e) {
 				// ignore exception
