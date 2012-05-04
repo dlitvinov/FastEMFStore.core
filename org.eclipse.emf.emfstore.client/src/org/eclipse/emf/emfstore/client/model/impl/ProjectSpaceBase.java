@@ -575,56 +575,6 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 		if (useCrossReferenceAdapter) {
 			crossReferenceAdapter = new ECrossReferenceAdapter();
 			getProject().eAdapters().add(crossReferenceAdapter);
-			// WorkspaceManager.getObserverBus().register(new DeleteProjectSpaceObserver() {
-			// public void projectDeleted(ProjectSpace projectSpace) {
-			// // remove project resourcess from crossreferenceadapter
-			// crossReferenceAdapter.unsetTarget(projectSpace);
-			// }
-			// });
-			// WorkspaceManager.getObserverBus().register(new ShareObserver() {
-			// public void shareDone(ProjectSpace projectSpace) {
-			// for (AbstractOperation op : projectSpace.getOperations()) {
-			// crossReferenceAdapter.unsetTarget(op);
-			// }
-			// }
-			// });
-			// WorkspaceManager.getObserverBus().register(new CheckoutObserver() {
-			// public void checkoutDone(ProjectSpace projectSpace) {
-			// for (AbstractOperation op : projectSpace.getOperations()) {
-			// crossReferenceAdapter.unsetTarget(op);
-			// }
-			// }
-			// });
-			// WorkspaceManager.getObserverBus().register(new CommitObserver() {
-			// private ChangePackage changePackage;
-			//
-			// public boolean inspectChanges(ProjectSpace projectSpace, ChangePackage changePackage) {
-			// this.changePackage = changePackage;
-			// return true;
-			// }
-			//
-			// public void commitCompleted(ProjectSpace projectSpace, PrimaryVersionSpec newRevision) {
-			// for (AbstractOperation op : changePackage.getOperations()) {
-			// crossReferenceAdapter.unsetTarget(op);
-			// }
-			// }
-			// });
-			// WorkspaceManager.getObserverBus().register(new UpdateObserver() {
-			// private List<ChangePackage> changePackages;
-			//
-			// public boolean inspectChanges(ProjectSpace projectSpace, List<ChangePackage> changePackages) {
-			// this.changePackages = changePackages;
-			// return true;
-			// }
-			//
-			// public void updateCompleted(ProjectSpace projectSpace) {
-			// for (ChangePackage changePackage : changePackages) {
-			// for (AbstractOperation op : changePackage.getOperations()) {
-			// crossReferenceAdapter.unsetTarget(op);
-			// }
-			// }
-			// }
-			// });
 		}
 
 		this.resourceSet = resourceSet;
@@ -689,10 +639,12 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 	 * @see org.eclipse.emf.emfstore.client.model.ProjectSpace#delete()
 	 * @generated NOT
 	 */
+	@SuppressWarnings("unchecked")
 	public void delete() throws IOException {
 		operationManager.removeOperationListener(modifiedModelElementsCache);
 		operationManager.dispose();
 		WorkspaceManager.getObserverBus().unregister(modifiedModelElementsCache);
+		// WorkspaceManager.getObserverBus().unregister(this, LoginObserver.class);
 		WorkspaceManager.getObserverBus().unregister(this);
 
 		String pathToProject = Configuration.getWorkspaceDirectory() + Configuration.getProjectSpaceDirectoryPrefix()

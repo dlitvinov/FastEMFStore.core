@@ -236,8 +236,6 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 		Set<EObject> allModelElements) {
 		List<SettingWithReferencedElement> settings = new ArrayList<SettingWithReferencedElement>();
 		for (EObject modelElement : allModelElements) {
-			// Collection<Setting> inverseReferences0 = WorkspaceManager.getInstance().findInverseCrossReferences(
-			// modelElement);
 			Collection<Setting> inverseReferences = projectSpace.findInverseCrossReferences(modelElement);
 
 			for (Setting setting : inverseReferences) {
@@ -620,8 +618,6 @@ public class OperationRecorder implements CommandObserver, IdEObjectCollectionCh
 
 			for (EObject eObject : allContainedModelElementsSet) {
 				// delete incoming cross references
-				// Collection<Setting> inverseReferences0 = WorkspaceManager.getInstance().findInverseCrossReferences(
-				// eObject);
 				Collection<Setting> inverseReferences = projectSpace.findInverseCrossReferences(eObject);
 				ModelUtil.deleteIncomingCrossReferencesFromParent(inverseReferences, eObject);
 
