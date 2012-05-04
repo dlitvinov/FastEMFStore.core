@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.common.model.util;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -41,6 +44,7 @@ import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.BinaryResourceImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -188,7 +192,49 @@ public final class ModelUtil {
 			containmentCheckEnabled = element.getBoolean("SelfContainmentCheck");
 		}
 
-		return eObjectToString(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
+		String res = eObjectToString(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
+		// String oldRes = eObjectToString_old(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
+		// if (res == null && oldRes != null || !res.equals(oldRes)) {
+		// System.err.println("The result is DIFFERENT!!");
+		// }
+		return res;
+	}
+
+	public static String eObjectToBinary(EObject object, boolean overrideContainmentCheck, boolean overrideHrefCheck,
+		boolean overrideProxyCheck) throws SerializationException {
+
+		if (object == null) {
+			return null;
+		}
+
+		Resource res;
+		int step = 200;
+		int initialSize = step;
+		// if (object instanceof Project) {
+		// Project project = (Project) object;
+		// initialSize = project.getAllModelElements().size() * step;
+		// res = project.eResource();
+		// } else {
+		res = new BinaryResourceImpl();
+		((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
+		res.getContents().add(object);
+		// }
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(initialSize);
+		try {
+			res.save(outputStream, getResourceSaveOptions());
+			// if (before != null && !before.equals(asString(res.getURI().toFileString()))) {
+			// System.err.println("The file is changed!");
+			// }
+		} catch (IOException e) {
+			throw new SerializationException(e);
+		}
+		String result = outputStream.toString();
+
+		if (!overrideHrefCheck) {
+			hrefCheck(result);
+		}
+
+		return result;
 	}
 
 	/**
@@ -209,6 +255,50 @@ public final class ModelUtil {
 	 */
 	public static String eObjectToString(EObject object, boolean overrideContainmentCheck, boolean overrideHrefCheck,
 		boolean overrideProxyCheck) throws SerializationException {
+
+		if (object == null) {
+			return null;
+		}
+
+		XMIResource res;
+		int step = 200;
+		int initialSize = step;
+		if (object instanceof Project) {
+			Project project = (Project) object;
+			initialSize = project.getAllModelElements().size() * step;
+			res = (XMIResource) project.eResource();
+		} else {
+			res = (XMIResource) (new ResourceSetImpl()).createResource(VIRTUAL_URI);
+			((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
+			res.getContents().add(object);
+		}
+		// XMIResource res = (XMIResource) object.eResource();
+		// String before = null;
+		// try {
+		// before = asString(res.getURI().toFileString());
+		// } catch (IOException e1) {
+		// e1.printStackTrace();
+		// }
+		StringWriter stringWriter = new StringWriter(initialSize);
+		try {
+			res.save(stringWriter, getResourceSaveOptions());
+			// if (before != null && !before.equals(asString(res.getURI().toFileString()))) {
+			// System.err.println("The file is changed!");
+			// }
+		} catch (IOException e) {
+			throw new SerializationException(e);
+		}
+		String result = stringWriter.toString();
+
+		if (!overrideHrefCheck) {
+			hrefCheck(result);
+		}
+
+		return result;
+	}
+
+	public static String eObjectToString_old(EObject object, boolean overrideContainmentCheck,
+		boolean overrideHrefCheck, boolean overrideProxyCheck) throws SerializationException {
 
 		if (object == null) {
 			return null;
@@ -253,6 +343,19 @@ public final class ModelUtil {
 		}
 
 		return result;
+	}
+
+	public static String asString(String fileName) throws java.io.IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(fileName));
+		String lLine;
+		StringBuilder lReturn = new StringBuilder();
+
+		while ((lLine = reader.readLine()) != null) {
+			lReturn.append(lLine);
+			lReturn.append(" ");
+		}
+		reader.close();
+		return lReturn.toString();
 	}
 
 	private static EObject copyIdEObjectCollection(IdEObjectCollection collection, XMIResource res) {
@@ -341,10 +444,12 @@ public final class ModelUtil {
 			return null;
 		}
 
+		// Resource res = new BinaryResourceImpl();
 		XMIResource res = (XMIResource) (new ResourceSetImpl()).createResource(VIRTUAL_URI);
 		((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
 		try {
 			res.load(new InputSource(new StringReader(object)), getResourceLoadOptions());
+			// res.load(new ByteArrayInputStream(object.getBytes()), getResourceLoadOptions());
 		} catch (UnsupportedEncodingException e) {
 			throw new SerializationException(e);
 		} catch (IOException e) {
@@ -417,6 +522,7 @@ public final class ModelUtil {
 			resourceSaveOptions = new HashMap<Object, Object>();
 			resourceSaveOptions.put(XMLResource.OPTION_USE_ENCODED_ATTRIBUTE_STYLE, Boolean.TRUE);
 			resourceSaveOptions.put(XMLResource.OPTION_USE_CACHED_LOOKUP_TABLE, new ArrayList<Object>());
+			resourceSaveOptions.put(XMLResource.OPTION_BINARY, Boolean.TRUE);
 		}
 		return resourceSaveOptions;
 	}
