@@ -1,9 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2012 EclipseSource Muenchen GmbH.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: Max Hohenegger (bug 371196)
+ ******************************************************************************/
 package org.eclipse.emf.emfstore.client.ui.dialogs.login;
 
 import org.eclipse.emf.emfstore.client.model.ServerInfo;
 import org.eclipse.emf.emfstore.client.model.Usersession;
 import org.eclipse.emf.emfstore.client.model.WorkspaceManager;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.AbstractSessionProvider;
+import org.eclipse.emf.emfstore.client.model.exceptions.LoginCanceledException;
 import org.eclipse.emf.emfstore.server.exceptions.AccessControlException;
 import org.eclipse.emf.emfstore.server.exceptions.EmfStoreException;
 import org.eclipse.jface.dialogs.Dialog;
@@ -30,6 +41,8 @@ public class BasicUISessionProvider extends AbstractSessionProvider {
 				WorkspaceManager.getInstance().getCurrentWorkspace().getServerInfos());
 			if (dialog.open() == Dialog.OK) {
 				serverInfo = dialog.getResult();
+			} else if (dialog.open() == Dialog.CANCEL) {
+				throw new LoginCanceledException("Operation canceled by user.");
 			}
 		}
 		if (serverInfo == null) {

@@ -33,6 +33,7 @@ import org.eclipse.emf.emfstore.common.model.EMFStoreProperty;
 import org.eclipse.emf.emfstore.common.model.Project;
 import org.eclipse.emf.emfstore.server.model.FileIdentifier;
 import org.eclipse.emf.emfstore.server.model.ProjectId;
+import org.eclipse.emf.emfstore.server.model.versioning.ChangePackage;
 import org.eclipse.emf.emfstore.server.model.versioning.PrimaryVersionSpec;
 
 /**
@@ -279,6 +280,17 @@ public class ProjectSpaceImpl extends ProjectSpaceBase implements ProjectSpace {
 	protected EList<EMFStoreProperty> changedSharedProperties;
 
 	/**
+	 * The cached value of the '{@link #getLocalChangePackage() <em>Local Change Package</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * 
+	 * @see #getLocalChangePackage()
+	 * @generated
+	 * @ordered
+	 */
+	protected ChangePackage localChangePackage;
+
+	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
 	 * @generated
@@ -497,6 +509,10 @@ public class ProjectSpaceImpl extends ProjectSpaceBase implements ProjectSpace {
 			if (resolve)
 				return getWorkspace();
 			return basicGetWorkspace();
+		case ModelPackage.PROJECT_SPACE__LOCAL_CHANGE_PACKAGE:
+			if (resolve)
+				return getLocalChangePackage();
+			return basicGetLocalChangePackage();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -540,6 +556,8 @@ public class ProjectSpaceImpl extends ProjectSpaceBase implements ProjectSpace {
 			return ((InternalEList<?>) getProperties()).basicRemove(otherEnd, msgs);
 		case ModelPackage.PROJECT_SPACE__WORKSPACE:
 			return basicSetWorkspace(null, msgs);
+		case ModelPackage.PROJECT_SPACE__LOCAL_CHANGE_PACKAGE:
+			return basicSetLocalChangePackage(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -583,6 +601,8 @@ public class ProjectSpaceImpl extends ProjectSpaceBase implements ProjectSpace {
 			return changedSharedProperties != null && !changedSharedProperties.isEmpty();
 		case ModelPackage.PROJECT_SPACE__WORKSPACE:
 			return basicGetWorkspace() != null;
+		case ModelPackage.PROJECT_SPACE__LOCAL_CHANGE_PACKAGE:
+			return localChangePackage != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -644,6 +664,9 @@ public class ProjectSpaceImpl extends ProjectSpaceBase implements ProjectSpace {
 			return;
 		case ModelPackage.PROJECT_SPACE__WORKSPACE:
 			setWorkspace((Workspace) newValue);
+			return;
+		case ModelPackage.PROJECT_SPACE__LOCAL_CHANGE_PACKAGE:
+			setLocalChangePackage((ChangePackage) newValue);
 			return;
 		}
 		super.eSet(featureID, newValue);
@@ -711,6 +734,9 @@ public class ProjectSpaceImpl extends ProjectSpaceBase implements ProjectSpace {
 			return;
 		case ModelPackage.PROJECT_SPACE__WORKSPACE:
 			setWorkspace((Workspace) null);
+			return;
+		case ModelPackage.PROJECT_SPACE__LOCAL_CHANGE_PACKAGE:
+			setLocalChangePackage((ChangePackage) null);
 			return;
 		}
 		super.eUnset(featureID);
@@ -1139,6 +1165,87 @@ public class ProjectSpaceImpl extends ProjectSpaceBase implements ProjectSpace {
 		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ModelPackage.PROJECT_SPACE__WORKSPACE, newWorkspace,
 				newWorkspace));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	public ChangePackage getLocalChangePackage() {
+		if (localChangePackage != null && localChangePackage.eIsProxy()) {
+			InternalEObject oldLocalChangePackage = (InternalEObject) localChangePackage;
+			localChangePackage = (ChangePackage) eResolveProxy(oldLocalChangePackage);
+			if (localChangePackage != oldLocalChangePackage) {
+				InternalEObject newLocalChangePackage = (InternalEObject) localChangePackage;
+				NotificationChain msgs = oldLocalChangePackage.eInverseRemove(this, EOPPOSITE_FEATURE_BASE
+					- ModelPackage.PROJECT_SPACE__LOCAL_CHANGE_PACKAGE, null, null);
+				if (newLocalChangePackage.eInternalContainer() == null) {
+					msgs = newLocalChangePackage.eInverseAdd(this, EOPPOSITE_FEATURE_BASE
+						- ModelPackage.PROJECT_SPACE__LOCAL_CHANGE_PACKAGE, null, msgs);
+				}
+				if (msgs != null)
+					msgs.dispatch();
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE,
+						ModelPackage.PROJECT_SPACE__LOCAL_CHANGE_PACKAGE, oldLocalChangePackage, localChangePackage));
+			}
+		}
+		return localChangePackage;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	public ChangePackage basicGetLocalChangePackage() {
+		return localChangePackage;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	public NotificationChain basicSetLocalChangePackage(ChangePackage newLocalChangePackage, NotificationChain msgs) {
+		ChangePackage oldLocalChangePackage = localChangePackage;
+		localChangePackage = newLocalChangePackage;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
+				ModelPackage.PROJECT_SPACE__LOCAL_CHANGE_PACKAGE, oldLocalChangePackage, newLocalChangePackage);
+			if (msgs == null)
+				msgs = notification;
+			else
+				msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	public void setLocalChangePackage(ChangePackage newLocalChangePackage) {
+		if (newLocalChangePackage != localChangePackage) {
+			NotificationChain msgs = null;
+			if (localChangePackage != null)
+				msgs = ((InternalEObject) localChangePackage).eInverseRemove(this, EOPPOSITE_FEATURE_BASE
+					- ModelPackage.PROJECT_SPACE__LOCAL_CHANGE_PACKAGE, null, msgs);
+			if (newLocalChangePackage != null)
+				msgs = ((InternalEObject) newLocalChangePackage).eInverseAdd(this, EOPPOSITE_FEATURE_BASE
+					- ModelPackage.PROJECT_SPACE__LOCAL_CHANGE_PACKAGE, null, msgs);
+			msgs = basicSetLocalChangePackage(newLocalChangePackage, msgs);
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ModelPackage.PROJECT_SPACE__LOCAL_CHANGE_PACKAGE,
+				newLocalChangePackage, newLocalChangePackage));
 	}
 
 	/**

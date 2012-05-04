@@ -10,28 +10,38 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.server.connection.xmlrpc.util;
 
-import org.apache.xmlrpc.parser.AtomicParser;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.parser.ByteArrayParser;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.common.model.util.SerializationException;
-import org.xml.sax.SAXException;
 
 /**
  * Parser for EObjects.
  * 
- * @author wesendon
+ * @author emueller
  */
-public class EObjectTypeParser extends AtomicParser {
+public class EObjectTypeParser extends ByteArrayParser {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	protected void setResult(String pResult) throws SAXException {
+	public Object getResult() throws XmlRpcException {
 		try {
-			super.setResult(ModelUtil.stringToEObject(pResult));
-		} catch (SerializationException e) {
-			throw new SAXException("Couldn't parse EObject", e);
+			byte[] res = (byte[]) super.getResult();
+			ByteArrayInputStream bais = new ByteArrayInputStream(res);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(bais));
+			try {
+				return ModelUtil.stringToEObject(reader);
+			} catch (SerializationException e) {
+				throw new XmlRpcException("Couldn't parse EObject", e);
+			} finally {
+				reader.close();
+			}
+		} catch (IOException e) {
+			throw new XmlRpcException("Failed to read result object: " + e.getMessage(), e);
 		}
 	}
-
 }

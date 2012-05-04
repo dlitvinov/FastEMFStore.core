@@ -10,10 +10,10 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.common.model.util;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -44,6 +44,7 @@ import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.BinaryResourceImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -341,8 +342,9 @@ public final class ModelUtil {
 		}
 
 		StringWriter stringWriter = new StringWriter(initialSize);
+		URIConverter.WriteableOutputStream uws = new URIConverter.WriteableOutputStream(stringWriter, "UTF-8");
 		try {
-			res.save(stringWriter, getResourceSaveOptions());
+			res.save(uws, getResourceSaveOptions());
 		} catch (IOException e) {
 			throw new SerializationException(e);
 		}
@@ -355,17 +357,48 @@ public final class ModelUtil {
 		return result;
 	}
 
-	public static String asString(String fileName) throws java.io.IOException {
-		BufferedReader reader = new BufferedReader(new FileReader(fileName));
-		String lLine;
-		StringBuilder lReturn = new StringBuilder();
+	/**
+	 * Converts an {@link EObject} to a {@link String}.
+	 * 
+	 * @param writer
+	 *            a writer that will be used as the destination where to write the serialized EObject
+	 * @param object
+	 *            the {@link EObject} that needs to be serialized
+	 * @param overrideContainmentCheck
+	 *            if true, no containment check is performed
+	 * @param overrideHrefCheck
+	 *            checks whether there is a <code>href</code> in the serialized
+	 *            text
+	 * @param overrideProxyCheck
+	 *            if true, proxy check is ignored
+	 * @throws SerializationException
+	 *             if a serialization problem occurs
+	 */
+	public static void eobjectToString(OutputStreamWriter writer, EObject object, boolean overrideContainmentCheck,
+		boolean overrideHrefCheck, boolean overrideProxyCheck) throws SerializationException {
 
-		while ((lLine = reader.readLine()) != null) {
-			lReturn.append(lLine);
-			lReturn.append(" ");
+		if (object == null) {
+			return;
 		}
-		reader.close();
-		return lReturn.toString();
+
+		XMIResource res = (XMIResource) object.eResource();
+
+		if (!overrideContainmentCheck && !(object instanceof EClass)) {
+			if (!CommonUtil.isSelfContained(object) || !CommonUtil.isContainedInResource(object, res)) {
+				throw new SerializationException(object);
+			}
+		}
+
+		if (!overrideProxyCheck) {
+			proxyCheck(res);
+		}
+
+		URIConverter.WriteableOutputStream uws = new URIConverter.WriteableOutputStream(writer, "UTF-8");
+		try {
+			res.save(uws, getResourceSaveOptions());
+		} catch (IOException e) {
+			throw new SerializationException(e);
+		}
 	}
 
 	private static EObject copyIdEObjectCollection(IdEObjectCollection collection, XMIResource res) {
@@ -469,6 +502,37 @@ public final class ModelUtil {
 			throw new SerializationException(e);
 		}
 
+		return handleParsedEObject(res);
+	}
+
+	/**
+	 * Reads from a given {@link Reader} instance and converts the read stream
+	 * into an {@link EObject}.
+	 * 
+	 * @param reader
+	 *            the {@link Reader} capable of reading in a serialized EObject
+	 * @return the deserialized {@link EObject}
+	 * @throws SerializationException
+	 *             if deserialization fails
+	 */
+	public static EObject stringToEObject(Reader reader) throws SerializationException {
+
+		XMIResource res = (XMIResource) (new ResourceSetImpl()).createResource(VIRTUAL_URI);
+		((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
+		URIConverter.ReadableInputStream ris = new URIConverter.ReadableInputStream(reader, "UTF-8");
+
+		try {
+			res.load(ris, getResourceLoadOptions());
+		} catch (UnsupportedEncodingException e) {
+			throw new SerializationException(e);
+		} catch (IOException e) {
+			throw new SerializationException(e);
+		}
+
+		return handleParsedEObject(res);
+	}
+
+	private static EObject handleParsedEObject(XMIResource res) throws SerializationException {
 		EObject result = res.getContents().get(0);
 
 		if (result instanceof IdEObjectCollection) {

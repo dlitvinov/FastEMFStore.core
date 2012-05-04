@@ -268,7 +268,7 @@ public final class Configuration {
 	 * 
 	 * @return the file extension
 	 */
-	public static String getOperationCompositeFileExtension() {
+	public static String getLocalChangePackageFileExtension() {
 		return UOC;
 	}
 

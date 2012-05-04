@@ -12,13 +12,11 @@ package org.eclipse.emf.emfstore.server.model.provider;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.emfstore.common.IDisposable;
 import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionElement;
 import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
 import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPointException;
-import org.eclipse.emf.emfstore.common.model.ModelElementId;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation;
 
@@ -28,19 +26,14 @@ import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOpera
  * @author Michael Kagel
  * @author emueller
  */
-public class CustomOperationLabelProviderManager {
+public class CustomOperationLabelProviderManager implements IDisposable {
 
 	private static List<AbstractOperationCustomLabelProvider> list;
-	private final Map<ModelElementId, EObject> modelElementMap;
 
 	/**
 	 * Constructor.
-	 * 
-	 * @param modelElementMap a model element/ID mapping that must
-	 *            contain all the model elements and their IDs that are involved with this operation.
 	 */
-	public CustomOperationLabelProviderManager(Map<ModelElementId, EObject> modelElementMap) {
-		this.modelElementMap = modelElementMap;
+	public CustomOperationLabelProviderManager() {
 		if (list == null) {
 			initExtensions();
 		}
@@ -80,11 +73,20 @@ public class CustomOperationLabelProviderManager {
 			try {
 				AbstractOperationCustomLabelProvider provider = element.getClass("class",
 					AbstractOperationCustomLabelProvider.class);
-				provider.setModelElementMap(modelElementMap);
 				list.add(provider);
 			} catch (ExtensionPointException e) {
 				ModelUtil.logException("Exception occured while initializing custom label provider extensions!", e);
 			}
 		}
+	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 * 
+	 * @see org.eclipse.emf.emfstore.common.IDisposable#dispose()
+	 */
+	public void dispose() {
+		list = null;
 	}
 }

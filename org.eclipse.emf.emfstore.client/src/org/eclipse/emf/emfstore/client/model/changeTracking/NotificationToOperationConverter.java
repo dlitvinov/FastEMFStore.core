@@ -15,7 +15,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.emfstore.client.model.changeTracking.notification.NotificationInfo;
@@ -355,12 +354,6 @@ public final class NotificationToOperationConverter {
 		if (reference.isContainment()) {
 			referenceOperation.setContainmentType(ContainmentType.CONTAINMENT);
 		}
-	}
-
-	private boolean isDiagramLayoutAttribute(EAttribute attribute, EObject modelElement) {
-		// FIXME: to check if attribute is the layout of a diagram
-		boolean isLayoutAttribute = attribute.getName().equals("diagramLayout");
-		return isLayoutAttribute;
 	}
 
 }

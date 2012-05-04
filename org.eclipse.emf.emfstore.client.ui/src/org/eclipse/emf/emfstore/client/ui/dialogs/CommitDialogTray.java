@@ -28,12 +28,6 @@ public abstract class CommitDialogTray extends DialogTray {
 	public abstract void init(CommitDialog commitDialog);
 
 	/**
-	 * Disposes the tray and its contents.
-	 */
-	public void dispose() {
-	}
-
-	/**
 	 * Notifies that the OK button of the CommitDialog has been pressed.
 	 */
 	public void okPressed() {

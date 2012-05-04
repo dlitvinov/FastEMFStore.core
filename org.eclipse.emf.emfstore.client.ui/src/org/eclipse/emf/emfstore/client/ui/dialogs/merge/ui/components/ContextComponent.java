@@ -16,6 +16,7 @@ import org.eclipse.emf.emfstore.client.ui.dialogs.merge.conflict.Conflict;
 import org.eclipse.emf.emfstore.client.ui.dialogs.merge.conflict.ConflictContext;
 import org.eclipse.emf.emfstore.client.ui.dialogs.merge.ui.DecisionBox;
 import org.eclipse.emf.emfstore.client.ui.dialogs.merge.util.DecisionUtil;
+import org.eclipse.emf.emfstore.common.IDisposable;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -29,7 +30,7 @@ import org.eclipse.swt.widgets.Label;
  * 
  * @author wesendon
  */
-public class ContextComponent extends Composite {
+public class ContextComponent extends Composite implements IDisposable {
 
 	private ComposedAdapterFactory adapterFactory;
 
@@ -71,17 +72,13 @@ public class ContextComponent extends Composite {
 		oppTitle.setFont(fontRegistry.get("titleLabel"));
 		oppTitle.setBackground(getBackground());
 
-		adapterFactory = new ComposedAdapterFactory(
-				ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
-		AdapterFactoryLabelProvider provider = new AdapterFactoryLabelProvider(
-				adapterFactory);
+		adapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
+		AdapterFactoryLabelProvider provider = new AdapterFactoryLabelProvider(adapterFactory);
 
 		CLabel meLabel = new CLabel(this, SWT.NONE);
 		meLabel.setImage(provider.getImage(context.getModelElement()));
-		meLabel.setText(DecisionUtil.cutString(
-				provider.getText(context.getModelElement()), 40, true));
-		meLabel.setToolTipText(DecisionUtil.getClassAndName(context
-				.getModelElement()));
+		meLabel.setText(DecisionUtil.cutString(provider.getText(context.getModelElement()), 40, true));
+		meLabel.setToolTipText(DecisionUtil.getClassAndName(context.getModelElement()));
 		meLabel.setFont(fontRegistry.get("content"));
 		meLabel.setBackground(getBackground());
 

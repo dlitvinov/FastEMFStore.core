@@ -129,7 +129,6 @@ public class CSVImportSource extends ImportSource {
 			int indexUserName = 0;
 			int indexForGroup = 1;
 
-			int counter = 0;
 			while ((line = bufferedReader.readLine()) != null) {
 				// Get the user information from the next line
 				String[] title = line.split(",");
@@ -159,8 +158,6 @@ public class CSVImportSource extends ImportSource {
 
 				childOrgUnits.add(userImportWrapper);
 				importWrapper.setChildOrgUnits(childOrgUnits);
-
-				counter++;
 
 			}
 

@@ -96,7 +96,8 @@ public class DefaultOperationLabelProvider extends AbstractOperationCustomLabelP
 	 * @see org.eclipse.emf.emfstore.server.model.provider.AbstractOperationCustomLabelProvider#getModelElementName(org.eclipse.emf.ecore.EObject)
 	 */
 	@Override
-	protected String getModelElementName(EObject modelElement) {
+	public String getModelElementName(EObject modelElement) {
+
 		if (modelElement == null) {
 			return UNKOWN_ELEMENT;
 		}
@@ -120,6 +121,12 @@ public class DefaultOperationLabelProvider extends AbstractOperationCustomLabelP
 		return result;
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 * 
+	 * @see org.eclipse.emf.emfstore.server.model.provider.AbstractOperationCustomLabelProvider#dispose()
+	 */
 	public void dispose() {
 		if (adapterFactory != null) {
 			adapterFactory.dispose();

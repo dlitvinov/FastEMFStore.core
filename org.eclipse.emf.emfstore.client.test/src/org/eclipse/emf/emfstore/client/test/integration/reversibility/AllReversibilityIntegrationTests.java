@@ -19,7 +19,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ AttributeOperationsReversibilityTest.class, ReferenceOperationsReversibilityTest.class,
-	CreateDeleteOperationsReversibilityTest.class, CompositeOperationReversibilityTest.class })
+	CreateDeleteOperationsReversibilityTest.class })
 public class AllReversibilityIntegrationTests {
 
 }

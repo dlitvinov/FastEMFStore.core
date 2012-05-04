@@ -63,6 +63,7 @@ public class XmlRpcClientManager {
 			config.setEnabledForExtensions(true);
 			config.setConnectionTimeout(Configuration.getXMLRPCConnectionTimeout());
 			config.setReplyTimeout(Configuration.getXMLRPCReplyTimeout());
+			config.setContentLengthOptional(true);
 
 			client = new XmlRpcClient();
 			client.setTypeFactory(new EObjectTypeFactory(client));

@@ -10,17 +10,15 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.client.ui.views.changes;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.emfstore.client.ui.Activator;
+import org.eclipse.emf.emfstore.common.IDisposable;
+import org.eclipse.emf.emfstore.common.model.IdEObjectCollection;
 import org.eclipse.emf.emfstore.common.model.ModelElementId;
 import org.eclipse.emf.emfstore.common.model.ModelFactory;
-import org.eclipse.emf.emfstore.common.model.Project;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.server.model.provider.AbstractOperationCustomLabelProvider;
 import org.eclipse.emf.emfstore.server.model.provider.CustomOperationLabelProviderManager;
@@ -46,49 +44,25 @@ import org.eclipse.swt.graphics.Image;
  * @author shterev
  * @author emueller
  */
-public class ChangePackageVisualizationHelper {
-
-	private Map<ModelElementId, EObject> modelElementMap;
+public class ChangePackageVisualizationHelper implements IDisposable {
 
 	private CustomOperationLabelProviderManager customLabelProviderManager;
 	private DefaultOperationLabelProvider defaultOperationLabelProvider;
+	private IdEObjectCollection collection;
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param changePackages
 	 *            a list of change packages
-	 * @param project
-	 *            a project
+	 * @param collection
+	 *            the {@link IdEObjectCollection} that is holding the EObjects that are going to be visualized
+	 *            as part of the change packages
 	 */
-	public ChangePackageVisualizationHelper(List<ChangePackage> changePackages, Project project) {
-		this.modelElementMap = new HashMap<ModelElementId, EObject>();
-
-		for (ChangePackage changePackage : changePackages) {
-			initModelElementMap(changePackage);
-		}
-
-		for (EObject eObject : project.getAllModelElements()) {
-			modelElementMap.put(project.getModelElementId(eObject), eObject);
-		}
-
+	public ChangePackageVisualizationHelper(List<ChangePackage> changePackages, IdEObjectCollection collection) {
 		defaultOperationLabelProvider = new DefaultOperationLabelProvider();
-		defaultOperationLabelProvider.setModelElementMap(modelElementMap);
-		this.customLabelProviderManager = new CustomOperationLabelProviderManager(modelElementMap);
-	}
-
-	private void initModelElementMap(ChangePackage changePackage) {
-		List<AbstractOperation> operations = changePackage.getLeafOperations();
-		for (AbstractOperation abstractOperation : operations) {
-			if (abstractOperation instanceof CreateDeleteOperation) {
-				for (Map.Entry<EObject, ModelElementId> entry : ((CreateDeleteOperation) abstractOperation)
-					.getEObjectToIdMap().map().entrySet()) {
-					ModelElementId orgModelElementId = entry.getValue();
-					EObject modelElement = entry.getKey();
-					modelElementMap.put(ModelUtil.clone(orgModelElementId), modelElement);
-				}
-			}
-		}
+		customLabelProviderManager = new CustomOperationLabelProviderManager();
+		this.collection = collection;
 	}
 
 	/**
@@ -134,7 +108,6 @@ public class ChangePackageVisualizationHelper {
 			overlay = "icons/modify_overlay.png";
 		}
 
-		// TODO: ChainSaw
 		ImageDescriptor overlayDescriptor = Activator.getImageDescriptor(overlay);
 		return overlayDescriptor;
 	}
@@ -235,38 +208,12 @@ public class ChangePackageVisualizationHelper {
 			if (i % 2 == 1) {
 				ModelElementId modelElementId = ModelFactory.eINSTANCE.createModelElementId();
 				modelElementId.setId(strings[i]);
-				stringBuilder.append(labelProvider.getModelElementName(modelElementId));
+				stringBuilder.append(labelProvider.getModelElementName(getModelElement(modelElementId)));
 			} else {
 				stringBuilder.append(strings[i]);
 			}
 		}
 		return stringBuilder.toString();
-	}
-
-	/**
-	 * Get all model elements of type T from the given collection of model
-	 * elements.
-	 * 
-	 * @param <T>
-	 *            Type of the model elements in the resulting collection
-	 * @param <S>
-	 *            Type of the Collection of model element ids
-	 * @param modelElementIds
-	 *            the collection of model element ids
-	 * @param resultCollection
-	 *            the transparent parameter of the collection of type T that
-	 *            will be return as result also
-	 * @return the collection of model elements of type T
-	 */
-	public <T extends Collection<EObject>, S extends Collection<ModelElementId>> T getModelElements(S modelElementIds,
-		T resultCollection) {
-		for (ModelElementId modelElementId : modelElementIds) {
-			EObject modelElement = getModelElement(modelElementId);
-			if (modelElement != null) {
-				resultCollection.add(modelElement);
-			}
-		}
-		return resultCollection;
 	}
 
 	/**
@@ -277,14 +224,14 @@ public class ChangePackageVisualizationHelper {
 	 * @return the model element instance
 	 */
 	public EObject getModelElement(ModelElementId modelElementId) {
-		if (modelElementId == null) {
-			return null;
-		}
-
-		return modelElementMap.get(modelElementId);
+		return collection.getModelElement(modelElementId);
 	}
 
+	/**
+	 * 
+	 */
 	public void dispose() {
 		defaultOperationLabelProvider.dispose();
+		collection = null;
 	}
 }

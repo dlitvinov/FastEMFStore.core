@@ -1,8 +1,19 @@
+/*******************************************************************************
+ * Copyright (c) 2008-2011 Chair for Applied Software Engineering,
+ * Technische Universitaet Muenchen.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ ******************************************************************************/
 package org.eclipse.emf.emfstore.client.ui.dialogs.login;
 
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.emf.emfstore.client.model.ServerInfo;
+import org.eclipse.emf.emfstore.common.IDisposable;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -19,6 +30,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * A dialog showing a list of servers from which the user is able to select one.
+ * 
+ */
 public class ServerInfoSelectionDialog extends TitleAreaDialog {
 
 	private final java.util.List<ServerInfo> servers;
@@ -30,6 +45,9 @@ public class ServerInfoSelectionDialog extends TitleAreaDialog {
 	 * Create the dialog.
 	 * 
 	 * @param parentShell
+	 *            the parent shell
+	 * @param servers
+	 *            a list of servers to be displayed
 	 */
 	public ServerInfoSelectionDialog(Shell parentShell, java.util.List<ServerInfo> servers) {
 		super(parentShell);
@@ -38,9 +56,10 @@ public class ServerInfoSelectionDialog extends TitleAreaDialog {
 	}
 
 	/**
-	 * Create contents of the dialog.
 	 * 
-	 * @param parent
+	 * {@inheritDoc}
+	 * 
+	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
@@ -74,6 +93,11 @@ public class ServerInfoSelectionDialog extends TitleAreaDialog {
 		super.okPressed();
 	}
 
+	/**
+	 * Returns the selected server.
+	 * 
+	 * @return the selected server.
+	 */
 	public ServerInfo getResult() {
 		return result;
 	}
@@ -85,9 +109,10 @@ public class ServerInfoSelectionDialog extends TitleAreaDialog {
 	}
 
 	/**
-	 * Create contents of the button bar.
 	 * 
-	 * @param parent
+	 * {@inheritDoc}
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -96,14 +121,20 @@ public class ServerInfoSelectionDialog extends TitleAreaDialog {
 	}
 
 	/**
-	 * Return the initial size of the dialog.
+	 * 
+	 * {@inheritDoc}
+	 * 
+	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#getInitialSize()
 	 */
 	@Override
 	protected Point getInitialSize() {
 		return new Point(355, 403);
 	}
 
-	private class ServerInfoLabelProvider extends AdapterFactoryLabelProvider {
+	/**
+	 * A label provider for {@link ServerInfo} instances.
+	 */
+	private class ServerInfoLabelProvider extends AdapterFactoryLabelProvider implements IDisposable {
 
 		public ServerInfoLabelProvider() {
 			super(new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE));

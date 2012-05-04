@@ -271,6 +271,35 @@ public interface ProjectSpace extends IdentifiableElement {
 	void setWorkspace(Workspace value);
 
 	/**
+	 * Returns the value of the '<em><b>Local Change Package</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Local Change Package</em>' containment reference isn't clear, there really should be
+	 * more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * 
+	 * @return the value of the '<em>Local Change Package</em>' containment reference.
+	 * @see #setLocalChangePackage(ChangePackage)
+	 * @see org.eclipse.emf.emfstore.client.model.ModelPackage#getProjectSpace_LocalChangePackage()
+	 * @model containment="true" resolveProxies="true"
+	 * @generated
+	 */
+	ChangePackage getLocalChangePackage();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.emf.emfstore.client.model.ProjectSpace#getLocalChangePackage
+	 * <em>Local Change Package</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * 
+	 * @param value the new value of the '<em>Local Change Package</em>' containment reference.
+	 * @see #getLocalChangePackage()
+	 * @generated
+	 */
+	void setLocalChangePackage(ChangePackage value);
+
+	/**
 	 * @return a list of the change packages between two PrimarySpecVersions.
 	 * @param sourceVersion
 	 *            the source version spec

@@ -55,41 +55,6 @@ public class CreateDeleteOperationsReversibilityTest extends OperationsReversibi
 	}
 
 	/**
-	 * Create a random ME and change one of its attributes, then changes one of its references, then changes one of its
-	 * attributes, and again changes one of its references.
-	 * 
-	 * @throws EmfStoreException EmfStoreException
-	 * @throws SerializationException SerializationException
-	 */
-	@Test
-	public void createAndMultipleChangeReversibilityTest() throws SerializationException, EmfStoreException {
-		System.out.println("CreateAndMultipleChangeReversibilityTest");
-
-		final IntegrationTestHelper testHelper = new IntegrationTestHelper(randomSeed, getTestProject());
-		new EMFStoreCommand() {
-
-			@Override
-			protected void doRun() {
-
-				testHelper.doCreateAndMultipleChange();
-				getTestProjectSpace().revert();
-			}
-
-		}.run(false);
-
-		new EMFStoreCommand() {
-			@Override
-			protected void doRun() {
-				getTestProjectSpace().revert();
-			}
-		}.run(false);
-
-		assertTrue(IntegrationTestHelper.areEqual(getTestProject(), getCompareProject(),
-			"CreateAndMultipleChangeReversibilityTest"));
-
-	}
-
-	/**
 	 * Create a random ME and change one of its references.
 	 * 
 	 * @throws EmfStoreException EmfStoreException
@@ -172,61 +137,6 @@ public class CreateDeleteOperationsReversibilityTest extends OperationsReversibi
 
 		assertTrue(IntegrationTestHelper.areEqual(getTestProject(), getCompareProject(),
 			"CreateDeleteReversibilityTest"));
-
-	}
-
-	/**
-	 * Delete a random ME. Revert delete.
-	 * 
-	 * @throws EmfStoreException EmfStoreException
-	 * @throws SerializationException SerializationException
-	 */
-	@Test
-	public void deleteAndRevertDeleteReversibilityTest() throws SerializationException, EmfStoreException {
-		System.out.println("DeleteAndRevertDeleteReversibilityTest");
-
-		final IntegrationTestHelper testHelper = new IntegrationTestHelper(randomSeed, getTestProject());
-		testHelper.doDeleteAndRevert();
-		new EMFStoreCommand() {
-			@Override
-			protected void doRun() {
-				getTestProjectSpace().revert();
-			}
-		}.run(false);
-
-		assertTrue(IntegrationTestHelper.areEqual(getTestProject(), getCompareProject(),
-			"DeleteAndRevertDeleteReversibilityTest"));
-	}
-
-	/**
-	 * Delete a random ME.
-	 * 
-	 * @throws EmfStoreException EmfStoreException
-	 * @throws SerializationException SerializationException
-	 */
-	@Test
-	public void deleteReversibilityTest() throws SerializationException, EmfStoreException {
-
-		System.out.println("DeleteReversibilityTest");
-		final IntegrationTestHelper testHelper = new IntegrationTestHelper(randomSeed, getTestProject());
-		new EMFStoreCommand() {
-
-			@Override
-			protected void doRun() {
-				testHelper.doDelete();
-			}
-
-		}.run(false);
-
-		new EMFStoreCommand() {
-
-			@Override
-			protected void doRun() {
-				getTestProjectSpace().revert();
-			}
-		}.run(false);
-
-		assertTrue(IntegrationTestHelper.areEqual(getTestProject(), getCompareProject(), "DeleteReversibilityTest"));
 
 	}
 

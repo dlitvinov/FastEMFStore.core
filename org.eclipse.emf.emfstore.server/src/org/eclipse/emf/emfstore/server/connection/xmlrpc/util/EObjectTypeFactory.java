@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.xml.sax.SAXException;
 
 /**
- * Type Facotry for XML RPC Transportation.
+ * Type Factory for XML RPC Transportation.
  * 
  * @author wesendon
  */
@@ -29,7 +29,8 @@ public class EObjectTypeFactory extends TypeFactoryImpl {
 	/**
 	 * Default constructor.
 	 * 
-	 * @param pController constroller.
+	 * @param pController
+	 *            XML RPC controller.
 	 */
 	public EObjectTypeFactory(XmlRpcController pController) {
 		super(pController);

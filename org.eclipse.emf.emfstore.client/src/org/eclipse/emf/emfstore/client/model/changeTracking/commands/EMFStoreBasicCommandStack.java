@@ -12,6 +12,7 @@ package org.eclipse.emf.emfstore.client.model.changeTracking.commands;
 
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.emfstore.client.model.util.AbstractEMFStoreCommand;
 
 /**
  * Basic Command Stack for EMFStore. Allows tracking of command start and end.
@@ -35,7 +36,6 @@ public class EMFStoreBasicCommandStack extends BasicCommandStack implements EMFS
 	protected void handleError(Exception exception) {
 		notifier.notifiyListenersAboutCommandFailed(currentCommand, exception);
 		currentCommand = null;
-		super.handleError(exception);
 	}
 
 	@Override
@@ -45,7 +45,19 @@ public class EMFStoreBasicCommandStack extends BasicCommandStack implements EMFS
 			currentCommand = command;
 			notifier.notifiyListenersAboutStart(command);
 		}
+
 		super.execute(command);
+
+		// handle EMFStore commands
+		if (command instanceof AbstractEMFStoreCommand) {
+			AbstractEMFStoreCommand emfStoreCmd = (AbstractEMFStoreCommand) command;
+
+			// rethrow runtime exceptions if neccessary
+			if (!emfStoreCmd.shouldIgnoreExceptions() && emfStoreCmd.getRuntimeException() != null) {
+				throw emfStoreCmd.getRuntimeException();
+			}
+		}
+
 		if (currentCommand == command) {
 			// check again if command was really completed.
 			if (mostRecentCommand == command) {

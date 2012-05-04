@@ -240,7 +240,7 @@ public class CreateDeleteOperationTest extends WorkspaceTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> operations = getProjectSpace().getOperations();
+		List<AbstractOperation> operations = getProjectSpace().getLocalChangePackage().getOperations();
 
 		assertEquals(1, operations.size());
 		AbstractOperation operation = operations.get(0);
@@ -419,7 +419,7 @@ public class CreateDeleteOperationTest extends WorkspaceTest {
 		Project loadedProject = loadedProjectSpace.getProject();
 
 		assertEquals(false, loadedProject.containsInstance(useCase));
-		operations = loadedProjectSpace.getOperations();
+		operations = loadedProjectSpace.getLocalChangePackage().getOperations();
 
 		assertEquals(1, operations.size());
 		operation = operations.get(0);

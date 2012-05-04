@@ -332,6 +332,12 @@ public class HistoryBrowserView extends ViewPart implements ProjectSpaceContaine
 		menuManager.add(showRoots);
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 * 
+	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
+	 */
 	@Override
 	public void dispose() {
 		if (adapterFactory != null) {

@@ -186,9 +186,4 @@ public interface IdEObjectCollection extends EObject {
 	 *            a map containing the model elements and the IDs
 	 */
 	void preAssignModelElementIds(Map<EObject, ModelElementId> eObjectToIdMap);
-
-	/**
-	 * Disposes the collection, i.e. clears all caches.
-	 */
-	void dispose();
 }
