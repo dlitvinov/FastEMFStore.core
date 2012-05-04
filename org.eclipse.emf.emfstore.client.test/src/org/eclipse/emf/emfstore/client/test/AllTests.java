@@ -8,7 +8,10 @@ package org.eclipse.emf.emfstore.client.test;
 
 import org.eclipse.emf.emfstore.client.test.caching.AllCachingTests;
 import org.eclipse.emf.emfstore.client.test.changeTracking.AllChangeTrackingTests;
+import org.eclipse.emf.emfstore.client.test.common.observerbus.AllObserverBusTests;
 import org.eclipse.emf.emfstore.client.test.conflictDetection.AllConflictDetectionTests;
+import org.eclipse.emf.emfstore.client.test.integration.AllIntegrationTests;
+import org.eclipse.emf.emfstore.client.test.server.AllServerTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -18,7 +21,8 @@ import org.junit.runners.Suite;
  * @author koegel
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ AllChangeTrackingTests.class, AllConflictDetectionTests.class, AllCachingTests.class })
+@Suite.SuiteClasses({ AllChangeTrackingTests.class, AllConflictDetectionTests.class, AllCachingTests.class,
+	AllServerTests.class, AllIntegrationTests.class, AllObserverBusTests.class })
 public class AllTests {
 
 }

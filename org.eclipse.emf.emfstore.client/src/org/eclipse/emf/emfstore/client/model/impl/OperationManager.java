@@ -16,11 +16,12 @@ import java.util.List;
 import org.eclipse.emf.emfstore.client.model.CompositeOperationHandle;
 import org.eclipse.emf.emfstore.client.model.ProjectSpace;
 import org.eclipse.emf.emfstore.client.model.observers.OperationObserver;
+import org.eclipse.emf.emfstore.common.IDisposable;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.CompositeOperation;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.semantic.SemanticCompositeOperation;
 
-public class OperationManager implements OperationRecorderListener {
+public class OperationManager implements OperationRecorderListener, IDisposable {
 
 	private OperationRecorder operationRecorder;
 	private List<OperationObserver> operationListeners;
@@ -144,22 +145,6 @@ public class OperationManager implements OperationRecorderListener {
 	public CompositeOperationHandle beginCompositeOperation() {
 		return operationRecorder.beginCompositeOperation();
 	}
-
-	// TODO: EM
-	// private void notifyPostCreationListeners(EObject modelElement) {
-	// // do not record changes since the creation listeners may only change
-	// // attributes
-	// boolean wasRecording = isRecording;
-	// if (isRecording) {
-	// stopChangeRecording();
-	// }
-	// for (PostCreationListener l : postCreationListeners) {
-	// l.onCreation(projectSpace, modelElement);
-	// }
-	// if (wasRecording) {
-	// startChangeRecording();
-	// }
-	// }
 
 	public void operationsRecorded(List<? extends AbstractOperation> operations) {
 		projectSpace.addOperations(operations);

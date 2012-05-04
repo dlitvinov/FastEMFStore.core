@@ -50,7 +50,7 @@ import org.junit.BeforeClass;
  * @author wesendon
  */
 
-public class ServerTests extends WorkspaceTest {
+public abstract class ServerTests extends WorkspaceTest {
 
 	private static SessionId sessionId;
 	private static ConnectionManager connectionManager;

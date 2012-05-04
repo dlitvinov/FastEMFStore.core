@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2008-2011 Chair for Applied Software Engineering,
+ * Technische Universitaet Muenchen.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ ******************************************************************************/
 package org.eclipse.emf.emfstore.client.model.controller;
 
 import java.util.Date;
@@ -16,13 +26,31 @@ import org.eclipse.emf.emfstore.server.model.versioning.LogMessage;
 import org.eclipse.emf.emfstore.server.model.versioning.PrimaryVersionSpec;
 import org.eclipse.emf.emfstore.server.model.versioning.VersionSpec;
 import org.eclipse.emf.emfstore.server.model.versioning.VersioningFactory;
-import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation;
 
+/**
+ * The controller responsible for performing a commit.
+ * 
+ * @author wesendon
+ */
 public class CommitController extends ServerCall<PrimaryVersionSpec> {
 
 	private LogMessage logMessage;
 	private CommitCallback callback;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param projectSpace
+	 *            the project space whose pending changes should be commited
+	 * @param logMessage
+	 *            a log message documenting the commit
+	 * @param callback
+	 *            an callback that will be called during and at the end of the commit.
+	 *            May be <code>null</code>.
+	 * @param monitor
+	 *            an {@link IProgressMonitor} that will be used to inform clients about the commit progress.
+	 *            May be <code>null</code>.
+	 */
 	public CommitController(ProjectSpaceBase projectSpace, LogMessage logMessage, CommitCallback callback,
 		IProgressMonitor monitor) {
 		super(projectSpace);
@@ -60,17 +88,8 @@ public class CommitController extends ServerCall<PrimaryVersionSpec> {
 
 		getProgressMonitor().worked(10);
 		getProgressMonitor().subTask("Gathering changes");
-		ChangePackage changePackage = getProjectSpace().getLocalChangePackage(true);
+		ChangePackage changePackage = getProjectSpace().getLocalChangePackage();
 		changePackage.setLogMessage(logMessage);
-		if (changePackage.getOperations().isEmpty()) {
-			for (AbstractOperation operation : getProjectSpace().getOperations()) {
-				getProjectSpace().getOperationManager().notifyOperationUndone(operation);
-			}
-			getProjectSpace().getOperations().clear();
-			getProjectSpace().updateDirtyState();
-			// finally, no local changes
-		}
-
 		WorkspaceManager.getObserverBus().notify(CommitObserver.class).inspectChanges(getProjectSpace(), changePackage);
 
 		getProgressMonitor().subTask("Presenting Changes");

@@ -215,7 +215,10 @@ public class ESBrowserView extends ViewPart implements LoginObserver {
 	}
 
 	/**
+	 * 
 	 * {@inheritDoc}
+	 * 
+	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */
 	@Override
 	public void dispose() {

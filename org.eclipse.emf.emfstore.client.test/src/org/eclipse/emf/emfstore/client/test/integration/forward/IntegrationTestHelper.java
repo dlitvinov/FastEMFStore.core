@@ -368,13 +368,11 @@ public final class IntegrationTestHelper {
 	 * @return
 	 */
 	private static int getColNum(String stringA, int index) {
-		int lineNum = 1;
 		int pos = index;
 		int j = 0;
 		for (int i = 0; i < index; i++) {
 			j++;
 			if (stringA.charAt(i) == '\n') {
-				lineNum++;
 				pos -= j;
 				j = 0;
 			}

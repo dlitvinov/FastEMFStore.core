@@ -299,7 +299,10 @@ public class SCMLabelProvider extends ColumnLabelProvider {
 	}
 
 	/**
+	 * 
 	 * {@inheritDoc}
+	 * 
+	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
 	 */
 	@Override
 	public void dispose() {

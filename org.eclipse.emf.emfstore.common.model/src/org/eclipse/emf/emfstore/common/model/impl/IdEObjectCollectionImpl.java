@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 import org.eclipse.emf.ecore.util.EcoreUtil.UsageCrossReferencer;
 import org.eclipse.emf.ecore.xmi.XMIResource;
+import org.eclipse.emf.emfstore.common.IDisposable;
 import org.eclipse.emf.emfstore.common.model.IdEObjectCollection;
 import org.eclipse.emf.emfstore.common.model.ModelElementId;
 import org.eclipse.emf.emfstore.common.model.ModelFactory;
@@ -38,7 +39,7 @@ import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
  * 
  * @author emueller
  */
-public abstract class IdEObjectCollectionImpl extends EObjectImpl implements IdEObjectCollection {
+public abstract class IdEObjectCollectionImpl extends EObjectImpl implements IdEObjectCollection, IDisposable {
 
 	// Caches
 	private Map<EObject, String> eObjectToIdCache;

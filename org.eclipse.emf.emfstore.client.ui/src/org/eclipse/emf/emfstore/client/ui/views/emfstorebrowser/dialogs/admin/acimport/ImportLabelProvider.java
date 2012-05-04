@@ -76,7 +76,10 @@ public class ImportLabelProvider implements ILabelProvider {
 	}
 
 	/**
-	 * Called when this LabelProvider is being disposed.
+	 * 
+	 * {@inheritDoc}
+	 * 
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
 		groupImage.dispose();

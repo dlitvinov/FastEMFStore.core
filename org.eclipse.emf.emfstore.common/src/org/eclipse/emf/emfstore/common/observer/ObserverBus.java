@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionElement;
 import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
@@ -262,14 +263,14 @@ public class ObserverBus {
 
 	@SuppressWarnings("unchecked")
 	private Class<? extends IObserver>[] getObserverInterfaces(IObserver observer) {
-		HashSet<Class<? extends IObserver>> result = new HashSet<Class<? extends IObserver>>();
-		getClasses(observer.getClass(), result);
-		return result.toArray(new Class[result.size()]);
+		HashSet<Class<? extends IObserver>> observerInterfacsFound = new HashSet<Class<? extends IObserver>>();
+		getClasses(observer.getClass(), observerInterfacsFound);
+		return observerInterfacsFound.toArray(new Class[observerInterfacsFound.size()]);
 	}
 
 	@SuppressWarnings("unchecked")
 	private boolean getClasses(Class<?> clazz, HashSet<Class<? extends IObserver>> result) {
-		for (Class<?> iface : clazz.getInterfaces()) {
+		for (Class<?> iface : getAllInterfaces(clazz, new HashSet<Class<?>>())) {
 			if (iface.equals(IObserver.class) && clazz.isInterface()) {
 				result.add((Class<? extends IObserver>) clazz);
 				return true;
@@ -280,6 +281,20 @@ public class ObserverBus {
 			}
 		}
 		return false;
+	}
+	
+	private Set<Class<?>> getAllInterfaces(final Class<?> clazz, 
+		final Set<Class<?>> interfacesFound) {
+		
+		for (Class<?> iface : clazz.getInterfaces()) {
+			interfacesFound.add((Class<?>) iface);
+		}
+		
+		if (clazz.getSuperclass() == null) {
+			return interfacesFound; 
+		}
+		
+		return getAllInterfaces(clazz.getSuperclass(), interfacesFound);
 	}
 
 	/**

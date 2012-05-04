@@ -12,6 +12,7 @@ import org.eclipse.emf.emfstore.client.test.common.observerbus.assets.B;
 import org.eclipse.emf.emfstore.client.test.common.observerbus.assets.BImpl;
 import org.eclipse.emf.emfstore.client.test.common.observerbus.assets.C;
 import org.eclipse.emf.emfstore.client.test.common.observerbus.assets.CImpl;
+import org.eclipse.emf.emfstore.client.test.common.observerbus.assets.DImpl;
 import org.eclipse.emf.emfstore.common.observer.ObserverBus;
 import org.eclipse.emf.emfstore.common.observer.ObserverCall;
 import org.eclipse.emf.emfstore.common.observer.ObserverCall.Result;
@@ -21,6 +22,28 @@ import org.junit.Test;
 public class ObserverBusTest {
 
 	private ObserverBus observerBus;
+
+	@Test
+	public void testUnregister() {
+		C observer = new C() {
+			public String fourtyTwo() {
+				return "42";
+			}
+		};
+		getObserverBus().register(observer);
+		assertEquals("42", getObserverBus().notify(C.class).fourtyTwo());
+		getObserverBus().unregister(observer);
+		assertFalse("42".equals(getObserverBus().notify(C.class).fourtyTwo()));
+	}
+
+	@Test
+	public void testSuperUnregister() {
+		DImpl d = new DImpl();
+		getObserverBus().register(d, C.class);
+		assertEquals("42", getObserverBus().notify(C.class).fourtyTwo());
+		getObserverBus().unregister(d);
+		assertFalse("42".equals(getObserverBus().notify(C.class).fourtyTwo()));
+	}
 
 	@Before
 	public void reset() {
@@ -142,5 +165,9 @@ public class ObserverBusTest {
 		assertTrue(((ObserverCall) a).getObserverCallResults().size() == 0);
 		b.returnTwo();
 		assertTrue(((ObserverCall) b).getObserverCallResults().size() == 1);
+	}
+
+	public String fourtyTwo() {
+		return "42";
 	}
 }

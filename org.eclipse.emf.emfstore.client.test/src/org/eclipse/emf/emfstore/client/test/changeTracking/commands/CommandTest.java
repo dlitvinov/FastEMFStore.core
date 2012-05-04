@@ -50,6 +50,7 @@ import org.eclipse.emf.emfstore.client.test.model.requirement.UseCase;
 import org.eclipse.emf.emfstore.client.test.model.task.ActionItem;
 import org.eclipse.emf.emfstore.client.test.model.task.TaskFactory;
 import org.eclipse.emf.emfstore.client.test.model.task.WorkPackage;
+import org.eclipse.emf.emfstore.common.model.IdEObjectCollection;
 import org.eclipse.emf.emfstore.common.model.ModelElementId;
 import org.eclipse.emf.emfstore.common.model.Project;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
@@ -938,5 +939,31 @@ public class CommandTest extends WorkspaceTest {
 		editingDomain.getCommandStack().redo();
 		assertEquals(0, leafSection.getModelElements().size());
 		// assertEquals(1, getProjectSpace().getOperations().size());
+	}
+
+	@Test
+	public void supressCommandStackException() {
+		new EMFStoreCommand() {
+			@SuppressWarnings("null")
+			@Override
+			protected void doRun() {
+				IdEObjectCollection col = null;
+				// provoke NPE
+				col.getModelElements();
+			}
+		}.run(true);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void rethrowCommandStackException() {
+		new EMFStoreCommand() {
+			@SuppressWarnings("null")
+			@Override
+			protected void doRun() {
+				IdEObjectCollection col = null;
+				// provoke NPE
+				col.getModelElements();
+			}
+		}.run(false);
 	}
 }

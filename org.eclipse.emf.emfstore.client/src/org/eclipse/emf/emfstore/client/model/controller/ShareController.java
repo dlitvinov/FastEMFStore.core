@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2008-2011 Chair for Applied Software Engineering,
+ * Technische Universitaet Muenchen.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ ******************************************************************************/
 package org.eclipse.emf.emfstore.client.model.controller;
 
 import java.util.Date;
@@ -51,7 +61,7 @@ public class ShareController extends ServerCall<Void> {
 		getProgressMonitor().worked(10);
 		if (getProgressMonitor().isCanceled()) {
 			Configuration.setAutoSave(true);
-			getProjectSpace().getStatePersister().saveDirtyResources(true);
+			getProjectSpace().save();
 			getProjectSpace().startChangeRecording();
 			getProgressMonitor().done();
 		}
@@ -71,7 +81,7 @@ public class ShareController extends ServerCall<Void> {
 		WorkspaceManager.getObserverBus().register(getProjectSpace(), LoginObserver.class);
 
 		Configuration.setAutoSave(true);
-		getProjectSpace().getStatePersister().saveDirtyResources(true);
+		getProjectSpace().save();
 		getProjectSpace().startChangeRecording();
 		getProjectSpace().setBaseVersion(createdProject.getVersion());
 		getProjectSpace().setLastUpdated(new Date());
