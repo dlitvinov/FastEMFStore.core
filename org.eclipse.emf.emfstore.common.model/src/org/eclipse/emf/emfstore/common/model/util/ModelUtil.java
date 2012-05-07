@@ -45,7 +45,6 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIConverter;
-import org.eclipse.emf.ecore.resource.impl.BinaryResourceImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -95,6 +94,8 @@ public final class ModelUtil {
 	private static Set<SingletonIdResolver> singletonIdResolvers;
 
 	private static HashMap<Object, Object> resourceLoadOptions;
+
+	private static HashMap<Object, Object> resourceBinaryLoadOptions;
 
 	private static HashMap<Object, Object> resourceSaveOptions;
 
@@ -203,44 +204,6 @@ public final class ModelUtil {
 		return res;
 	}
 
-	public static String eObjectToBinary(EObject object, boolean overrideContainmentCheck, boolean overrideHrefCheck,
-		boolean overrideProxyCheck) throws SerializationException {
-
-		if (object == null) {
-			return null;
-		}
-
-		Resource res;
-		int step = 200;
-		int initialSize = step;
-		// if (object instanceof Project) {
-		// Project project = (Project) object;
-		// initialSize = project.getAllModelElements().size() * step;
-		// res = project.eResource();
-		// } else {
-		res = new BinaryResourceImpl();
-		((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
-		res.getContents().add(object);
-		// res.getContents().add()
-		// }
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(initialSize);
-		try {
-			res.save(outputStream, getResourceBinarySaveOptions());
-			// if (before != null && !before.equals(asString(res.getURI().toFileString()))) {
-			// System.err.println("The file is changed!");
-			// }
-		} catch (IOException e) {
-			throw new SerializationException(e);
-		}
-		String result = outputStream.toString();
-
-		if (!overrideHrefCheck) {
-			hrefCheck(result);
-		}
-
-		return result;
-	}
-
 	/**
 	 * Converts an {@link EObject} to a {@link String}.
 	 * 
@@ -295,7 +258,7 @@ public final class ModelUtil {
 		// String result = stringWriter.toString();
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(initialSize);
 		try {
-			res.save(outputStream, getResourceBinarySaveOptions());
+			res.save(outputStream, getResourceSaveOptions());
 		} catch (IOException e) {
 			throw new SerializationException(e);
 		}
@@ -589,6 +552,15 @@ public final class ModelUtil {
 		return resourceLoadOptions;
 	}
 
+	public static Map<Object, Object> getResourceBinaryLoadOptions() {
+		if (resourceBinaryLoadOptions == null) {
+			resourceBinaryLoadOptions = new HashMap<Object, Object>(getResourceLoadOptions());
+			// resourceBinaryLoadOptions.put(XMLResource.OPTION_BINARY, Boolean.TRUE);
+			// resourceLoadOptions.put(XMLResource.OPTION_ZIP, Boolean.TRUE);
+		}
+		return resourceBinaryLoadOptions;
+	}
+
 	/**
 	 * Delivers a map of mandatory options for saving resources.
 	 * 
@@ -610,8 +582,9 @@ public final class ModelUtil {
 	 */
 	public static Map<Object, Object> getResourceBinarySaveOptions() {
 		if (resourceBinarySaveOptions == null) {
-			resourceBinarySaveOptions = new HashMap<Object, Object>(resourceSaveOptions);
-			resourceBinarySaveOptions.put(XMLResource.OPTION_BINARY, Boolean.TRUE);
+			resourceBinarySaveOptions = new HashMap<Object, Object>(getResourceSaveOptions());
+			// resourceBinarySaveOptions.put(XMLResource.OPTION_BINARY, Boolean.TRUE);
+			// resourceBinarySaveOptions.put(XMLResource.OPTION_ZIP, Boolean.TRUE);
 		}
 		return resourceBinarySaveOptions;
 	}

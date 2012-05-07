@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.emfstore.common.model.Project;
 import org.eclipse.emf.emfstore.common.model.util.FileUtil;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
@@ -214,7 +215,10 @@ public class ProjectSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 						if (projectState != null) {
 							projectState.eResource().delete(null);
 						}
-						version.eResource().delete(null);
+						Resource res = version.eResource();
+						if (res != null) {
+							res.delete(null);
+						}
 					}
 				}
 			} catch (InvalidProjectIdException e) {
