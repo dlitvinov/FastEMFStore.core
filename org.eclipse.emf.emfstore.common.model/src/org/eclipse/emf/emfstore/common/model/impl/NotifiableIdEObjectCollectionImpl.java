@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.emfstore.common.model.IdEObjectCollection;
-import org.eclipse.emf.emfstore.common.model.ModelElementId;
 import org.eclipse.emf.emfstore.common.model.NotifiableIdEObjectCollection;
 import org.eclipse.emf.emfstore.common.model.util.EObjectChangeNotifier;
 import org.eclipse.emf.emfstore.common.model.util.IdEObjectCollectionChangeObserver;
@@ -62,7 +61,7 @@ public abstract class NotifiableIdEObjectCollectionImpl extends IdEObjectCollect
 	 * Constructor. Adds the contents of the given {@link XMIResource} as model
 	 * elements to the collection. If the {@link XMIResource} also has XMI IDs
 	 * assigned to the {@link EObject}s it contains, they will be used for
-	 * creating the {@link ModelElementId}s within the project, if not, the {@link ModelElementId}s will get created on
+	 * creating the model element IDs within the project, if not, the model element IDs will get created on
 	 * the fly.
 	 * 
 	 * An {@link EObjectChangeNotifier} is also attached to the given {@link XMIResource}.
@@ -105,6 +104,12 @@ public abstract class NotifiableIdEObjectCollectionImpl extends IdEObjectCollect
 		notifyIdEObjectCollectionChangeObservers(command);
 	}
 
+	/**
+	 * Notifies all collection change observers.
+	 * 
+	 * @param command
+	 *            the notification command
+	 */
 	protected synchronized void notifyIdEObjectCollectionChangeObservers(
 		EObjectChangeObserverNotificationCommand command) {
 		isNotifiying = true;
@@ -252,9 +257,12 @@ public abstract class NotifiableIdEObjectCollectionImpl extends IdEObjectCollect
 	}
 
 	/**
-	 * Copies the current project.
+	 * Copies the current collection.
 	 * 
-	 * @return the copied project
+	 * @param <T>
+	 *            the actual collection type to be copied
+	 * 
+	 * @return the copied collection
 	 */
 	@Override
 	public <T extends IdEObjectCollection> T copy() {
@@ -282,6 +290,11 @@ public abstract class NotifiableIdEObjectCollectionImpl extends IdEObjectCollect
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.eclipse.emf.emfstore.common.model.NotifiableIdEObjectCollection#getChangeNotifier()
+	 */
 	public EObjectChangeNotifier getChangeNotifier() {
 		return changeNotifier;
 	}

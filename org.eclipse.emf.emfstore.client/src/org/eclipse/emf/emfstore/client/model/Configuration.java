@@ -54,14 +54,14 @@ public final class Configuration {
 	private static final String UPF = ".upf";
 	private static final String PLUGIN_BASEDIR = "pluginData";
 
+	private static boolean autoSave;
 	private static boolean testing;
+
 	private static LocationProvider locationProvider;
 	private static EditingDomain editingDomain;
+
 	private static int xmlRPCConnectionTimeout = XML_RPC_CONNECTION_TIMEOUT;
 	private static int xmlRPCReplyTimeout = XML_RPC_REPLY_TIMEOUT;
-	private static Boolean resourceSplitting;
-
-	private static boolean autoSave;
 
 	private Configuration() {
 		// nothing to do
@@ -358,25 +358,6 @@ public final class Configuration {
 	 */
 	public static void setEditingDomain(EditingDomain editingDomain) {
 		Configuration.editingDomain = editingDomain;
-	}
-
-	/**
-	 * Determines whether resource splitting is enabled.
-	 * 
-	 * @return true, if resource splitting is enabled, false otherwise
-	 */
-	public static boolean isResourceSplittingEnabled() {
-		if (resourceSplitting != null) {
-			return resourceSplitting;
-		}
-		try {
-			resourceSplitting = new ExtensionPoint("org.eclipse.emf.emfstore.client.persistence.options")
-				.setThrowException(true).getBoolean("enabled");
-		} catch (ExtensionPointException e) {
-			resourceSplitting = false;
-		}
-
-		return resourceSplitting;
 	}
 
 	/**

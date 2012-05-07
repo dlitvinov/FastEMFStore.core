@@ -6,7 +6,7 @@
 	xmlns:pmp="http://www.eclipse.org/buckminster/PDEMapProvider-1.0"
 	xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0">
 
-	<property key="platform.version" value="3.7"/>
+	<property key="platform.version" value="3.6"/>
 	<property key="orbit.version" value="S20110907174232"/>
 	<property key="eclipse.downloads" value="http://download.eclipse.org"/>
 	<property key="resolve.target.platform" value="true"/>

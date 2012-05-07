@@ -32,7 +32,7 @@ public class AccessControlException extends EmfStoreException {
 	 * Default Constructor.
 	 */
 	public AccessControlException() {
-		super("Access denied!");
+		super("Access denied! Maybe your password changed.");
 	}
 
 	/**

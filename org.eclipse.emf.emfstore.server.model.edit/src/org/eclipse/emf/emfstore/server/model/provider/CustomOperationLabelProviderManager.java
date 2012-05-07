@@ -28,15 +28,30 @@ import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOpera
  */
 public class CustomOperationLabelProviderManager implements IDisposable {
 
-	private static List<AbstractOperationCustomLabelProvider> list;
+	/**
+	 * Initializes the singleton instance statically.
+	 */
+	private static class SingletonHolder {
+		public static final CustomOperationLabelProviderManager INSTANCE = new CustomOperationLabelProviderManager();
+	}
+
+	/**
+	 * Returns the singleton instance.
+	 * 
+	 * @return The DragSourcePlaceHolder instance
+	 */
+	public static CustomOperationLabelProviderManager getInstance() {
+		return SingletonHolder.INSTANCE;
+	}
+
+	private List<AbstractOperationCustomLabelProvider> list;
 
 	/**
 	 * Constructor.
 	 */
-	public CustomOperationLabelProviderManager() {
-		if (list == null) {
-			initExtensions();
-		}
+	private CustomOperationLabelProviderManager() {
+		list = new ArrayList<AbstractOperationCustomLabelProvider>();
+		collectExtensions();
 	}
 
 	/**
@@ -64,10 +79,7 @@ public class CustomOperationLabelProviderManager implements IDisposable {
 		return highestVisualizer;
 	}
 
-	private void initExtensions() {
-
-		list = new ArrayList<AbstractOperationCustomLabelProvider>();
-
+	private void collectExtensions() {
 		for (ExtensionElement element : new ExtensionPoint(
 			"org.eclipse.emf.emfstore.server.model.edit.customOperationLabelProvider", true).getExtensionElements()) {
 			try {

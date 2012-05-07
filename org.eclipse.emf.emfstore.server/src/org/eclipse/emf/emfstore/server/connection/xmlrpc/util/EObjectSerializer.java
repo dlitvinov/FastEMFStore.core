@@ -37,7 +37,7 @@ public class EObjectSerializer extends TypeSerializerImpl {
 	 * EObject Tag for parsing.
 	 */
 	public static final String EOBJECT_TAG = "EObject";
-	public static final String EX_EOBJECT_TAG = "ex:" + EOBJECT_TAG;
+	private static final String EX_EOBJECT_TAG = "ex:" + EOBJECT_TAG;
 
 	/**
 	 * {@inheritDoc}

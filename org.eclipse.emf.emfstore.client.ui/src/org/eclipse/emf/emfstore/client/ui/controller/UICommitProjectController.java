@@ -24,9 +24,12 @@ public class UICommitProjectController extends AbstractEMFStoreUIController impl
 
 	public PrimaryVersionSpec commit(ProjectSpace projectSpace, LogMessage logMessage) throws EmfStoreException {
 		openProgress();
-		PrimaryVersionSpec commit = projectSpace.commit(logMessage, this, getProgressMonitor());
-		closeProgress();
-		return commit;
+		try {
+			PrimaryVersionSpec commit = projectSpace.commit(logMessage, this, getProgressMonitor());
+			return commit;
+		} finally {
+			closeProgress();
+		}
 	}
 
 	public void noLocalChanges(ProjectSpace projectSpace) {

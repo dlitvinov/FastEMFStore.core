@@ -46,7 +46,6 @@ import org.eclipse.swt.graphics.Image;
  */
 public class ChangePackageVisualizationHelper implements IDisposable {
 
-	private CustomOperationLabelProviderManager customLabelProviderManager;
 	private DefaultOperationLabelProvider defaultOperationLabelProvider;
 	private IdEObjectCollection collection;
 
@@ -61,7 +60,6 @@ public class ChangePackageVisualizationHelper implements IDisposable {
 	 */
 	public ChangePackageVisualizationHelper(List<ChangePackage> changePackages, IdEObjectCollection collection) {
 		defaultOperationLabelProvider = new DefaultOperationLabelProvider();
-		customLabelProviderManager = new CustomOperationLabelProviderManager();
 		this.collection = collection;
 	}
 
@@ -133,7 +131,7 @@ public class ChangePackageVisualizationHelper implements IDisposable {
 	}
 
 	private Image getCustomOperationProviderLabel(AbstractOperation operation) {
-		AbstractOperationCustomLabelProvider customLabelProvider = customLabelProviderManager
+		AbstractOperationCustomLabelProvider customLabelProvider = CustomOperationLabelProviderManager.getInstance()
 			.getCustomLabelProvider(operation);
 		if (customLabelProvider != null) {
 			try {
@@ -148,15 +146,18 @@ public class ChangePackageVisualizationHelper implements IDisposable {
 	}
 
 	/**
+	 * Returns a description for the given operation.
+	 * 
 	 * @param op
 	 *            the operation to generate a description for
-	 * @return the description for given operation
+	 * @return the description for the given operation
 	 */
 	public String getDescription(AbstractOperation op) {
 
 		// check of a custom operation label provider can provide a label
-		AbstractOperationCustomLabelProvider customLabelProvider = customLabelProviderManager
+		AbstractOperationCustomLabelProvider customLabelProvider = CustomOperationLabelProviderManager.getInstance()
 			.getCustomLabelProvider(op);
+
 		if (customLabelProvider != null) {
 			return decorate(customLabelProvider, op);
 		}
@@ -164,7 +165,7 @@ public class ChangePackageVisualizationHelper implements IDisposable {
 		if (op instanceof CompositeOperation) {
 			CompositeOperation compositeOperation = (CompositeOperation) op;
 			// artificial composite because of opposite ref, take description of
-			// mainoperation
+			// main operation
 			if (compositeOperation.getMainOperation() != null) {
 				return getDescription(compositeOperation.getMainOperation());
 			}
@@ -229,6 +230,9 @@ public class ChangePackageVisualizationHelper implements IDisposable {
 
 	/**
 	 * 
+	 * {@inheritDoc}
+	 * 
+	 * @see org.eclipse.emf.emfstore.common.IDisposable#dispose()
 	 */
 	public void dispose() {
 		defaultOperationLabelProvider.dispose();

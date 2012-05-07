@@ -10,16 +10,10 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.client.model.impl;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.util.BasicEMap;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.emfstore.client.model.Configuration;
 import org.eclipse.emf.emfstore.client.model.changeTracking.commands.CommandObserver;
 import org.eclipse.emf.emfstore.client.model.changeTracking.commands.EMFStoreCommandStack;
@@ -62,8 +56,6 @@ public class StatePersister implements CommandObserver, IdEObjectCollectionChang
 	private EMFStoreCommandStack commandStack;
 	private FilterStack filterStack;
 
-	private static Resource currentResource;
-
 	/**
 	 * Constructor.
 	 * 
@@ -75,8 +67,7 @@ public class StatePersister implements CommandObserver, IdEObjectCollectionChang
 	 * @param collection
 	 *            the collection that should be persisted
 	 */
-	public StatePersister(EObjectChangeNotifier changeNotifier, EMFStoreCommandStack commandStack,
-		IdEObjectCollectionImpl collection) {
+	public StatePersister(EMFStoreCommandStack commandStack, IdEObjectCollectionImpl collection) {
 		this.commandStack = commandStack;
 		this.dirtyResourceSet = new DirtyResourceSet(collection);
 		filterStack = new FilterStack(new NotificationFilter[] { new TouchFilter(), new TransientFilter(),
@@ -188,14 +179,6 @@ public class StatePersister implements CommandObserver, IdEObjectCollectionChang
 	 *      org.eclipse.emf.ecore.EObject)
 	 */
 	public void modelElementAdded(IdEObjectCollection rootEObject, EObject modelElement) {
-		XMIResource oldResource = (XMIResource) modelElement.eResource();
-
-		// do not split if splitting disabled or the element is a map entry
-		if (oldResource != null && Configuration.isResourceSplittingEnabled()
-			&& !(modelElement instanceof BasicEMap.Entry)) {
-			addToNewResourceIfRequired(modelElement, oldResource);
-		}
-
 		addToDirtyResources(modelElement);
 	}
 
@@ -219,38 +202,6 @@ public class StatePersister implements CommandObserver, IdEObjectCollectionChang
 	public void collectionDeleted(IdEObjectCollection collection) {
 		if (commandStack != null) {
 			commandStack.removeCommandStackObserver(this);
-		}
-	}
-
-	private void addToNewResourceIfRequired(final EObject modelElement, XMIResource oldResource) {
-
-		if (currentResource == null || currentResource.getURI() == null) {
-			currentResource = oldResource;
-		}
-		URI oldUri = currentResource.getURI();
-		String oldFileName = oldUri.toFileString();
-
-		if (!oldUri.isFile()) {
-			throw new IllegalStateException("Project contains ModelElements that are not part of a file resource.");
-		}
-
-		File oldFile = new File(oldFileName);
-		if (oldFile.length() > Configuration.getMaxResourceFileSizeOnExpand()) {
-
-			String newFileName;
-			try {
-				newFileName = File.createTempFile("frag", Configuration.getProjectFragmentFileExtension(),
-					new File(oldFile.getParent())).getAbsolutePath();
-			} catch (IOException e) {
-				throw new IllegalStateException("File fragment \"" + "\" already exists - ProjectSpace corrupted.\n"
-					+ "Cause: " + e.getMessage());
-			}
-
-			URI fileURI = URI.createFileURI(newFileName);
-			XMIResource newResource = (XMIResource) currentResource.getResourceSet().createResource(fileURI);
-
-			newResource.getContents().add(modelElement);
-			currentResource = newResource;
 		}
 	}
 
