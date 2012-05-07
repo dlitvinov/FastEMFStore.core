@@ -556,7 +556,7 @@ public final class ModelUtil {
 		if (resourceBinaryLoadOptions == null) {
 			resourceBinaryLoadOptions = new HashMap<Object, Object>(getResourceLoadOptions());
 			// resourceBinaryLoadOptions.put(XMLResource.OPTION_BINARY, Boolean.TRUE);
-			// resourceLoadOptions.put(XMLResource.OPTION_ZIP, Boolean.TRUE);
+			// resourceBinaryLoadOptions.put(XMLResource.OPTION_ZIP, Boolean.TRUE);
 		}
 		return resourceBinaryLoadOptions;
 	}
