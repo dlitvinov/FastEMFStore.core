@@ -64,6 +64,8 @@ public class XmlRpcClientManager {
 			config.setConnectionTimeout(Configuration.getXMLRPCConnectionTimeout());
 			config.setReplyTimeout(Configuration.getXMLRPCReplyTimeout());
 			config.setContentLengthOptional(true);
+			// config.setGzipCompressing(true);
+			config.setGzipRequesting(true);
 
 			client = new XmlRpcClient();
 			client.setTypeFactory(new EObjectTypeFactory(client));
