@@ -112,8 +112,8 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 
 	private StatePersister statePersister;
 	private OperationPersister operationPersister;
-
 	private ECrossReferenceAdapter crossReferenceAdapter;
+
 	protected ResourceSet resourceSet;
 
 	/**
@@ -668,7 +668,7 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 		operationManager.removeOperationListener(modifiedModelElementsCache);
 		operationManager.dispose();
 		WorkspaceManager.getObserverBus().unregister(modifiedModelElementsCache);
-		// WorkspaceManager.getObserverBus().unregister(this, LoginObserver.class);
+		WorkspaceManager.getObserverBus().unregister(this, LoginObserver.class);
 		WorkspaceManager.getObserverBus().unregister(this);
 		((EMFStoreCommandStack) Configuration.getEditingDomain().getCommandStack())
 			.removeCommandStackObserver(operationPersister);

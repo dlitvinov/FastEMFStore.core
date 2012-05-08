@@ -619,15 +619,18 @@ public interface ProjectSpace extends IdentifiableElement {
 	 * Deletes the project space.
 	 * 
 	 * @generated NOT
+	 * 
 	 * @throws IOException
 	 *             in case the project space could not be deleted
 	 */
-	public void delete() throws IOException;
+	void delete() throws IOException;
 
 	/**
 	 * Returns the resource set of the ProjectSpace.
+	 * 
+	 * @return resource set of the ProjectSpace
 	 */
-	public ResourceSet getResourceSet();
+	ResourceSet getResourceSet();
 
 	/**
 	 * Returns the value of the '<em><b>Dirty</b></em>' attribute. <!--
