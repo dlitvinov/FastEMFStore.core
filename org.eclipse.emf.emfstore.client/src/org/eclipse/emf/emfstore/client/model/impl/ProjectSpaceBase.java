@@ -258,12 +258,6 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 		}
 	}
 
-	private void assignElementToResource(Resource resource, EObject modelElement) {
-		resource.getContents().add(modelElement);
-		// FIXME: this is not nice!
-		((XMIResource) resource).setID(modelElement, getProject().getModelElementId(modelElement).getId());
-	}
-
 	/**
 	 * {@inheritDoc}
 	 * 

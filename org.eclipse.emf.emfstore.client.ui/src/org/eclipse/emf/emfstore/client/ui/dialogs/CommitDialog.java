@@ -126,9 +126,12 @@ public class CommitDialog extends TitleAreaDialog implements KeyListener {
 			.applyTo(txtLogMsg);
 		String logMsg = "";
 		LogMessage logMessage = changes.getLogMessage();
-		if (logMessage != null && logMessage.getMessage() != null) {
+
+		if (logMessage != null && logMessage.getMessage() != null && !logMessage.getMessage().equals("")) {
+			// if change package has log message attached to it, use it
 			logMsg = logMessage.getMessage();
 		} else if (oldLogMessages != null && oldLogMessages.size() > 0) {
+			// otherwise use the most recent log message
 			logMsg = oldLogMessages.get(oldLogMessages.size() - 1);
 		}
 		txtLogMsg.setText(logMsg);
@@ -157,6 +160,10 @@ public class CommitDialog extends TitleAreaDialog implements KeyListener {
 			}
 
 		});
+
+		if (oldLogMessages.size() > 0) {
+			oldMsg.select(0);
+		}
 
 		// ChangesTree
 		ArrayList<ChangePackage> changePackages = new ArrayList<ChangePackage>();

@@ -36,6 +36,7 @@ public class ObserverBusTest {
 		assertFalse("42".equals(getObserverBus().notify(C.class).fourtyTwo()));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testSuperUnregister() {
 		DImpl d = new DImpl();
@@ -115,6 +116,7 @@ public class ObserverBusTest {
 		assertEquals(callResults.get(0).getResult(), 2);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void simpleObserverInheritanceAndUnRegSubTest() {
 		getObserverBus().register(new AImpl());
@@ -154,6 +156,7 @@ public class ObserverBusTest {
 		getObserverBus().notify(C.class).fourtyTwo();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void registerForOneInterfaceTest() {
 		getObserverBus().register(new BImpl(), B.class);
