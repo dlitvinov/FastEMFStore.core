@@ -14,7 +14,6 @@ import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.emf.emfstore.client.model.ServerInfo;
 import org.eclipse.emf.emfstore.client.model.Workspace;
-import org.eclipse.emf.emfstore.client.model.accesscontrol.AccessControlHelper;
 
 /**
  * Content provider for the EMFStore Browser View.
@@ -23,8 +22,6 @@ import org.eclipse.emf.emfstore.client.model.accesscontrol.AccessControlHelper;
  * @author ovonwesend
  */
 public class ESBrowserContentProvider extends AdapterFactoryContentProvider {
-
-	private AccessControlHelper accessControl;
 
 	/**
 	 * Default constructor.
@@ -40,15 +37,6 @@ public class ESBrowserContentProvider extends AdapterFactoryContentProvider {
 		}
 
 		return super.getElements(object);
-	}
-
-	/**
-	 * Getter for the AccesscontrolHelper.
-	 * 
-	 * @return the AccesscontrolHelper
-	 */
-	public AccessControlHelper getAccesscontrolHelper() {
-		return accessControl;
 	}
 
 	/**

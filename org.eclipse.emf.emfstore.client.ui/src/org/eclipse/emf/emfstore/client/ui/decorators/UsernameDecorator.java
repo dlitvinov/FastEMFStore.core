@@ -28,7 +28,6 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 public class UsernameDecorator extends AdapterImpl implements ILightweightLabelDecorator {
 
 	private ArrayList<ILabelProviderListener> listeners = new ArrayList<ILabelProviderListener>();
-	private ProjectSpace element;
 
 	/**
 	 * {@inheritDoc}
@@ -88,9 +87,8 @@ public class UsernameDecorator extends AdapterImpl implements ILightweightLabelD
 	 * {@inheritDoc}
 	 */
 	public void decorationChanged() {
-		LabelProviderChangedEvent event = new LabelProviderChangedEvent(this, element);
 		for (ILabelProviderListener listener : listeners) {
-			listener.labelProviderChanged(event);
+			listener.labelProviderChanged(new LabelProviderChangedEvent(this));
 		}
 	}
 

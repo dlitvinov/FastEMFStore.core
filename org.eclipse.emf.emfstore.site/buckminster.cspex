@@ -10,7 +10,7 @@
 		<dependency name="ECPTargetPlatform" componentType="eclipse.feature"/>
 		<dependency name="ECPDeveloper" componentType="eclipse.feature"/>
 		
-		<dependency name="org.eclipse.emf.emfstore.client.test"/>
+		<dependency name="org.eclipse.emf.emfstore.client.test" componentType="osgi.bundle"/>
 	</dependencies>
 
 	<actions>

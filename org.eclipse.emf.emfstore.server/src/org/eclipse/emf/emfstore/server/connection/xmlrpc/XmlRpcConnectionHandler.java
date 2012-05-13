@@ -44,7 +44,7 @@ public class XmlRpcConnectionHandler implements ConnectionHandler<EmfStore> {
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("static-access")
-	public void init(EmfStore emfStore, AuthenticationControl accessControl) throws FatalEmfStoreException {
+	public synchronized void init(EmfStore emfStore, AuthenticationControl accessControl) throws FatalEmfStoreException {
 		this.emfStore = emfStore;
 		this.accessControl = accessControl;
 		XmlRpcWebserverManager webServer = XmlRpcWebserverManager.getInstance();

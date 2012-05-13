@@ -6,80 +6,27 @@ import java.io.IOException;
 
 import org.eclipse.emf.emfstore.client.model.ModelPackage;
 import org.eclipse.emf.emfstore.client.model.ProjectSpace;
-import org.eclipse.emf.emfstore.client.model.Usersession;
-import org.eclipse.emf.emfstore.client.model.Workspace;
-import org.eclipse.emf.emfstore.client.model.WorkspaceManager;
-import org.eclipse.emf.emfstore.client.model.impl.ProjectSpaceImpl;
+import org.eclipse.emf.emfstore.client.model.impl.ProjectSpaceBase;
 import org.eclipse.emf.emfstore.client.model.util.EMFStoreCommand;
 import org.eclipse.emf.emfstore.client.properties.EMFStorePropertiesOutdatedException;
 import org.eclipse.emf.emfstore.client.properties.PropertyManager;
-import org.eclipse.emf.emfstore.client.test.SetupHelper;
 import org.eclipse.emf.emfstore.client.test.testmodel.TestmodelFactory;
 import org.eclipse.emf.emfstore.common.model.PropertyStringValue;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
-import org.eclipse.emf.emfstore.server.exceptions.AccessControlException;
 import org.eclipse.emf.emfstore.server.exceptions.EmfStoreException;
-import org.eclipse.emf.emfstore.server.model.accesscontrol.ACOrgUnitId;
-import org.eclipse.emf.emfstore.server.model.accesscontrol.roles.RolesPackage;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-public class PropertiesTest extends ServerTests {
+public class PropertiesTest extends TransmissionTests {
 
-	private static ProjectSpace projectSpace1;
 	private static PropertyManager propertyManager1;
-	private static ProjectSpace projectSpace2;
 	private static PropertyManager propertyManager2;
-	private static Usersession usersession1;
-	private static Usersession usersession2;
-	private ACOrgUnitId user1;
-	private ACOrgUnitId user2;
-
-	@Before
-	public void setUpTests() throws EmfStoreException {
-		user1 = setupUsers("writer1", RolesPackage.eINSTANCE.getWriterRole());
-		user2 = setupUsers("writer2", RolesPackage.eINSTANCE.getWriterRole());
-		usersession1 = setUpUsersession("writer1", "foo");
-		usersession2 = setUpUsersession("writer2", "foo");
-		new EMFStoreCommand() {
-
-			@Override
-			protected void doRun() {
-				Workspace workspace = WorkspaceManager.getInstance().getCurrentWorkspace();
-				workspace.getServerInfos().add(getServerInfo());
-				workspace.getUsersessions().add(usersession1);
-				workspace.getUsersessions().add(usersession2);
-				workspace.save();
-
-				try {
-					usersession1.logIn();
-					usersession2.logIn();
-					projectSpace1 = workspace.checkout(usersession1, getProjectInfo());
-					projectSpace2 = workspace.checkout(usersession2, getProjectInfo());
-				} catch (AccessControlException e) {
-					throw new RuntimeException(e);
-				} catch (EmfStoreException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}.run(false);
-
-	}
-
-	@After
-	public void tearDownUsers() throws EmfStoreException {
-		SetupHelper.deleteUserOnServer(user1);
-		SetupHelper.deleteUserOnServer(user2);
-
-	}
 
 	@Test
 	public void testSharedProperties() throws EmfStoreException {
 
-		propertyManager1 = projectSpace1.getPropertyManager();
-		propertyManager2 = projectSpace2.getPropertyManager();
+		propertyManager1 = getProjectSpace1().getPropertyManager();
+		propertyManager2 = getProjectSpace2().getPropertyManager();
 
 		new EMFStoreCommand() {
 			@Override
@@ -138,8 +85,8 @@ public class PropertiesTest extends ServerTests {
 	@Test
 	public void testVersionedProperty() {
 
-		propertyManager1 = projectSpace1.getPropertyManager();
-		propertyManager2 = projectSpace2.getPropertyManager();
+		propertyManager1 = getProjectSpace1().getPropertyManager();
+		propertyManager2 = getProjectSpace2().getPropertyManager();
 
 		new EMFStoreCommand() {
 			@Override
@@ -177,14 +124,14 @@ public class PropertiesTest extends ServerTests {
 		new EMFStoreCommand() {
 			@Override
 			protected void doRun() {
-				projectSpace1.getPropertyManager().setLocalProperty("foo",
+				getProjectSpace1().getPropertyManager().setLocalProperty("foo",
 					TestmodelFactory.eINSTANCE.createTestElement());
 			}
 		}.run(false);
 
-		((ProjectSpaceImpl) projectSpace1).saveProjectSpaceOnly();
+		((ProjectSpaceBase) getProjectSpace1()).save();
 		ProjectSpace loadedProjectSpace = ModelUtil.loadEObjectFromResource(ModelPackage.eINSTANCE.getProjectSpace(),
-			projectSpace1.eResource().getURI(), false);
+			getProjectSpace1().eResource().getURI(), false);
 
 		assertNotNull(loadedProjectSpace.getPropertyManager().getLocalProperty("foo"));
 	}

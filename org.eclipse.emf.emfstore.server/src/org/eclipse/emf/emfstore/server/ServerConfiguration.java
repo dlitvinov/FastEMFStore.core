@@ -431,7 +431,7 @@ public final class ServerConfiguration {
 	 * 
 	 * @return workspace location provider
 	 */
-	public static LocationProvider getLocationProvider() {
+	public synchronized static LocationProvider getLocationProvider() {
 		if (locationProvider == null) {
 			// TODO EXPT PRIO
 			try {
@@ -496,7 +496,7 @@ public final class ServerConfiguration {
 	 * 
 	 * @return properties
 	 */
-	public static Properties getProperties() {
+	public synchronized static Properties getProperties() {
 		if (properties == null) {
 			properties = new Properties();
 		}

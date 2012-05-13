@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.emfstore.client.model.ProjectSpace;
-import org.eclipse.emf.emfstore.client.ui.Activator;
 import org.eclipse.emf.emfstore.client.ui.views.changes.TabbedChangesComposite;
 import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionElement;
 import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
@@ -114,7 +113,6 @@ public class CommitDialog extends TitleAreaDialog implements KeyListener {
 
 		setTitle("Commit your local changes to the server");
 		setMessage("Don't forget the commit message!");
-		setTitleImage(Activator.getImageDescriptor("icons/dontForget.png").createImage());
 
 		// Log message
 		Label lblLogMsg = new Label(contents, SWT.NONE);

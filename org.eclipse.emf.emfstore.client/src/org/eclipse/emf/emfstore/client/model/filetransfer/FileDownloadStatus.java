@@ -159,19 +159,9 @@ public final class FileDownloadStatus {
 	}
 
 	/**
-	 * Removes a transfer observer from the list of observers.
-	 * 
-	 * @param o
-	 *            an observer to be removed
-	 */
-	public void deleteTransferFinishedObserver(Observer o) {
-		finishedObservable.deleteObserver(o);
-	}
-
-	/**
 	 * Returns true if the transfer is finished.
 	 * 
-	 * @return transfer finished?
+	 * @return Whether the transfer is finished
 	 */
 	public boolean isTransferFinished() {
 		return status == Status.FINISHED;
@@ -211,10 +201,10 @@ public final class FileDownloadStatus {
 	 * client thread.
 	 * 
 	 * @param block
-	 *            block or not
-	 * @return File
+	 *            whether to block or not
+	 * @return the transferred file
 	 * @throws FileTransferException
-	 *             in case of an error
+	 *             in case of an error during transfer
 	 */
 	public File getTransferredFile(boolean block) throws FileTransferException {
 
@@ -225,6 +215,7 @@ public final class FileDownloadStatus {
 			final Observer observer = new Observer() {
 				public void update(Observable arg0, Object arg1) {
 					synchronized (this) {
+						// TODO: notify should be sufficient here
 						notifyAll();
 					}
 				}

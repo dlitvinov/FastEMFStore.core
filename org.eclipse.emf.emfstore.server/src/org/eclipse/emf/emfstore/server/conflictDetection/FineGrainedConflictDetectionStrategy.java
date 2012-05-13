@@ -183,7 +183,7 @@ public class FineGrainedConflictDetectionStrategy implements ConflictDetectionSt
 				}
 				if (operation instanceof MultiReferenceMoveOperation) {
 					return ((MultiReferenceMoveOperation) operation).getReferencedModelElementId().equals(
-						requiredOperation);
+						requiredOperation.getModelElementId());
 				}
 				return false;
 			} else if (operation instanceof CompositeOperation) {

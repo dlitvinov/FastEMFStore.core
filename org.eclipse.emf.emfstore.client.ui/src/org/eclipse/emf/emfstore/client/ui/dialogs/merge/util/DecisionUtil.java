@@ -33,8 +33,7 @@ import org.eclipse.swt.widgets.Display;
 public final class DecisionUtil {
 
 	private static final AdapterFactoryLabelProvider ADAPTER_FACTORY_LABEL_PROVIDER = new AdapterFactoryLabelProvider(
-			new ComposedAdapterFactory(
-					ComposedAdapterFactory.Descriptor.Registry.INSTANCE));
+		new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE));
 
 	private DecisionUtil() {
 	}
@@ -61,8 +60,7 @@ public final class DecisionUtil {
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		final String key = path;
-		ImageDescriptor regImage = JFaceResources.getImageRegistry()
-				.getDescriptor(key);
+		ImageDescriptor regImage = JFaceResources.getImageRegistry().getDescriptor(key);
 		if (regImage == null) {
 			regImage = Activator.getImageDescriptor("icons/merge/" + path);
 			JFaceResources.getImageRegistry().put(key, regImage);
@@ -115,7 +113,7 @@ public final class DecisionUtil {
 	 * 
 	 * @return fonts
 	 */
-	public static FontRegistry getFontRegistry() {
+	public synchronized static FontRegistry getFontRegistry() {
 		if (fontRegistry == null) {
 			fontRegistry = new FontRegistry(Display.getCurrent());
 			DecisionConfig.initFonts(fontRegistry);
@@ -132,8 +130,7 @@ public final class DecisionUtil {
 	 *            type
 	 * @return resulting option or null
 	 */
-	public static ConflictOption getConflictOptionByType(
-			List<ConflictOption> options, OptionType type) {
+	public static ConflictOption getConflictOptionByType(List<ConflictOption> options, OptionType type) {
 		for (ConflictOption option : options) {
 			if (option.getType().equals(type)) {
 				return option;
@@ -157,8 +154,7 @@ public final class DecisionUtil {
 			if (!option.isDetailsProvider()) {
 				continue;
 			}
-			if (option.getDetailProvider().startsWith(
-					DecisionConfig.WIDGET_MULTILINE)) {
+			if (option.getDetailProvider().startsWith(DecisionConfig.WIDGET_MULTILINE)) {
 				if (option.getOptionLabel().length() > DecisionConfig.OPTION_LENGTH) {
 					return true;
 				}
@@ -179,8 +175,7 @@ public final class DecisionUtil {
 	 * @return obj.toString or unset
 	 */
 	public static String getLabel(Object obj, String unset) {
-		return (obj != null && obj.toString().length() > 1) ? obj.toString()
-				: unset;
+		return (obj != null && obj.toString().length() > 1) ? obj.toString() : unset;
 	}
 
 	/**

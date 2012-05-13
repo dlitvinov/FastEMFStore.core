@@ -134,7 +134,7 @@ public class CertificateSelectionDialog extends ElementListSelectionDialog {
 			}
 
 			public void widgetSelected(SelectionEvent e) {
-				if (selectedTableItem != null && !selectedTableItem.equals("")) {
+				if (selectedTableItem != null && !selectedTableItem.getText().equals("")) {
 					String alias = selectedTableItem.getText();
 					try {
 						KeyStoreManager.getInstance().deleteCertificate(alias);
@@ -150,7 +150,7 @@ public class CertificateSelectionDialog extends ElementListSelectionDialog {
 	}
 
 	/**
-	 * Returns the alias of the certificate
+	 * Returns the alias of the certificate.
 	 * 
 	 * @return the certificate alias
 	 */

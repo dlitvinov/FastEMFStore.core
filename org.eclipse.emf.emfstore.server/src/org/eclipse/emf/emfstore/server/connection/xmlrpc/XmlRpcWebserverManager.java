@@ -83,23 +83,33 @@ public final class XmlRpcWebserverManager {
 
 				@Override
 				protected ServerSocket createServerSocket(int pPort, int backlog, InetAddress addr) throws IOException {
+
 					SSLServerSocketFactory serverSocketFactory = null;
+					Exception exception = null;
+
 					try {
 						SSLContext context = SSLContext.getInstance("TLS");
 						context.init(ServerKeyStoreManager.getInstance().getKeyManagerFactory().getKeyManagers(), null,
 							null);
 						serverSocketFactory = context.getServerSocketFactory();
 					} catch (NoSuchAlgorithmException e) {
-						ModelUtil.logException("Couldn't initialize server socket.", e);
-						EmfStoreController.getInstance().shutdown(new FatalEmfStoreException());
+						exception = e;
 					} catch (KeyManagementException e) {
-						ModelUtil.logException("Couldn't initialize server socket.", e);
-						EmfStoreController.getInstance().shutdown(new FatalEmfStoreException());
+						exception = e;
 					} catch (ServerKeyStoreException e) {
+						exception = e;
+					}
+
+					shutdown(serverSocketFactory, exception);
+
+					return serverSocketFactory.createServerSocket(pPort, backlog, addr);
+				}
+
+				private void shutdown(SSLServerSocketFactory serverSocketFactory, Exception e) {
+					if (serverSocketFactory == null) {
 						ModelUtil.logException("Couldn't initialize server socket.", e);
 						EmfStoreController.getInstance().shutdown(new FatalEmfStoreException());
 					}
-					return serverSocketFactory.createServerSocket(pPort, backlog, addr);
 				}
 			};
 
@@ -121,7 +131,7 @@ public final class XmlRpcWebserverManager {
 			serverConfig.setEnabledForExtensions(true);
 			serverConfig.setEnabledForExceptions(true);
 			serverConfig.setContentLengthOptional(true);
-	
+
 			webServer.start();
 		} catch (IOException e) {
 			throw new FatalEmfStoreException("Couldn't start webserver", e);

@@ -105,7 +105,7 @@ public class FileTransferManager {
 	 */
 	private void addToCommitQueue(final FileIdentifier identifier) {
 		for (FileIdentifier f : projectSpace.getWaitingUploads()) {
-			if (f.getIdentifier().equals(identifier)) {
+			if (f.getIdentifier().equals(identifier.getIdentifier())) {
 				return;
 			}
 

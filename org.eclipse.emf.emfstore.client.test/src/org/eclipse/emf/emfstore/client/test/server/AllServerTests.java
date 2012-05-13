@@ -15,7 +15,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ ServerInterfaceTest.class, InvalidArgumentsTest.class, InvalidAuthenticationTest.class,
-	PropertiesTest.class })
+	PropertiesTest.class, FileManagerTest.class })
 public class AllServerTests {
 
 }

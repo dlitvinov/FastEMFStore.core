@@ -122,8 +122,9 @@ public interface IdEObjectCollection extends EObject {
 	 * Initializes the ID caches of the project with the given mappings.
 	 * 
 	 * @param eObjectToIdMap
-	 * 
+	 *            a mapping from EObjects to IDs
 	 * @param idToEObjectMap
+	 *            the reverse mapping of <code>eObjectToIdMap</code>
 	 */
 	void initCaches(Map<EObject, String> eObjectToIdMap, Map<String, EObject> idToEObjectMap);
 

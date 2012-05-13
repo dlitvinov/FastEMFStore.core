@@ -60,10 +60,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.emf.emfstore.backchannel.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.emf.emfstore.client.transaction.feature"
          version="0.0.0"/>
 
@@ -73,6 +69,10 @@
 
    <includes
          id="org.eclipse.emf.emfstore.ecp.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.emfstore.example.feature"
          version="0.0.0"/>
 
 </feature>

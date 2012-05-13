@@ -136,7 +136,7 @@ public class ModifiedModelElementsCache implements OperationObserver, CommitObse
 	}
 
 	private void addOneToParent(ModelElementId parentModelElementId) {
-		Integer number = modifiedModelElementParents.get(parentModelElementId);
+		Integer number = modifiedModelElementParents.get(parentModelElementId.getId());
 		if (number == null || number < 1) {
 			number = 1;
 			if (!modifiedModelElements.containsKey(parentModelElementId.getId())) {

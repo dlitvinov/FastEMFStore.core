@@ -357,7 +357,7 @@ public final class ModelUtil {
 	 *            the EObject which is to be checked
 	 * @return true, if the EObject will be ignored, false otherwise
 	 */
-	public static boolean isIgnoredDatatype(EObject eObject) {
+	public synchronized static boolean isIgnoredDatatype(EObject eObject) {
 
 		if (ignoredDataTypes == null) {
 			ignoredDataTypes = new HashSet<String>();
@@ -473,7 +473,7 @@ public final class ModelUtil {
 	 * @return map of options for {@link XMIResource} or {@link XMLResource}.
 	 */
 	@SuppressWarnings("rawtypes")
-	public static Map<Object, Object> getResourceLoadOptions() {
+	public synchronized static Map<Object, Object> getResourceLoadOptions() {
 		if (resourceLoadOptions == null) {
 			resourceLoadOptions = new HashMap<Object, Object>();
 			resourceLoadOptions.put(XMLResource.OPTION_DEFER_ATTACHMENT, Boolean.TRUE);
@@ -491,7 +491,7 @@ public final class ModelUtil {
 	 * 
 	 * @return map of options for {@link XMIResource} or {@link XMLResource}.
 	 */
-	public static Map<Object, Object> getResourceSaveOptions() {
+	public synchronized static Map<Object, Object> getResourceSaveOptions() {
 		if (resourceSaveOptions == null) {
 			resourceSaveOptions = new HashMap<Object, Object>();
 			resourceSaveOptions.put(XMLResource.OPTION_USE_ENCODED_ATTRIBUTE_STYLE, Boolean.TRUE);
@@ -813,6 +813,25 @@ public final class ModelUtil {
 		ArrayList<EObject> list = new ArrayList<EObject>();
 		list.add(eObject);
 		saveEObjectToResource(list, resourceURI);
+	}
+
+	/**
+	 * Deletes all resources from resourceSet, which string representation of URI starts with prefix.
+	 * 
+	 * @param resourceSet resource set
+	 * @param prefix string prefix of the resource path
+	 * @throws IOException
+	 */
+	public static void deleteResourcesWithPrefix(ResourceSet resourceSet, String prefix) throws IOException {
+		List<Resource> toDelete = new ArrayList<Resource>();
+		for (Resource resource : resourceSet.getResources()) {
+			if (resource.getURI().toFileString().startsWith(prefix)) {
+				toDelete.add(resource);
+			}
+		}
+		for (Resource resource : toDelete) {
+			resource.delete(null);
+		}
 	}
 
 	/**
@@ -1247,7 +1266,7 @@ public final class ModelUtil {
 	/**
 	 * Initializes all available {@link SingletonIdResolver}.
 	 */
-	private static void initSingletonIdResolvers() {
+	private synchronized static void initSingletonIdResolvers() {
 		if (singletonIdResolvers == null) {
 			// collect singleton ID resolvers
 			singletonIdResolvers = new HashSet<SingletonIdResolver>();

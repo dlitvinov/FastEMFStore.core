@@ -20,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -150,7 +151,7 @@ public final class ServerKeyStoreManager {
 	public void setJavaSSLProperties() {
 		System.setProperty("javax.net.ssl.keyStore", ServerConfiguration.getServerKeyStorePath());
 		System.setProperty("javax.net.ssl.trustStore", ServerConfiguration.getServerKeyStorePath());
-		System.setProperty("javax.net.ssl.keyStorePassword", getKeyStorePassword().toString());
+		System.setProperty("javax.net.ssl.keyStorePassword", Arrays.toString(getKeyStorePassword()));
 	}
 
 	private char[] getKeyStorePassword() {

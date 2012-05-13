@@ -85,7 +85,7 @@ public class EmfStoreController implements IApplication, Runnable {
 	 * 
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
-	public Object start(IApplicationContext context) throws FatalEmfStoreException {
+	public synchronized Object start(IApplicationContext context) throws FatalEmfStoreException {
 		run(true);
 		instance = null;
 		ModelUtil.logInfo("Server is STOPPED.");

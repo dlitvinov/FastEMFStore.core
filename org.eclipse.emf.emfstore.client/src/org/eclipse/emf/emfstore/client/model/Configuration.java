@@ -20,6 +20,7 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.KeyStoreManager;
 import org.eclipse.emf.emfstore.client.model.util.ConfigurationProvider;
 import org.eclipse.emf.emfstore.client.model.util.DefaultWorkspaceLocationProvider;
+import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionElement;
 import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPoint;
 import org.eclipse.emf.emfstore.common.extensionpoint.ExtensionPointException;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
@@ -218,12 +219,18 @@ public final class Configuration {
 			.createClientVersionInfo();
 		clientVersionInfo.setName(CLIENT_NAME);
 
-		Bundle emfStoreBundle = Platform.getBundle("org.eclipse.emf.emfstore.client");
-		@SuppressWarnings("cast")
-		String emfStoreVersionString = (String) emfStoreBundle.getHeaders().get(
-			org.osgi.framework.Constants.BUNDLE_VERSION);
+		String versionId;
+		ExtensionElement version = new ExtensionPoint("org.eclipse.emf.emfstore.client.version").setThrowException(
+			false).getFirst();
 
-		clientVersionInfo.setVersion(emfStoreVersionString);
+		if (version != null) {
+			versionId = version.getAttribute("identifier");
+		} else {
+			Bundle emfStoreBundle = Platform.getBundle("org.eclipse.emf.emfstore.client");
+			versionId = (String) emfStoreBundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
+		}
+
+		clientVersionInfo.setVersion(versionId);
 		return clientVersionInfo;
 	}
 

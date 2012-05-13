@@ -165,8 +165,10 @@ public final class NotificationToOperationConverter {
 			break;
 		}
 
-		for (Object valueElement : list) {
-			operation.getReferencedValues().add(valueElement);
+		if (list != null) {
+			for (Object valueElement : list) {
+				operation.getReferencedValues().add(valueElement);
+			}
 		}
 
 		return operation;
@@ -175,18 +177,16 @@ public final class NotificationToOperationConverter {
 	@SuppressWarnings("unchecked")
 	private AbstractOperation handleMultiReference(NotificationInfo n) {
 
-		List<EObject> list = null;
+		List<EObject> list = new ArrayList<EObject>();
 
 		switch (n.getEventType()) {
 		case Notification.ADD:
-			list = new ArrayList<EObject>();
 			list.add(n.getNewModelElementValue());
 			break;
 		case Notification.ADD_MANY:
 			list = (List<EObject>) n.getNewValue();
 			break;
 		case Notification.REMOVE:
-			list = new ArrayList<EObject>();
 			list.add(n.getOldModelElementValue());
 			break;
 		case Notification.REMOVE_MANY:
@@ -202,6 +202,24 @@ public final class NotificationToOperationConverter {
 			n.getPosition());
 	}
 
+	/**
+	 * Creates a multi reference operation based on the given information.
+	 * 
+	 * @param collection
+	 *            the collection the <code>modelElement</code> is contained in
+	 * @param modelElement
+	 *            the model element holding the reference
+	 * @param reference
+	 *            the actual reference
+	 * @param referencedElements
+	 *            the elements referenced by the reference
+	 * @param isAdd
+	 *            whether any referenced model elements were added to the <code>collection</code>
+	 * @param position
+	 *            the index of the model element within the <code>referenceElements</code> affected by
+	 *            the generated operation
+	 * @return a multi reference operation
+	 */
 	public static MultiReferenceOperation createMultiReferenceOperation(IdEObjectCollectionImpl collection,
 		EObject modelElement, EReference reference, List<EObject> referencedElements, boolean isAdd, int position) {
 		MultiReferenceOperation op = OperationsFactory.eINSTANCE.createMultiReferenceOperation();
@@ -276,6 +294,21 @@ public final class NotificationToOperationConverter {
 		}
 	}
 
+	/**
+	 * Creates a single reference operation based on the given information.
+	 * 
+	 * @param collection
+	 *            the collection the <code>modelElement</code> is contained in
+	 * @param oldReference
+	 *            the {@link ModelElementId} of the model element the reference was pointing to
+	 * @param newReference
+	 *            the {@link ModelElementId} of the model element the reference is now pointing to
+	 * @param reference
+	 *            the actual reference
+	 * @param modelElement
+	 *            the model element holding the reference
+	 * @return a single reference operation
+	 */
 	public static SingleReferenceOperation createSingleReferenceOperation(IdEObjectCollectionImpl collection,
 		ModelElementId oldReference, ModelElementId newReference, EReference reference, EObject modelElement) {
 

@@ -13,11 +13,8 @@ package org.eclipse.emf.emfstore.server.eventmanager;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
-import org.eclipse.emf.emfstore.server.model.ProjectId;
 import org.eclipse.emf.emfstore.server.model.versioning.events.server.ServerEvent;
-import org.eclipse.emf.emfstore.server.model.versioning.events.server.ServerProjectEvent;
 
 /**
  * EventManager accepts events and distributes them to the listeners.
@@ -96,12 +93,12 @@ public final class EventManager extends Thread {
 	 * @param clazz
 	 *            not implemented yet
 	 */
-	public void registerListener(EMFStoreEventListener listener, ProjectId projectId, EClass clazz) {
+	public void registerListener(ListenerContainer listener) {
 		if (listener == null) {
 			return;
 		}
 		synchronized (this) {
-			listeners.add(new ListenerContainer(listener, projectId, clazz));
+			listeners.add(listener);
 		}
 	}
 
@@ -111,7 +108,7 @@ public final class EventManager extends Thread {
 	 * @param listener
 	 *            a listener
 	 */
-	public void unregisterListener(EMFStoreEventListener listener) {
+	public void unregisterListener(ListenerContainer listener) {
 		if (listener == null) {
 			return;
 		}
@@ -134,34 +131,6 @@ public final class EventManager extends Thread {
 			} catch (InterruptedException e) {
 				// fail silently
 			}
-		}
-	}
-
-	/**
-	 * Container for listener.
-	 * 
-	 * @author wesendon
-	 */
-	private class ListenerContainer {
-
-		private final EMFStoreEventListener listener;
-		private final ProjectId projectId;
-		@SuppressWarnings("unused")
-		private final EClass clazz;
-
-		public ListenerContainer(EMFStoreEventListener listener, ProjectId projectId, EClass clazz) {
-			this.listener = listener;
-			this.projectId = projectId;
-			this.clazz = clazz;
-		}
-
-		public boolean handleEvent(ServerEvent event) {
-			if (projectId != null && event instanceof ServerProjectEvent) {
-				if (!projectId.equals(((ServerProjectEvent) event).getProjectId())) {
-					return true;
-				}
-			}
-			return listener.handleEvent(event);
 		}
 	}
 }
