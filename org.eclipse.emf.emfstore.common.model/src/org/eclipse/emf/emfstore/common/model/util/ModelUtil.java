@@ -140,16 +140,16 @@ public final class ModelUtil {
 	}
 
 	/**
-	 * Compares two EObject by checking whether the string representations of
+	 * Compares two lists of EObject by checking whether the string representations of
 	 * the EObjects are equal.
 	 * 
-	 * @param eobjectA
-	 *            the first EObject
-	 * @param eobjectB
-	 *            the second EObject
-	 * @return true if the two objects are equal
+	 * @param listA
+	 *            the first list of EObject
+	 * @param listB
+	 *            the second list of EObject
+	 * @return true if the two lists are equal
 	 */
-	public static boolean areEqual(EList<EObject> listA, EList<EObject> listB) {
+	public static boolean areEqual(EList<? extends EObject> listA, EList<? extends EObject> listB) {
 		if (listA == listB) {
 			return true;
 		}
@@ -161,7 +161,7 @@ public final class ModelUtil {
 		for (int i = 0; i < listA.size(); ++i) {
 			EObject o1 = listA.get(i);
 			EObject o2 = listB.get(i);
-			if (o1 == null ? o2 != null : !areEqual(o1, o2)) {
+			if (!areEqual(o1, o2)) {
 				return false;
 			}
 		}
