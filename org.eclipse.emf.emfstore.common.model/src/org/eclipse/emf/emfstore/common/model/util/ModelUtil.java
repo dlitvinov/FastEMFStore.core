@@ -835,25 +835,6 @@ public final class ModelUtil {
 	}
 
 	/**
-	 * Deletes all resources from resourceSet, which string representation of URI starts with prefix.
-	 * 
-	 * @param resourceSet resource set
-	 * @param prefix string prefix of the resource path
-	 * @throws IOException
-	 */
-	public static void deleteResourcesWithPrefix(ResourceSet resourceSet, String prefix) throws IOException {
-		List<Resource> toDelete = new ArrayList<Resource>();
-		for (Resource resource : resourceSet.getResources()) {
-			if (resource.getURI().toFileString().startsWith(prefix)) {
-				toDelete.add(resource);
-			}
-		}
-		for (Resource resource : toDelete) {
-			resource.delete(null);
-		}
-	}
-
-	/**
 	 * Retrieve the current model version number.
 	 * 
 	 * @return an integer identifing the current model version
