@@ -196,11 +196,13 @@ public final class ModelUtil {
 			containmentCheckEnabled = element.getBoolean("SelfContainmentCheck");
 		}
 
-		String res = eObjectToString(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
-		// String oldRes = eObjectToString_old(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
-		// if (res == null && oldRes != null || !res.equals(oldRes)) {
-		// System.err.println("The results are DIFFERENT!!");
-		// }
+		String res = eObjectToString_old(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
+		String oldRes = eObjectToString_old(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
+		if (res == null && oldRes != null || !res.equals(oldRes)) {
+			System.err.println("The results are DIFFERENT!!");
+			System.err.println("res = " + res);
+			System.err.println("oldRes = " + oldRes);
+		}
 		return res;
 	}
 
@@ -267,6 +269,14 @@ public final class ModelUtil {
 		if (!overrideHrefCheck) {
 			hrefCheck(result);
 		}
+		// XMLsave
+		// XML load
+
+		// Binary XML Save
+		// BinaryXML Load
+
+		// Binary Save
+		// Binary Load
 
 		return result;
 	}
@@ -364,7 +374,7 @@ public final class ModelUtil {
 		}
 	}
 
-	private static EObject copyIdEObjectCollection(IdEObjectCollection collection, XMIResource res) {
+	public static EObject copyIdEObjectCollection(IdEObjectCollection collection, XMIResource res) {
 		IdEObjectCollection copiedCollection = clone(collection);
 
 		for (EObject modelElement : copiedCollection.getAllModelElements()) {
@@ -382,7 +392,7 @@ public final class ModelUtil {
 	/**
 	 * @param result
 	 */
-	private static void proxyCheck(Resource resource) throws SerializationException {
+	public static void proxyCheck(Resource resource) throws SerializationException {
 		EcoreUtil.resolveAll(resource);
 		TreeIterator<EObject> contents = resource.getAllContents();
 		while (contents.hasNext()) {
@@ -393,7 +403,7 @@ public final class ModelUtil {
 		}
 	}
 
-	private static void hrefCheck(String result) throws SerializationException {
+	public static void hrefCheck(String result) throws SerializationException {
 		char[] needle = "href".toCharArray();
 		int pointer = 0;
 		boolean insideQuotes = false;
@@ -495,7 +505,7 @@ public final class ModelUtil {
 		return handleParsedEObject(res);
 	}
 
-	private static EObject handleParsedEObject(XMIResource res) throws SerializationException {
+	public static EObject handleParsedEObject(XMIResource res) throws SerializationException {
 		EObject result = res.getContents().get(0);
 
 		if (result instanceof IdEObjectCollection) {
