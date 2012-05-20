@@ -7,21 +7,36 @@ package org.eclipse.emf.emfstore.client.test.server;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.impl.BinaryResourceImpl;
+import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.xmi.XMIResource;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.emfstore.client.model.ProjectSpace;
 import org.eclipse.emf.emfstore.client.model.Usersession;
 import org.eclipse.emf.emfstore.client.model.WorkspaceManager;
 import org.eclipse.emf.emfstore.client.model.util.EMFStoreCommand;
 import org.eclipse.emf.emfstore.client.test.SetupHelper;
+import org.eclipse.emf.emfstore.common.model.IdEObjectCollection;
+import org.eclipse.emf.emfstore.common.model.ModelFactory;
 import org.eclipse.emf.emfstore.common.model.Project;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
+import org.eclipse.emf.emfstore.common.model.util.SerializationException;
 import org.eclipse.emf.emfstore.modelmutator.api.ModelMutator;
 import org.eclipse.emf.emfstore.modelmutator.api.ModelMutatorConfiguration;
 import org.eclipse.emf.emfstore.modelmutator.api.ModelMutatorUtil;
@@ -42,7 +57,8 @@ public class PerformanceTest extends ServerTests {
 
 	private static final String MODELS_DIR = new File("../../../Models").getAbsolutePath() + '/';
 	private static final String OUTPUT_DIR = "../../TestResults/";
-	private static final String[] MODELS = new String[] { "1000", "10000", "50000", "100000", "200000", "500000" };
+	private static final String[] MODELS = new String[] // { "200000" };
+	{ "1000", "10000", "50000", "100000", "200000", "500000" };
 	private static final int NUM_ITERATIONS = 50;
 
 	private static MemoryMeter memoryMeter;
@@ -185,14 +201,17 @@ public class PerformanceTest extends ServerTests {
 				file = new File(outputDir, fileName);
 				writer = new FileWriter(file);
 			}
-			writer.write(title + "\nTime:;" + modelName + ";" + average(times));
+			String avgTime = ("" + average(times)).replace('.', ',');
+			writer.write(title + "\nTime:;" + modelName + ";" + avgTime);
 			for (double time : times) {
 				String text = (";" + time).replace('.', ',');
 				writer.write(text);
 			}
-			writer.write("\nMem Before:;;");
-			for (int i = 0; i < NUM_ITERATIONS; i++) {
-				writer.write(";" + memBefore[i]);
+			if (memBefore != null) {
+				writer.write("\nMem Before:;;");
+				for (int i = 0; i < NUM_ITERATIONS; i++) {
+					writer.write(";" + memBefore[i]);
+				}
 			}
 			if (memDuring != null) {
 				writer.write("\nMem During:;;");
@@ -200,9 +219,11 @@ public class PerformanceTest extends ServerTests {
 					writer.write(";" + memDuring[i]);
 				}
 			}
-			writer.write("\nMem After:;;");
-			for (int i = 0; i < NUM_ITERATIONS; i++) {
-				writer.write(";" + memAfter[i]);
+			if (memAfter != null) {
+				writer.write("\nMem After:;;");
+				for (int i = 0; i < NUM_ITERATIONS; i++) {
+					writer.write(";" + memAfter[i]);
+				}
 			}
 			writer.write("\n\n");
 			writer.flush();
@@ -468,9 +489,9 @@ public class PerformanceTest extends ServerTests {
 				time = System.currentTimeMillis();
 				modelChanger.createEObjects(10);
 				System.out.println("Create objects: " + (System.currentTimeMillis() - time) / 1000.0 + "sec");
-				// time = System.currentTimeMillis();
-				// modelChanger.changeAttributes(1000);
-				// System.out.println("Change Attributes: " + (System.currentTimeMillis() - time) / 1000.0 + "sec");
+				time = System.currentTimeMillis();
+				modelChanger.changeAttributes(1000);
+				System.out.println("Change Attributes: " + (System.currentTimeMillis() - time) / 1000.0 + "sec");
 				time = System.currentTimeMillis();
 				modelChanger.changeContainmentReferences(1000);
 				System.out.println("Change Containment References: " + (System.currentTimeMillis() - time) / 1000.0
@@ -570,5 +591,462 @@ public class PerformanceTest extends ServerTests {
 		public void finish() {
 			stop = true;
 		}
+	}
+
+	@Test
+	public void saveResourceTest() throws EmfStoreException {
+		for (String modelName : MODELS) {
+			final SetupHelper setupHelper = new SetupHelper(MODELS_DIR + modelName + ".ecp");
+			setupHelper.setupWorkSpace();
+			setupHelper.setupTestProjectSpace();
+			final Project project = setupHelper.getTestProjectSpace().getProject();
+
+			double[] saveXmlTimes = new double[NUM_ITERATIONS];
+			long[] saveXmlMemBefore = new long[NUM_ITERATIONS];
+			long[] saveXmlMemDuring = new long[NUM_ITERATIONS];
+			double[] loadXmlTimes = new double[NUM_ITERATIONS];
+			long[] loadXmlMemBefore = new long[NUM_ITERATIONS];
+			long[] loadXmlMemDuring = new long[NUM_ITERATIONS];
+
+			double[] saveBinTimes = new double[NUM_ITERATIONS];
+			long[] saveBinMemBefore = new long[NUM_ITERATIONS];
+			long[] saveBinMemDuring = new long[NUM_ITERATIONS];
+			double[] loadBinTimes = new double[NUM_ITERATIONS];
+			long[] loadBinMemBefore = new long[NUM_ITERATIONS];
+			long[] loadBinMemDuring = new long[NUM_ITERATIONS];
+
+			double[] saveBinZipTimes = new double[NUM_ITERATIONS];
+			long[] saveBinZipMemBefore = new long[NUM_ITERATIONS];
+			long[] saveBinZipMemDuring = new long[NUM_ITERATIONS];
+			double[] loadBinZipTimes = new double[NUM_ITERATIONS];
+			long[] loadBinZipMemBefore = new long[NUM_ITERATIONS];
+			long[] loadBinZipMemDuring = new long[NUM_ITERATIONS];
+
+			double[] saveZipTimes = new double[NUM_ITERATIONS];
+			long[] saveZipMemBefore = new long[NUM_ITERATIONS];
+			long[] saveZipMemDuring = new long[NUM_ITERATIONS];
+			double[] loadZipTimes = new double[NUM_ITERATIONS];
+			long[] loadZipMemBefore = new long[NUM_ITERATIONS];
+			long[] loadZipMemDuring = new long[NUM_ITERATIONS];
+
+			for (int i = 0; i < NUM_ITERATIONS; i++) {
+				// ================= XML ==================
+				memoryMeter.startMeasurements();
+				saveXmlMemBefore[i] = usedMemory();
+				try {
+					long time = System.currentTimeMillis();
+					String string = saveXMLResource(project, ModelUtil.getResourceSaveOptions());
+					saveXmlTimes[i] = (System.currentTimeMillis() - time) / 1000.0;
+					saveXmlMemDuring[i] = memoryMeter.stopMeasurements();
+					System.out.println("String size: " + string.length());
+
+					loadXmlMemBefore[i] = usedMemory();
+					memoryMeter.startMeasurements();
+					time = System.currentTimeMillis();
+					EObject eObject = loadXMLResource(string, ModelUtil.getResourceLoadOptions());
+					loadXmlTimes[i] = (System.currentTimeMillis() - time) / 1000.0;
+
+					assert (eObject instanceof Project);
+					assertEqual(project, (Project) eObject);
+				} catch (SerializationException e1) {
+					ModelUtil.logException(e1);
+				}
+				loadXmlMemDuring[i] = memoryMeter.stopMeasurements();
+				ModelUtil.logInfo("save XML " + modelName + " iteration #" + (i + 1) + ": time=" + saveXmlTimes[i]
+					+ ", memory used before: " + saveXmlMemBefore[i] / 1024 / 1024 + "MB, during: "
+					+ saveXmlMemDuring[i] / 1024 / 1024 + "MB");
+				ModelUtil.logInfo("load XML " + modelName + " iteration #" + (i + 1) + ": time=" + loadXmlTimes[i]
+					+ ", memory used before: " + loadXmlMemBefore[i] / 1024 / 1024 + "MB, during: "
+					+ loadXmlMemDuring[i] / 1024 / 1024 + "MB");
+
+				// ================= BINARY ==================
+				memoryMeter.startMeasurements();
+				saveBinMemBefore[i] = usedMemory();
+				try {
+					long time = System.currentTimeMillis();
+					Map<Object, Object> saveOptions = new HashMap<Object, Object>(ModelUtil.getResourceSaveOptions());
+					saveOptions.put(XMLResource.OPTION_BINARY, Boolean.TRUE);
+					String string = saveXMLResource(project, saveOptions);
+					saveBinTimes[i] = (System.currentTimeMillis() - time) / 1000.0;
+					saveBinMemDuring[i] = memoryMeter.stopMeasurements();
+					System.out.println("String size: " + string.length());
+
+					loadBinMemBefore[i] = usedMemory();
+					memoryMeter.startMeasurements();
+					time = System.currentTimeMillis();
+					Map<Object, Object> loadOptions = new HashMap<Object, Object>(ModelUtil.getResourceLoadOptions());
+					loadOptions.put(XMLResource.OPTION_BINARY, Boolean.TRUE);
+					EObject eObject = loadXMLResource(string, loadOptions);
+					loadBinTimes[i] = (System.currentTimeMillis() - time) / 1000.0;
+
+					assert (eObject instanceof Project);
+					assertEqual(project, (Project) eObject);
+				} catch (SerializationException e1) {
+					ModelUtil.logException(e1);
+				}
+				loadBinMemDuring[i] = memoryMeter.stopMeasurements();
+				ModelUtil.logInfo("save binary " + modelName + " iteration #" + (i + 1) + ": time=" + saveBinTimes[i]
+					+ ", memory used before: " + saveBinMemBefore[i] / 1024 / 1024 + "MB, during: "
+					+ saveBinMemDuring[i] / 1024 / 1024 + "MB");
+				ModelUtil.logInfo("load binary " + modelName + " iteration #" + (i + 1) + ": time=" + loadBinTimes[i]
+					+ ", memory used before: " + loadBinMemBefore[i] / 1024 / 1024 + "MB, during: "
+					+ loadBinMemDuring[i] / 1024 / 1024 + "MB");
+
+				// ================= BINARY ZIP ==================
+				memoryMeter.startMeasurements();
+				saveBinZipMemBefore[i] = usedMemory();
+				try {
+					long time = System.currentTimeMillis();
+					Map<Object, Object> saveOptions = new HashMap<Object, Object>(ModelUtil.getResourceSaveOptions());
+					saveOptions.put(XMLResource.OPTION_BINARY, Boolean.TRUE);
+					saveOptions.put(XMLResource.OPTION_ZIP, Boolean.TRUE);
+					String string = saveXMLResource(project, saveOptions);
+					saveBinZipTimes[i] = (System.currentTimeMillis() - time) / 1000.0;
+					saveBinZipMemDuring[i] = memoryMeter.stopMeasurements();
+					System.out.println("String size: " + string.length());
+
+					loadBinZipMemBefore[i] = usedMemory();
+					memoryMeter.startMeasurements();
+					time = System.currentTimeMillis();
+					Map<Object, Object> loadOptions = new HashMap<Object, Object>(ModelUtil.getResourceLoadOptions());
+					loadOptions.put(XMLResource.OPTION_BINARY, Boolean.TRUE);
+					loadOptions.put(XMLResource.OPTION_ZIP, Boolean.TRUE);
+					EObject eObject = loadXMLResource(string, loadOptions);
+					loadBinZipTimes[i] = (System.currentTimeMillis() - time) / 1000.0;
+
+					assert (eObject instanceof Project);
+					assertEqual(project, (Project) eObject);
+				} catch (SerializationException e1) {
+					ModelUtil.logException(e1);
+				}
+				loadBinZipMemDuring[i] = memoryMeter.stopMeasurements();
+				ModelUtil.logInfo("save binary Zip " + modelName + " iteration #" + (i + 1) + ": time="
+					+ saveBinZipTimes[i] + ", memory used before: " + saveBinZipMemBefore[i] / 1024 / 1024
+					+ "MB, during: " + saveBinZipMemDuring[i] / 1024 / 1024 + "MB");
+				ModelUtil.logInfo("load binary Zip " + modelName + " iteration #" + (i + 1) + ": time="
+					+ loadBinZipTimes[i] + ", memory used before: " + loadBinZipMemBefore[i] / 1024 / 1024
+					+ "MB, during: " + loadBinZipMemDuring[i] / 1024 / 1024 + "MB");
+
+				// ================= BINARY ZIP ==================
+				memoryMeter.startMeasurements();
+				saveZipMemBefore[i] = usedMemory();
+				try {
+					long time = System.currentTimeMillis();
+					Map<Object, Object> saveOptions = new HashMap<Object, Object>(ModelUtil.getResourceSaveOptions());
+					saveOptions.put(XMLResource.OPTION_ZIP, Boolean.TRUE);
+					String string = saveXMLResource(project, saveOptions);
+					saveZipTimes[i] = (System.currentTimeMillis() - time) / 1000.0;
+					saveZipMemDuring[i] = memoryMeter.stopMeasurements();
+					System.out.println("String size: " + string.length());
+
+					loadZipMemBefore[i] = usedMemory();
+					memoryMeter.startMeasurements();
+					time = System.currentTimeMillis();
+					Map<Object, Object> loadOptions = new HashMap<Object, Object>(ModelUtil.getResourceLoadOptions());
+					loadOptions.put(XMLResource.OPTION_ZIP, Boolean.TRUE);
+					EObject eObject = loadXMLResource(string, loadOptions);
+					loadZipTimes[i] = (System.currentTimeMillis() - time) / 1000.0;
+
+					assert (eObject instanceof Project);
+					assertEqual(project, (Project) eObject);
+				} catch (SerializationException e1) {
+					ModelUtil.logException(e1);
+				}
+				loadZipMemDuring[i] = memoryMeter.stopMeasurements();
+				ModelUtil.logInfo("save Zip " + modelName + " iteration #" + (i + 1) + ": time=" + saveZipTimes[i]
+					+ ", memory used before: " + saveZipMemBefore[i] / 1024 / 1024 + "MB, during: "
+					+ saveZipMemDuring[i] / 1024 / 1024 + "MB");
+				ModelUtil.logInfo("load Zip " + modelName + " iteration #" + (i + 1) + ": time=" + loadZipTimes[i]
+					+ ", memory used before: " + loadZipMemBefore[i] / 1024 / 1024 + "MB, during: "
+					+ loadZipMemDuring[i] / 1024 / 1024 + "MB");
+
+				// memoryMeter.startMeasurements();
+				// saveBinMemBefore[i] = usedMemory();
+				// try {
+				// long time = System.currentTimeMillis();
+				// String string = saveBinaryResource(project);
+				// saveBinTimes[i] = (System.currentTimeMillis() - time) / 1000.0;
+				// saveBinMemDuring[i] = memoryMeter.stopMeasurements();
+				//
+				// loadBinMemBefore[i] = usedMemory();
+				// memoryMeter.startMeasurements();
+				// time = System.currentTimeMillis();
+				// EObject eObject = loadBinaryResource(xml);
+				// loadBinTimes[i] = (System.currentTimeMillis() - time) / 1000.0;
+				//
+				// assert (eObject instanceof Project);
+				// assertEqual(project, (Project) eObject);
+				// } catch (SerializationException e1) {
+				// ModelUtil.logException(e1);
+				// }
+				// loadBinMemDuring[i] = memoryMeter.stopMeasurements();
+				// ModelUtil.logInfo("save binary resource " + modelName + " iteration #" + (i + 1) + ": time="
+				// + saveBinTimes[i] + ", memory used before: " + saveBinMemBefore[i] / 1024 / 1024 + "MB, during: "
+				// + saveBinMemDuring[i] / 1024 / 1024 + "MB");
+				// ModelUtil.logInfo("load binary resource " + modelName + " iteration #" + (i + 1) + ": time="
+				// + loadBinTimes[i] + ", memory used before: " + loadBinMemBefore[i] / 1024 / 1024 + "MB, during: "
+				// + loadBinMemDuring[i] / 1024 / 1024 + "MB");
+
+			} // for loop with iterations
+			ModelUtil.logInfo("Save XML times=" + Arrays.toString(saveXmlTimes));
+			writedata("Save XML", modelName, saveXmlTimes, saveXmlMemBefore, saveXmlMemDuring, null);
+			ModelUtil.logInfo("Load XML times=" + Arrays.toString(loadXmlTimes));
+			writedata("Load XML", modelName, loadXmlTimes, loadXmlMemBefore, loadXmlMemDuring, null);
+
+			ModelUtil.logInfo("Save Binary times=" + Arrays.toString(saveBinTimes));
+			writedata("Save Binary", modelName, saveBinTimes, saveBinMemBefore, saveBinMemDuring, null);
+			ModelUtil.logInfo("Load Binary times=" + Arrays.toString(loadBinTimes));
+			writedata("Load Binary", modelName, loadBinTimes, loadBinMemBefore, loadBinMemDuring, null);
+
+			ModelUtil.logInfo("Save Binary Zip times=" + Arrays.toString(saveBinZipTimes));
+			writedata("Save Binary Zip", modelName, saveBinZipTimes, saveBinZipMemBefore, saveBinZipMemDuring, null);
+			ModelUtil.logInfo("Load Binary Zip times=" + Arrays.toString(loadBinZipTimes));
+			writedata("Load Binary Zip", modelName, loadBinZipTimes, loadBinZipMemBefore, loadBinZipMemDuring, null);
+
+			ModelUtil.logInfo("Save Zip times=" + Arrays.toString(saveZipTimes));
+			writedata("Save Zip", modelName, saveZipTimes, saveZipMemBefore, saveZipMemDuring, null);
+			ModelUtil.logInfo("Load Zip times=" + Arrays.toString(loadZipTimes));
+			writedata("Load Zip", modelName, loadZipTimes, loadZipMemBefore, loadZipMemDuring, null);
+
+			// ModelUtil.logInfo("Save Binary resource times=" + Arrays.toString(saveBinTimes));
+			// writedata("Save Binary resource", modelName, saveBinTimes, saveBinMemBefore, saveBinMemDuring, null);
+			// ModelUtil.logInfo("Load Binary resource times=" + Arrays.toString(loadBinTimes));
+			// writedata("Load Binary resource", modelName, loadBinTimes, loadBinMemBefore, loadBinMemDuring, null);
+
+			SetupHelper.cleanupWorkspace();
+		} // for loop with different models
+
+	}
+
+	// private static String saveXMLResource(EObject object, boolean overrideContainmentCheck,
+	// boolean overrideHrefCheck, boolean overrideProxyCheck) throws SerializationException {
+
+	// private static String saveXMLResource(EObject object) throws SerializationException {
+	// XMIResource res = (XMIResource) (new ResourceSetImpl()).createResource(ModelUtil.VIRTUAL_URI);
+	// ((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
+	// EObject copy;
+	// if (object instanceof IdEObjectCollection) {
+	// copy = ModelUtil.copyIdEObjectCollection((IdEObjectCollection) object, res);
+	// } else {
+	// copy = ModelUtil.clone(object);
+	// res.getContents().add(copy);
+	// }
+	//
+	// // if (!overrideContainmentCheck && !(copy instanceof EClass)) {
+	// // if (!CommonUtil.isSelfContained(copy) || !CommonUtil.isContainedInResource(copy, res)) {
+	// // throw new SerializationException(copy);
+	// // }
+	// // }
+	//
+	// int step = 200;
+	// int initialSize = step;
+	// if (object instanceof Project) {
+	// Project project = (Project) object;
+	// initialSize = project.getAllModelElements().size() * step;
+	// }
+	// // if (!overrideProxyCheck) {
+	// // ModelUtil.proxyCheck(res);
+	// // }
+	//
+	// StringWriter stringWriter = new StringWriter(initialSize);
+	// URIConverter.WriteableOutputStream uws = new URIConverter.WriteableOutputStream(stringWriter, "UTF-8");
+	// try {
+	// res.save(uws, ModelUtil.getResourceSaveOptions());
+	// } catch (IOException e) {
+	// throw new SerializationException(e);
+	// }
+	// String result = stringWriter.toString();
+	//
+	// // if (!overrideHrefCheck) {
+	// // ModelUtil.hrefCheck(result);
+	// // }
+	//
+	// return result;
+	// }
+	//
+	// private static EObject loadXMLResource(String object) throws SerializationException {
+	// // Resource res = new BinaryResourceImpl();
+	// XMIResource res = (XMIResource) (new ResourceSetImpl()).createResource(ModelUtil.VIRTUAL_URI);
+	// ((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
+	// try {
+	// // res.load(new InputSource(new StringReader(object)), getResourceLoadOptions());
+	// res.load(new InputSource(new StringReader(object)), ModelUtil.getResourceLoadOptions());
+	// // res.load(new ByteArrayInputStream(object.getBytes()), getResourceLoadOptions());
+	// } catch (UnsupportedEncodingException e) {
+	// throw new SerializationException(e);
+	// } catch (IOException e) {
+	// throw new SerializationException(e);
+	// }
+	//
+	// EObject result = handleParsedEObject(res);
+	// // res.getContents().add(result);
+	// return result;
+	// }
+
+	private static String saveXMLResource(EObject object, Map<?, ?> options) throws SerializationException {
+		XMIResource res;
+		int step = 200;
+		int initialSize = step;
+		if (object instanceof Project) {
+			Project project = (Project) object;
+			initialSize = project.getAllModelElements().size() * step;
+			res = (XMIResource) project.eResource();
+		} else {
+			res = (XMIResource) (new ResourceSetImpl()).createResource(ModelUtil.VIRTUAL_URI);
+			((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
+			res.getContents().add(object);
+		}
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(initialSize);
+		try {
+			res.save(outputStream, options);
+		} catch (IOException e) {
+			throw new SerializationException(e);
+		}
+		String result = outputStream.toString();
+
+		// if (!overrideHrefCheck) {
+		// ModelUtil.hrefCheck(result);
+		// }
+
+		return result;
+	}
+
+	private static EObject loadXMLResource(String object, Map<?, ?> options) throws SerializationException {
+		XMIResource res = (XMIResource) (new ResourceSetImpl()).createResource(ModelUtil.VIRTUAL_URI);
+		((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
+		try {
+			// res.load(new InputSource(new StringReader(object)), options);
+			// res.load(new InputSource(new StringReader(object)), getResourceLoadOptions());
+			res.load(new ByteArrayInputStream(object.getBytes()), options);
+		} catch (UnsupportedEncodingException e) {
+			throw new SerializationException(e);
+		} catch (IOException e) {
+			throw new SerializationException(e);
+		}
+
+		return handleParsedEObject(res);
+	}
+
+	// private static String saveBinaryResource(EObject object) throws SerializationException {
+	// Resource res;
+	// int step = 200;
+	// int initialSize = step;
+	// // if (object instanceof Project) {
+	// // Project project = (Project) object;
+	// // initialSize = project.getAllModelElements().size() * step;
+	// // res = project.eResource();
+	// // } else {
+	// res = new BinaryResourceImpl();
+	// ((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
+	// res.getContents().add(object);
+	// // res.getContents().add()
+	// // }
+	// ByteArrayOutputStream outputStream = new ByteArrayOutputStream(initialSize);
+	// try {
+	// res.save(outputStream, ModelUtil.getResourceBinarySaveOptions());
+	// // if (before != null && !before.equals(asString(res.getURI().toFileString()))) {
+	// // System.err.println("The file is changed!");
+	// // }
+	// } catch (IOException e) {
+	// throw new SerializationException(e);
+	// }
+	// String result = outputStream.toString();
+	//
+	// // if (!overrideHrefCheck) {
+	// // ModelUtil.hrefCheck(result);
+	// // }
+	//
+	// return result;
+	// }
+	//
+	// private static EObject loadBinaryResource(String string) throws SerializationException {
+	// BinaryResourceImpl res = new BinaryResourceImpl();
+	// res.setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
+	// try {
+	// // Map<Object, Object> newOptions = new HashMap<Object, Object>(ModelUtil.getResourceLoadOptions());
+	// // newOptions.put(XMLResource.OPTION_BINARY, Boolean.TRUE);
+	// // res.load(new InputSource(new StringReader(object)), newOptions);
+	// // res.load(new InputSource(new StringReader(object)), ModelUtil.getResourceLoadOptions());
+	// res.load(new ByteArrayInputStream(string.getBytes()), ModelUtil.getResourceLoadOptions());
+	// } catch (UnsupportedEncodingException e) {
+	// throw new SerializationException(e);
+	// } catch (IOException e) {
+	// throw new SerializationException(e);
+	// }
+	//
+	// return handleParsedEObject(res);
+	// }
+
+	public static EObject handleParsedEObject(XMIResource res) throws SerializationException {
+		EObject result = res.getContents().get(0);
+
+		if (result instanceof IdEObjectCollection) {
+			IdEObjectCollection collection = (IdEObjectCollection) result;
+			Map<EObject, String> eObjectToIdMap = new HashMap<EObject, String>();
+			Map<String, EObject> idToEObjectMap = new HashMap<String, EObject>();
+
+			for (EObject modelElement : collection.getAllModelElements()) {
+				String modelElementId;
+				if (ModelUtil.isIgnoredDatatype(modelElement)) {
+					// create random ID for generic types, won't get serialized
+					// anyway
+					modelElementId = ModelFactory.eINSTANCE.createModelElementId().getId();
+				} else {
+					modelElementId = res.getID(modelElement);
+				}
+
+				if (modelElementId == null) {
+					throw new SerializationException("Failed to retrieve ID for EObject contained in project: "
+						+ modelElement);
+				}
+
+				eObjectToIdMap.put(modelElement, modelElementId);
+				idToEObjectMap.put(modelElementId, modelElement);
+			}
+
+			collection.initCaches(eObjectToIdMap, idToEObjectMap);
+		}
+
+		EcoreUtil.resolveAll(result);
+		// res.getContents().remove(result);
+
+		return result;
+	}
+
+	public static EObject handleParsedEObject(BinaryResourceImpl res) throws SerializationException {
+		EObject result = res.getContents().get(0);
+
+		if (result instanceof IdEObjectCollection) {
+			IdEObjectCollection collection = (IdEObjectCollection) result;
+			Map<EObject, String> eObjectToIdMap = new HashMap<EObject, String>();
+			Map<String, EObject> idToEObjectMap = new HashMap<String, EObject>();
+
+			for (EObject modelElement : collection.getAllModelElements()) {
+				String modelElementId;
+				// if (ModelUtil.isIgnoredDatatype(modelElement)) {
+				// create random ID for generic types, won't get serialized
+				// anyway
+				modelElementId = ModelFactory.eINSTANCE.createModelElementId().getId();
+				// } else {
+				// modelElementId = res.getID(modelElement);
+				// }
+
+				if (modelElementId == null) {
+					throw new SerializationException("Failed to retrieve ID for EObject contained in project: "
+						+ modelElement);
+				}
+
+				eObjectToIdMap.put(modelElement, modelElementId);
+				idToEObjectMap.put(modelElementId, modelElement);
+			}
+
+			collection.initCaches(eObjectToIdMap, idToEObjectMap);
+		}
+
+		EcoreUtil.resolveAll(result);
+		// res.getContents().remove(result);
+
+		return result;
 	}
 }
