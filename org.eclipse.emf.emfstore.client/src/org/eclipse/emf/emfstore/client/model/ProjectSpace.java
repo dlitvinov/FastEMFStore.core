@@ -135,6 +135,16 @@ public interface ProjectSpace extends IdentifiableElement {
 	/**
 	 * Commits all pending changes of the project space.
 	 * 
+	 * @throws EmfStoreException
+	 *             in case the commit went wrong
+	 * 
+	 * @return the current version spec
+	 **/
+	PrimaryVersionSpec commit() throws EmfStoreException;
+
+	/**
+	 * Commits all pending changes of the project space.
+	 * 
 	 * @param logMessage
 	 *            a log message describing the changes to be committed
 	 * @param callback
@@ -631,6 +641,14 @@ public interface ProjectSpace extends IdentifiableElement {
 	 * @return resource set of the ProjectSpace
 	 */
 	ResourceSet getResourceSet();
+
+	/**
+	 * Sets the resource set of the project space.
+	 * 
+	 * @param resourceSet
+	 *            the resource set to be used by this project space
+	 */
+	void setResourceSet(ResourceSet resourceSet);
 
 	/**
 	 * Returns the value of the '<em><b>Dirty</b></em>' attribute. <!--

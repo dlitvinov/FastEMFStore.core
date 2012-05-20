@@ -13,7 +13,6 @@ package org.eclipse.emf.emfstore.client.model.controller;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.emfstore.client.model.WorkspaceManager;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.ServerCall;
 import org.eclipse.emf.emfstore.client.model.controller.callbacks.CommitCallback;
@@ -97,20 +96,23 @@ public class CommitController extends ServerCall<PrimaryVersionSpec> {
 			return getProjectSpace().getBaseVersion();
 		}
 
+		getProgressMonitor().subTask("Sending files to server");
+		// TODO reimplement with ObserverBus and think about subtasks for commit
+		getProjectSpace().getFileTransferManager().uploadQueuedFiles(getProgressMonitor());
+		getProgressMonitor().worked(30);
+
 		getProgressMonitor().subTask("Sending changes to server");
 		PrimaryVersionSpec newBaseVersion = getConnectionManager().createVersion(getUsersession().getSessionId(),
 			getProjectSpace().getProjectId(), getProjectSpace().getBaseVersion(), changePackage,
 			changePackage.getLogMessage());
+		getProgressMonitor().worked(35);
 
-		getProgressMonitor().worked(75);
 		getProgressMonitor().subTask("Finalizing commit");
 		getProjectSpace().setBaseVersion(newBaseVersion);
 		getProjectSpace().getOperations().clear();
 
 		getProjectSpace().saveProjectSpaceOnly();
 
-		// TODO reimplement with ObserverBus and think about subtasks for commit
-		getProjectSpace().getFileTransferManager().uploadQueuedFiles(new NullProgressMonitor());
 		WorkspaceManager.getObserverBus().notify(CommitObserver.class)
 			.commitCompleted(getProjectSpace(), newBaseVersion);
 

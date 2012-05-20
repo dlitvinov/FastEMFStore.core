@@ -527,19 +527,19 @@ public class HistoryBrowserView extends ViewPart implements ProjectSpaceContaine
 		refresh();
 	}
 
-	private void getHeadVersionIdentifier() throws EmfStoreException {
+	private int getHeadVersionIdentifier() throws EmfStoreException {
 		PrimaryVersionSpec resolveVersionSpec = projectSpace.resolveVersionSpec(VersionSpec.HEAD_VERSION);
-		int identifier = resolveVersionSpec.getIdentifier();
-		headVersion = identifier;
+		return resolveVersionSpec.getIdentifier();
 	}
 
 	private HistoryQuery getQuery(int end) throws EmfStoreException {
 		HistoryQuery query = VersioningFactory.eINSTANCE.createHistoryQuery();
 
-		getHeadVersionIdentifier();
+		headVersion = getHeadVersionIdentifier();
+
 		if (end == -1) {
 			end = headVersion;
-			currentEnd = -1;
+			currentEnd = headVersion;// -1;
 		} else {
 			currentEnd = end;
 			PrimaryVersionSpec tempVersionSpec = VersioningFactory.eINSTANCE.createPrimaryVersionSpec();

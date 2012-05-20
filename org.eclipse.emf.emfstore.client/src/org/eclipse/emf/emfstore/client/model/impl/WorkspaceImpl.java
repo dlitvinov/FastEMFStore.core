@@ -897,6 +897,10 @@ public class WorkspaceImpl extends EObjectImpl implements Workspace {
 	 */
 	public void setResourceSet(ResourceSet resourceSet) {
 		this.workspaceResourceSet = resourceSet;
+		for (ProjectSpace projectSpace : getProjectSpaces()) {
+			ProjectSpaceBase base = (ProjectSpaceBase) projectSpace;
+			base.setResourceSet(workspaceResourceSet);
+		}
 	}
 
 	/**

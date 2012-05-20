@@ -33,21 +33,20 @@ import org.eclipse.emf.ecore.EObject;
  * 
  * @see org.eclipse.emf.emfstore.common.model.ModelPackage#getProject()
  * @model
- * @generated NOT
+ * @extends NotifiableIdEObjectCollection
  */
-public interface Project extends NotifiableIdEObjectCollection, IAdaptable {
+public interface Project extends EObject, IAdaptable, NotifiableIdEObjectCollection {
 
 	/**
-	 * Returns the value of the '<em><b>Model Elements</b></em>' containment
-	 * reference list. The list contents are of type {@link org.eclipse.emf.ecore.EObject}. <!-- begin-user-doc -->
+	 * Returns the value of the '<em><b>Model Elements</b></em>' containment reference list.
+	 * The list contents are of type {@link org.eclipse.emf.ecore.EObject}.
+	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Model Elements</em>' containment reference list isn't clear, there really should be
 	 * more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
-	 * @return the value of the '<em>Model Elements</em>' containment reference
-	 *         list.
+	 * @return the value of the '<em>Model Elements</em>' containment reference list.
 	 * @see org.eclipse.emf.emfstore.common.model.ModelPackage#getProject_ModelElements()
 	 * @model containment="true" resolveProxies="true" ordered="false"
 	 * @generated
@@ -55,16 +54,15 @@ public interface Project extends NotifiableIdEObjectCollection, IAdaptable {
 	EList<EObject> getModelElements();
 
 	/**
-	 * Returns the value of the '<em><b>Cut Elements</b></em>' containment
-	 * reference list. The list contents are of type {@link org.eclipse.emf.ecore.EObject}. <!-- begin-user-doc -->
+	 * Returns the value of the '<em><b>Cut Elements</b></em>' containment reference list.
+	 * The list contents are of type {@link org.eclipse.emf.ecore.EObject}.
+	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Cut Elements</em>' containment reference list isn't clear, there really should be more
 	 * of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
-	 * @return the value of the '<em>Cut Elements</em>' containment reference
-	 *         list.
+	 * @return the value of the '<em>Cut Elements</em>' containment reference list.
 	 * @see org.eclipse.emf.emfstore.common.model.ModelPackage#getProject_CutElements()
 	 * @model containment="true" resolveProxies="true"
 	 * @generated

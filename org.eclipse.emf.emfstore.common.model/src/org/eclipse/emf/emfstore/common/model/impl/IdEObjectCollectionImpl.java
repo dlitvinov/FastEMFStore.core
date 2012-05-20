@@ -195,7 +195,7 @@ public abstract class IdEObjectCollectionImpl extends EObjectImpl implements IdE
 			return null;
 		}
 
-		EObject eObject = newIdMapToEObject.get(modelElementId.getId());
+		EObject eObject = newIdMapToEObject.get(modelElementId);
 		return eObject != null ? eObject : ModelUtil.getSingleton(modelElementId);
 	}
 

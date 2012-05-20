@@ -15,13 +15,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.emfstore.client.model.ModelPackage;
 import org.eclipse.emf.emfstore.client.model.ProjectSpace;
@@ -52,6 +49,7 @@ import org.eclipse.emf.emfstore.client.test.testmodel.TestElement;
 import org.eclipse.emf.emfstore.common.CommonUtil;
 import org.eclipse.emf.emfstore.common.model.ModelElementId;
 import org.eclipse.emf.emfstore.common.model.Project;
+import org.eclipse.emf.emfstore.common.model.impl.IdEObjectCollectionImpl;
 import org.eclipse.emf.emfstore.common.model.impl.ProjectImpl;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.server.model.versioning.operations.AbstractOperation;
@@ -1106,50 +1104,6 @@ public class CreateDeleteOperationTest extends WorkspaceTest {
 	}
 
 	@Test
-	public void testRemoveChildFromParentWithSplittedResource() throws IOException {
-		final CompositeSection compositeSection = DocumentFactory.eINSTANCE.createCompositeSection();
-
-		new EMFStoreCommand() {
-			@Override
-			protected void doRun() {
-				getProject().addModelElement(compositeSection);
-			}
-		}.run(false);
-
-		final LeafSection leafSection = DocumentFactory.eINSTANCE.createLeafSection();
-		ResourceSet rs = getProjectSpace().eResource().getResourceSet();
-		Resource compositeResource = compositeSection.eResource();
-		final Resource leafResource = rs.createResource(URI.createFileURI(compositeResource.getURI().toFileString()
-			+ "leaf"));
-		new EMFStoreCommand() {
-			@Override
-			protected void doRun() {
-				leafResource.getContents().add(leafSection);
-			}
-		}.run(true);
-
-		new EMFStoreCommand() {
-			@Override
-			protected void doRun() {
-				compositeSection.getSubsections().add(leafSection);
-			}
-		}.run(false);
-
-		assertTrue(compositeSection.eResource() != leafSection.eResource());
-
-		new EMFStoreCommand() {
-
-			@Override
-			protected void doRun() {
-				getProject().deleteModelElement(compositeSection);
-			}
-		}.run(false);
-
-		assertTrue(getProject().getModelElements().size() == 0);
-		assertTrue(leafResource.getContents().size() == 0);
-	}
-
-	@Test
 	public void testCreateWithOneIngoingReference() {
 
 		final TestElement parentTestElement = getTestElement("parent");
@@ -1511,6 +1465,102 @@ public class CreateDeleteOperationTest extends WorkspaceTest {
 		assertEquals(parentElementId, getProject().getModelElementId(parentTestElement));
 		assertEquals(elementId, getProject().getModelElementId(copiedTestElement));
 		assertEquals(subElementId, getProject().getModelElementId(copiedSubTestElement));
+	}
+
+	@Test
+	public void testCreateReverse() {
+
+		final UseCase useCase = RequirementFactory.eINSTANCE.createUseCase();
+		new EMFStoreCommand() {
+			@Override
+			protected void doRun() {
+				getProject().addModelElement(useCase);
+			}
+		}.run(false);
+
+		List<AbstractOperation> operations = getProjectSpace().getOperations();
+
+		assertEquals(1, operations.size());
+		AbstractOperation operation = operations.get(0);
+		assertEquals(true, operation instanceof CreateDeleteOperation);
+		final CreateDeleteOperation createDeleteOperation = (CreateDeleteOperation) operation;
+
+		final Project project = ModelUtil.getProject(useCase);
+		ModelElementId useCaseId = project.getModelElementId(useCase);
+
+		assertEquals(useCaseId, createDeleteOperation.getModelElementId());
+		assertEquals(0, createDeleteOperation.getSubOperations().size());
+		assertEquals(false, createDeleteOperation.isDelete());
+
+		new EMFStoreCommand() {
+
+			@Override
+			protected void doRun() {
+				createDeleteOperation.reverse().apply(project);
+			}
+		}.run(false);
+
+		assertEquals(null, useCase.eContainer());
+		assertEquals(null, ((IdEObjectCollectionImpl) project).getDeletedModelElement(useCaseId));
+	}
+
+	@Test
+	public void testDeleteReverse() {
+
+		final LeafSection section = DocumentFactory.eINSTANCE.createLeafSection();
+		final UseCase useCase = RequirementFactory.eINSTANCE.createUseCase();
+		final Actor oldActor = RequirementFactory.eINSTANCE.createActor();
+		final Actor newActor = RequirementFactory.eINSTANCE.createActor();
+		final Actor otherActor = RequirementFactory.eINSTANCE.createActor();
+
+		new EMFStoreCommand() {
+			@Override
+			protected void doRun() {
+				getProject().addModelElement(section);
+				section.getModelElements().add(useCase);
+				section.getModelElements().add(oldActor);
+				getProject().addModelElement(newActor);
+				getProject().addModelElement(otherActor);
+				useCase.setInitiatingActor(oldActor);
+				useCase.getParticipatingActors().add(newActor);
+				useCase.getParticipatingActors().add(otherActor);
+				assertEquals(true, getProject().containsInstance(useCase));
+				assertEquals(getProject(), ModelUtil.getProject(useCase));
+				clearOperations();
+			}
+		}.run(false);
+
+		ModelElementId useCaseId = ModelUtil.getProject(useCase).getModelElementId(useCase);
+		assertNotNull(useCaseId);
+
+		new EMFStoreCommand() {
+			@Override
+			protected void doRun() {
+				getProject().deleteModelElement(useCase);
+			}
+		}.run(false);
+
+		List<AbstractOperation> operations = getProjectSpace().getOperations();
+
+		assertEquals(1, operations.size());
+		AbstractOperation operation = operations.get(0);
+		assertEquals(true, operation instanceof CreateDeleteOperation);
+		final CreateDeleteOperation createDeleteOperation = (CreateDeleteOperation) operation;
+		assertEquals(true, createDeleteOperation.isDelete());
+
+		new EMFStoreCommand() {
+
+			@Override
+			protected void doRun() {
+				createDeleteOperation.reverse().apply(getProject());
+			}
+		}.run(false);
+
+		EObject modelElement = project.getModelElement(useCaseId);
+		ModelElementId modelElementId = project.getModelElementId(modelElement);
+
+		assertNotNull(modelElement);
+		assertEquals(useCaseId, modelElementId);
 	}
 
 	// commenting out, too exotic to happen
