@@ -225,10 +225,6 @@ public final class ModelUtil {
 	public static String eObjectToString(EObject object, boolean overrideContainmentCheck, boolean overrideHrefCheck,
 		boolean overrideProxyCheck) throws SerializationException {
 
-		if (object == null) {
-			return null;
-		}
-
 		XMIResource res;
 		int step = 200;
 		int initialSize = step;
@@ -269,14 +265,6 @@ public final class ModelUtil {
 		if (!overrideHrefCheck) {
 			hrefCheck(result);
 		}
-		// XMLsave
-		// XML load
-
-		// Binary XML Save
-		// BinaryXML Load
-
-		// Binary Save
-		// Binary Load
 
 		return result;
 	}
@@ -349,10 +337,6 @@ public final class ModelUtil {
 	 */
 	public static void eobjectToString(OutputStreamWriter writer, EObject object, boolean overrideContainmentCheck,
 		boolean overrideHrefCheck, boolean overrideProxyCheck) throws SerializationException {
-
-		if (object == null) {
-			return;
-		}
 
 		XMIResource res = (XMIResource) object.eResource();
 
@@ -506,6 +490,9 @@ public final class ModelUtil {
 	}
 
 	public static EObject handleParsedEObject(XMIResource res) throws SerializationException {
+		if (res.getContents().isEmpty()) {
+			throw new SerializationException("Resource is empty after reading");
+		}
 		EObject result = res.getContents().get(0);
 
 		if (result instanceof IdEObjectCollection) {
