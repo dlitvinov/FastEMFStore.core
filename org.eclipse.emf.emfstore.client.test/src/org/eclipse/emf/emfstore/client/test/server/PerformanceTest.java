@@ -160,12 +160,6 @@ public class PerformanceTest extends ServerTests {
 			} // for loop with iterations
 			ModelUtil.logInfo("times=" + Arrays.toString(times));
 			writedata("Share", modelName, times, memBefore, memDuring, memAfter);
-			new EMFStoreCommand() {
-				@Override
-				protected void doRun() {
-					WorkspaceManager.getInstance().getCurrentWorkspace().getUsersessions().remove(usersession);
-				}
-			}.run(false);
 			usersession = null;
 			SetupHelper.cleanupWorkspace();
 		} // for loop with different models
