@@ -145,11 +145,11 @@ public class ConflictDetectionSelectiveCommitSpecialCases extends ConflictDetect
 		// nothing to do here
 
 		// 7. update ps2 -> conflictdetector
-		List<AbstractOperation> endOps1 = ps1.getLocalOperations().getOperations();
+		List<AbstractOperation> endOps1 = ps1.getOperations();
 		assertTrue("endOps1.size() != 1", endOps1.size() == 1);
 		assertTrue("endOps1.get(0) !instanceof MultiRefOp", endOps1.get(0) instanceof MultiReferenceOperation);
 
-		List<AbstractOperation> endOps2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> endOps2 = ps2.getOperations();
 		assertTrue("endOps2.size() != 1", endOps2.size() == 1);
 		assertTrue("endOps2.get(0) !instanceof CompositeOp", endOps2.get(0) instanceof CompositeOperation);
 

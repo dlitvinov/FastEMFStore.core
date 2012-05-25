@@ -180,7 +180,7 @@ public class ConflictDetectionRequiredRelationTest extends ConflictDetectionTest
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops = getProjectSpace().getLocalOperations().getOperations();
+		List<AbstractOperation> ops = getProjectSpace().getOperations();
 
 		// ops are [Create actor], [add actor to section], [rename actor]
 		AbstractOperation createActor = ops.get(0);
@@ -225,7 +225,7 @@ public class ConflictDetectionRequiredRelationTest extends ConflictDetectionTest
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops = getProjectSpace().getLocalOperations().getOperations();
+		List<AbstractOperation> ops = getProjectSpace().getOperations();
 
 		// ops are [Create actor], [add actor to section], [task actor]
 		AbstractOperation createActor = ops.get(0);
@@ -270,7 +270,7 @@ public class ConflictDetectionRequiredRelationTest extends ConflictDetectionTest
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops = getProjectSpace().getLocalOperations().getOperations();
+		List<AbstractOperation> ops = getProjectSpace().getOperations();
 
 		// ops are [Create actor], [add actor to section], [add usecase to actor]
 		AbstractOperation createActor = ops.get(0);
@@ -403,7 +403,7 @@ public class ConflictDetectionRequiredRelationTest extends ConflictDetectionTest
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops = getProjectSpace().getLocalOperations().getOperations();
+		List<AbstractOperation> ops = getProjectSpace().getOperations();
 
 		// ops are [create section], [create actor], [add actor], [name actor], [delete section]
 		AbstractOperation createSection = ops.get(0);
@@ -459,7 +459,7 @@ public class ConflictDetectionRequiredRelationTest extends ConflictDetectionTest
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops = getProjectSpace().getLocalOperations().getOperations();
+		List<AbstractOperation> ops = getProjectSpace().getOperations();
 
 		// ops are [add actor to section], [move actor in section]
 		AbstractOperation addActor = ops.get(0);
@@ -501,7 +501,7 @@ public class ConflictDetectionRequiredRelationTest extends ConflictDetectionTest
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops = getProjectSpace().getLocalOperations().getOperations();
+		List<AbstractOperation> ops = getProjectSpace().getOperations();
 
 		// ops are [add actor to section], [remove actor from section]
 		AbstractOperation addActor = ops.get(0);
@@ -543,7 +543,7 @@ public class ConflictDetectionRequiredRelationTest extends ConflictDetectionTest
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops = getProjectSpace().getLocalOperations().getOperations();
+		List<AbstractOperation> ops = getProjectSpace().getOperations();
 
 		// ops are [add actor to section], [composite remove/add actor to section2]
 		AbstractOperation addActor = ops.get(0);
@@ -585,7 +585,7 @@ public class ConflictDetectionRequiredRelationTest extends ConflictDetectionTest
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops = getProjectSpace().getLocalOperations().getOperations();
+		List<AbstractOperation> ops = getProjectSpace().getOperations();
 
 		// ops are [add actor to section], [composite remove/add actor to section2]
 		AbstractOperation addActor = ops.get(0);
@@ -624,7 +624,7 @@ public class ConflictDetectionRequiredRelationTest extends ConflictDetectionTest
 
 			}
 		}.run(false);
-		List<AbstractOperation> ops = getProjectSpace().getLocalOperations().getOperations();
+		List<AbstractOperation> ops = getProjectSpace().getOperations();
 
 		// ops are [add actor to section], [remove actor]
 		AbstractOperation addActor = ops.get(0);
@@ -666,7 +666,7 @@ public class ConflictDetectionRequiredRelationTest extends ConflictDetectionTest
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops = getProjectSpace().getLocalOperations().getOperations();
+		List<AbstractOperation> ops = getProjectSpace().getOperations();
 
 		// ops are [add actor to section], [move actor]
 		AbstractOperation addActor = ops.get(0);
@@ -721,7 +721,7 @@ public class ConflictDetectionRequiredRelationTest extends ConflictDetectionTest
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops = getProjectSpace().getLocalOperations().getOperations();
+		List<AbstractOperation> ops = getProjectSpace().getOperations();
 
 		// ops are [composite add actor to section], [composite move actor in section2]
 		AbstractOperation addActor = ops.get(0);
@@ -777,7 +777,7 @@ public class ConflictDetectionRequiredRelationTest extends ConflictDetectionTest
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops = getProjectSpace().getLocalOperations().getOperations();
+		List<AbstractOperation> ops = getProjectSpace().getOperations();
 
 		// ops are [composite add actor to section], [composite composite remove/add actor to section2]
 		AbstractOperation addActor = ops.get(0);
@@ -833,7 +833,7 @@ public class ConflictDetectionRequiredRelationTest extends ConflictDetectionTest
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops = getProjectSpace().getLocalOperations().getOperations();
+		List<AbstractOperation> ops = getProjectSpace().getOperations();
 
 		// ops are [composite add actor to section], [composite add actor2 to section2]
 		AbstractOperation addActor = ops.get(0);
@@ -878,7 +878,7 @@ public class ConflictDetectionRequiredRelationTest extends ConflictDetectionTest
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops = getProjectSpace().getLocalOperations().getOperations();
+		List<AbstractOperation> ops = getProjectSpace().getOperations();
 
 		// ops are [add actor to section], [add actor2 to section2]
 		AbstractOperation addActor = ops.get(0);
@@ -932,7 +932,7 @@ public class ConflictDetectionRequiredRelationTest extends ConflictDetectionTest
 				getProject().deleteModelElement(section);
 			}
 		}.run(false);
-		List<AbstractOperation> ops = getProjectSpace().getLocalOperations().getOperations();
+		List<AbstractOperation> ops = getProjectSpace().getOperations();
 
 		// ops lineup
 		AbstractOperation createSection = ops.get(0);

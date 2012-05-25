@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMFStore Client  (Incubation)
 Bundle-SymbolicName: org.eclipse.emf.emfstore.client;singleton:=true
-Bundle-Version: 0.8.9.qualifier
+Bundle-Version: 0.9.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-Localization: plugin
@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.emf.emfstore.server;visibility:=reexport,
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.emf.emfstore.client.model.Activator
 Import-Package: org.eclipse.emf.emfstore.client.model.observers
-Export-Package: org.eclipse.emf.emfstore.client.model,
+Export-Package: org.eclipse.emf.emfstore.client.common,
+ org.eclipse.emf.emfstore.client.model,
  org.eclipse.emf.emfstore.client.model.accesscontrol,
  org.eclipse.emf.emfstore.client.model.changeTracking.commands,
  org.eclipse.emf.emfstore.client.model.changeTracking.notification,

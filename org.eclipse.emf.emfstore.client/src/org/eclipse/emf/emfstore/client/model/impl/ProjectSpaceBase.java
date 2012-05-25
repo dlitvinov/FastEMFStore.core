@@ -451,9 +451,7 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 	private void migrateOperations(ChangePackage localChangePackage) {
 
 		if (getLocalOperations() != null) {
-			for (AbstractOperation op : getLocalOperations().getOperations()) {
-				localChangePackage.getOperations().add(op);
-			}
+			localChangePackage.getOperations().addAll(getLocalOperations().getOperations());
 
 			Resource eResource = getLocalOperations().eResource();
 

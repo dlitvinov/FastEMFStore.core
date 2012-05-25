@@ -6,23 +6,7 @@
 	xmlns:pmp="http://www.eclipse.org/buckminster/PDEMapProvider-1.0"
 	xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0">
 
-	<property key="platform.version" value="3.7"/>
-	<property key="orbit.version" value="S20110907174232"/>
-	<property key="eclipse.downloads" value="http://download.eclipse.org"/>
-	<property key="resolve.target.platform" value="true"/>
-	
-	<!-- HUDSON: local resolution using the local readerType (this requires the pre-defined names for all repositories) -->
-	<locator pattern="^org\.eclipse\.emf\.emfstore(?:\..+)?\.feature$" searchPathRef="hudson"/>
-	<locator pattern="^org\.eclipse\.emf\.emfstore(?:\..+)?$" searchPathRef="hudson"/>
-	<locator pattern="^EMFStoreTargetPlatform$" searchPathRef="hudson"/>
-	<locator pattern="^EMFStoreDeveloper$" searchPathRef="hudson"/>
-	
-	<locator pattern="^org\.eclipse\.emf.ecp(?:\..+)?\.feature$" searchPathRef="hudsonecp"/>
-	<locator pattern="^org\.eclipse\.emf.ecp(?:\..+)?$" searchPathRef="hudsonecp"/>
-	<locator pattern="^ECPTargetPlatform$" searchPathRef="hudsonecp"/>
-	<locator pattern="^ECPDeveloper$" searchPathRef="hudsonecp"/>
-	
-	<!-- DEBUG: local resolution using the git readerType (this requires the pre-defined names for all repositories) -->
+	<!-- LEGACY: local resolution using the git readerType (this requires the pre-defined names for all repositories) -->
 	<!--
 	<locator pattern="^org\.eclipse\.emf\.emfstore(?:\..+)?\.feature$" searchPathRef="localgit"/>
 	<locator pattern="^org\.eclipse\.emf\.emfstore(?:\..+)?$" searchPathRef="localgit"/>
@@ -35,88 +19,161 @@
 	<locator pattern="^ECPDeveloper$" searchPathRef="localgitecp"/>
 	-->
 		
-	<!-- DEBUG: local resolution comparable to HUDSON -->
-	<!--
-	<locator pattern="^org\.eclipse\.emf\.emfstore(?:\..+)?\.feature$" searchPathRef="local"/>
-	<locator pattern="^org\.eclipse\.emf\.emfstore(?:\..+)?$" searchPathRef="local"/>
-	<locator pattern="^EMFStoreTargetPlatform$" searchPathRef="local"/>
-	<locator pattern="^EMFStoreDeveloper$" searchPathRef="local"/>
+		
+		
+		
+	<!-- path configuration for HUDSON build -->
+	<property key="local.reader.path.emfstore.base"   value="${hudson.git.checkout.base}" mutable="true"/>
+	<property key="local.reader.path.emfstore.core"   value="${hudson.git.checkout.emfstore.core.extension}" mutable="true"/>
+	<property key="local.reader.path.emfstore.releng" value="${hudson.git.checkout.emfstore.releng.extension}" mutable="true"/>
+	<property key="local.reader.path.emfstore.other"  value="${hudson.git.checkout.emfstore.other.extension}" mutable="true"/>
 	
-	<locator pattern="^org\.eclipse\.emf.ecp(?:\..+)?\.feature$" searchPathRef="localecp"/>
-	<locator pattern="^org\.eclipse\.emf.ecp(?:\..+)?$" searchPathRef="localecp"/>
-	<locator pattern="^ECPTargetPlatform$" searchPathRef="localecp"/>
-	<locator pattern="^ECPDeveloper$" searchPathRef="localecp"/>
-	-->
+	<property key="local.reader.path.ecp.base"   value="${hudson.git.checkout.base}" mutable="true"/>
+	<property key="local.reader.path.ecp.core"   value="${hudson.git.checkout.ecp.core.extension}" mutable="true"/>
+	<property key="local.reader.path.ecp.releng" value="${hudson.git.checkout.ecp.releng.extension}" mutable="true"/>
+	<property key="local.reader.path.ecp.other"  value="${hudson.git.checkout.ecp.other.extension}" mutable="true"/>
 	
-	<!-- LEGACY: remote resolution using the git readerType (this requires the git readerType to be installed on Hudson) -->
-	<!--
-	<locator pattern="^org\.eclipse\.emf\.emfstore(?:\..+)?\.feature$" searchPathRef="remote"/>
-	<locator pattern="^org\.eclipse\.emf\.emfstore(?:\..+)?$" searchPathRef="remote"/>
-	<locator pattern="^EMFStoreTargetPlatform$" searchPathRef="remote"/>
-	<locator pattern="^EMFStoreDeveloper$" searchPathRef="remote"/>
+	<locator pattern="^org\.eclipse\.emf\.emfstore(?:\..+)?\.feature$" searchPathRef="emfstore"/>
+	<locator pattern="^org\.eclipse\.emf\.emfstore(?:\..+)?$" searchPathRef="emfstore"/>
+	<locator pattern="^EMFStoreTargetPlatform$" searchPathRef="emfstore"/>
+	<locator pattern="^EMFStoreDeveloper$" searchPathRef="emfstore"/>
 	
-	<locator pattern="^org\.eclipse\.emf.ecp(?:\..+)?\.feature$" searchPathRef="remoteecp"/>
-	<locator pattern="^org\.eclipse\.emf.ecp(?:\..+)?$" searchPathRef="remoteecp"/>
-	<locator pattern="^ECPTargetPlatform$" searchPathRef="remoteecp"/>
-	<locator pattern="^ECPDeveloper$" searchPathRef="remoteecp"/>
-	-->
+	<locator pattern="^org\.eclipse\.emf.ecp(?:\..+)?\.feature$" searchPathRef="ecp"/>
+	<locator pattern="^org\.eclipse\.emf.ecp(?:\..+)?$" searchPathRef="ecp"/>
+	<locator pattern="^ECPTargetPlatform$" searchPathRef="ecp"/>
+	<locator pattern="^ECPDeveloper$" searchPathRef="ecp"/>
 	
+	
+	<!-- path configuration for LOCAL buid -->
+	<property key="local.reader.path.emfstore.base"   value="${local.git.checkout.base}" mutable="true"/>
+	<property key="local.reader.path.emfstore.core"   value="${local.git.checkout.emfstore.core.extension}" mutable="true"/>
+	<property key="local.reader.path.emfstore.releng" value="${local.git.checkout.emfstore.releng.extension}" mutable="true"/>
+	<property key="local.reader.path.emfstore.other"  value="${local.git.checkout.emfstore.other.extension}" mutable="true"/>
+	
+	<property key="local.reader.path.ecp.base"   value="${local.git.checkout.base}" mutable="true"/>
+	<property key="local.reader.path.ecp.core"   value="${local.git.checkout.ecp.core.extension}" mutable="true"/>
+	<property key="local.reader.path.ecp.releng" value="${local.git.checkout.ecp.releng.extension}" mutable="true"/>
+	<property key="local.reader.path.ecp.other"  value="${local.git.checkout.ecp.other.extension}" mutable="true"/>
+
+	<locator pattern="^org\.eclipse\.emf\.emfstore(?:\..+)?\.feature$" searchPathRef="emfstore"/>
+	<locator pattern="^org\.eclipse\.emf\.emfstore(?:\..+)?$" searchPathRef="emfstore"/>
+	<locator pattern="^EMFStoreTargetPlatform$" searchPathRef="emfstore"/>
+	<locator pattern="^EMFStoreDeveloper$" searchPathRef="emfstore"/>
+	
+	<locator pattern="^org\.eclipse\.emf.ecp(?:\..+)?\.feature$" searchPathRef="ecp"/>
+	<locator pattern="^org\.eclipse\.emf.ecp(?:\..+)?$" searchPathRef="ecp"/>
+	<locator pattern="^ECPTargetPlatform$" searchPathRef="ecp"/>
+	<locator pattern="^ECPDeveloper$" searchPathRef="ecp"/>
+	
+	
+	<!-- Dependencies: EMF, Eclipse, ... -->
 	<locator pattern="^org\.eclipse\.emf\.edapt(?:\..+)?$" searchPathRef="p2"/>
 	<locator pattern="^org\.eclipse\.ocl(?:\..+)?$" searchPathRef="p2"/>
 	
 	<locator pattern="^org\.eclipse\.(?:emf|xsd)(?:\..+)?$" searchPathRef="emf"/>
 	<locator searchPathRef="p2"/>
 
-	<searchPath name="remote">
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="git">
-			<property key="git.remote.uri" value="git://git.eclipse.org/gitroot/emf-store/org.eclipse.emf.emfstore.core.git"/>
-			<property key="git.auto.fetch" value="true"/>
-            <uri format="{0}/git/org.eclipse.emf.emfstore.core,{1}">
-                <bc:propertyRef key="workspace.root"/>
+
+
+	<!-- EMFStore/ECP -->
+	<searchPath name="emfstore">
+		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
+			<uri format="{0}{1}/{2}">
+				<bc:propertyRef key="local.reader.path.emfstore.base"/>
+				<bc:propertyRef key="local.reader.path.emfstore.core"/>
 				<bc:propertyRef key="buckminster.component"/>
 			</uri>
 		</provider>
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="git" source="true">
-			<property key="git.remote.uri" value="git://git.eclipse.org/gitroot/emf-store/org.eclipse.emf.emfstore.releng.git"/>
-			<property key="git.auto.fetch" value="true"/>
-            <uri format="{0}/git/org.eclipse.emf.emfstore.releng,{1}">
-                <bc:propertyRef key="workspace.root"/>
+		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
+			<uri format="{0}{1}/{2}">
+				<bc:propertyRef key="local.reader.path.emfstore.base"/>
+				<bc:propertyRef key="local.reader.path.emfstore.releng"/>
 				<bc:propertyRef key="buckminster.component"/>
 			</uri>
 		</provider>
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="git" source="true">
-			<property key="git.remote.uri" value="git://git.eclipse.org/gitroot/emf-store/org.eclipse.emf.emfstore.other.git"/>
-			<property key="git.auto.fetch" value="true"/>
-            <uri format="{0}/git/org.eclipse.emf.emfstore.other,{1}">
-                <bc:propertyRef key="workspace.root"/>
+		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
+			<uri format="{0}{1}/{2}">
+				<bc:propertyRef key="local.reader.path.emfstore.base"/>
+				<bc:propertyRef key="local.reader.path.emfstore.other"/>
 				<bc:propertyRef key="buckminster.component"/>
 			</uri>
 		</provider>
 	</searchPath>
+
+	<searchPath name="ecp">
+		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
+			<uri format="{0}{1}/{2}">
+				<bc:propertyRef key="local.reader.path.ecp.base"/>
+				<bc:propertyRef key="local.reader.path.ecp.core"/>
+				<bc:propertyRef key="buckminster.component"/>
+			</uri>
+		</provider>
+		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
+			<uri format="{0}{1}/{2}">
+				<bc:propertyRef key="local.reader.path.ecp.base"/>
+				<bc:propertyRef key="local.reader.path.ecp.releng"/>
+				<bc:propertyRef key="buckminster.component"/>
+			</uri>
+		</provider>
+		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
+			<uri format="{0}{1}/{2}">
+				<bc:propertyRef key="local.reader.path.ecp.base"/>
+				<bc:propertyRef key="local.reader.path.ecp.other"/>
+				<bc:propertyRef key="buckminster.component"/>
+			</uri>
+		</provider>
+	</searchPath>
+
 	
-	<searchPath name="remoteecp">
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="git">
-			<property key="git.remote.uri" value="git://git.eclipse.org/gitroot/emfclient/org.eclipse.emf.ecp.core.git"/>
-			<property key="git.auto.fetch" value="true"/>
-            <uri format="{0}/git/org.eclipse.emf.ecp.core,{1}">
-                <bc:propertyRef key="workspace.root"/>
-				<bc:propertyRef key="buckminster.component"/>
+	
+	<!-- Dependencies -->
+	<searchPath name="p2">
+		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="p2" source="false"
+			mutable="false">
+			<property key="buckminster.source" value="false"/>
+			<property key="buckminster.mutable" value="false"/>
+			<uri format="{0}/tools/orbit/downloads/drops/{1}/repository">
+				<bc:propertyRef key="eclipse.downloads"/>
+				<bc:propertyRef key="orbit.version"/>
 			</uri>
 		</provider>
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="git" source="true">
-			<property key="git.remote.uri" value="git://git.eclipse.org/gitroot/emfclient/org.eclipse.emf.ecp.releng.git"/>
-			<property key="git.auto.fetch" value="true"/>
-            <uri format="{0}/git/org.eclipse.emf.ecp.releng,{1}">
-                <bc:propertyRef key="workspace.root"/>
-				<bc:propertyRef key="buckminster.component"/>
+
+		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="p2" source="false"
+			mutable="false">
+			<property key="buckminster.source" value="false"/>
+			<property key="buckminster.mutable" value="false"/>
+			<uri format="{0}/eclipse/updates/{1}">
+				<bc:propertyRef key="eclipse.downloads"/>
+				<bc:propertyRef key="platform.version"/>
 			</uri>
 		</provider>
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="git" source="true">
-			<property key="git.remote.uri" value="git://git.eclipse.org/gitroot/emfclient/org.eclipse.emf.ecp.other.git"/>
-			<property key="git.auto.fetch" value="true"/>
-            <uri format="{0}/git/org.eclipse.emf.ecp.other,{1}">
-                <bc:propertyRef key="workspace.root"/>
-				<bc:propertyRef key="buckminster.component"/>
+		
+		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="p2" source="false"
+			mutable="false">
+			<property key="buckminster.source" value="false"/>
+			<property key="buckminster.mutable" value="false"/>
+			<uri format="{0}/edapt/update-site/">
+				<bc:propertyRef key="eclipse.downloads"/>
+			</uri>
+		</provider>
+		
+		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="p2" source="false"
+			mutable="false">
+			<property key="buckminster.source" value="false"/>
+			<property key="buckminster.mutable" value="false"/>
+			<uri format="{0}/modeling/mdt/ocl/updates/">
+				<bc:propertyRef key="eclipse.downloads"/>
+			</uri>
+		</provider>
+	</searchPath>
+
+	<searchPath name="emf">
+		<provider readerType="p2" componentTypes="eclipse.feature,osgi.bundle" source="false"
+			mutable="false">
+			<property key="buckminster.source" value="false"/>
+			<property key="buckminster.mutable" value="false"/>
+			<uri format="{0}/modeling/emf/updates/releases/">
+				<bc:propertyRef key="eclipse.downloads"/>
 			</uri>
 		</provider>
 	</searchPath>
@@ -127,6 +184,8 @@
 
 
 
+
+	<!-- LEGACY: git readertype -->
 	<searchPath name="localgit">
 		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="git" source="true">
 			<property key="git.remote.uri" value="git://git.eclipse.org/gitroot/emf-store/org.eclipse.emf.emfstore.core.git"/>
@@ -180,158 +239,4 @@
 			</uri>
 		</provider>
 	</searchPath>
-	
-	
-	
-	
-	
-	
-	
-	
-	<searchPath name="local">
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
-			<uri format="{0}/git/ssh_emfstore.core/{1}">
-				<bc:propertyRef key="user.home"/>
-				<bc:propertyRef key="buckminster.component"/>
-			</uri>
-		</provider>
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
-			<uri format="{0}/git/ssh_emfstore.releng/{1}">
-				<bc:propertyRef key="user.home"/>
-				<bc:propertyRef key="buckminster.component"/>
-			</uri>
-		</provider>
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
-			<uri format="{0}/git/ssh_emfstore.other/{1}">
-				<bc:propertyRef key="user.home"/>
-				<bc:propertyRef key="buckminster.component"/>
-			</uri>
-		</provider>
-	</searchPath>
-
-	<searchPath name="localecp">
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
-			<uri format="{0}/git/ssh_emfcp.core/{1}">
-				<bc:propertyRef key="user.home"/>
-				<bc:propertyRef key="buckminster.component"/>
-			</uri>
-		</provider>
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
-			<uri format="{0}/git/ssh_emfcp.releng/{1}">
-				<bc:propertyRef key="user.home"/>
-				<bc:propertyRef key="buckminster.component"/>
-			</uri>
-		</provider>
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
-			<uri format="{0}/git/ssh_emfcp.other/{1}">
-				<bc:propertyRef key="user.home"/>
-				<bc:propertyRef key="buckminster.component"/>
-			</uri>
-		</provider>
-	</searchPath>
-
-
-
-
-
-
-	<searchPath name="hudson">
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
-			<uri format="{0}/git/org.eclipse.emf.emfstore.core/{1}">
-				<bc:propertyRef key="workspace.root"/>
-				<bc:propertyRef key="buckminster.component"/>
-			</uri>
-		</provider>
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
-			<uri format="{0}/git/org.eclipse.emf.emfstore.releng/{1}">
-				<bc:propertyRef key="workspace.root"/>
-				<bc:propertyRef key="buckminster.component"/>
-			</uri>
-		</provider>
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
-			<uri format="{0}/git/org.eclipse.emf.emfstore.other/{1}">
-				<bc:propertyRef key="workspace.root"/>
-				<bc:propertyRef key="buckminster.component"/>
-			</uri>
-		</provider>
-	</searchPath>
-
-	<searchPath name="hudsonecp">
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
-			<uri format="{0}/git/org.eclipse.emf.ecp.core/{1}">
-				<bc:propertyRef key="workspace.root"/>
-				<bc:propertyRef key="buckminster.component"/>
-			</uri>
-		</provider>
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
-			<uri format="{0}/git/org.eclipse.emf.ecp.releng/{1}">
-				<bc:propertyRef key="workspace.root"/>
-				<bc:propertyRef key="buckminster.component"/>
-			</uri>
-		</provider>
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true">
-			<uri format="{0}/git/org.eclipse.emf.ecp.other/{1}">
-				<bc:propertyRef key="workspace.root"/>
-				<bc:propertyRef key="buckminster.component"/>
-			</uri>
-		</provider>
-	</searchPath>
-
-
-
-
-
-
-
-	<searchPath name="p2">
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="p2" source="false"
-			mutable="false">
-			<property key="buckminster.source" value="false"/>
-			<property key="buckminster.mutable" value="false"/>
-			<uri format="{0}/tools/orbit/downloads/drops/{1}/repository">
-				<bc:propertyRef key="eclipse.downloads"/>
-				<bc:propertyRef key="orbit.version"/>
-			</uri>
-		</provider>
-
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="p2" source="false"
-			mutable="false">
-			<property key="buckminster.source" value="false"/>
-			<property key="buckminster.mutable" value="false"/>
-			<uri format="{0}/eclipse/updates/{1}">
-				<bc:propertyRef key="eclipse.downloads"/>
-				<bc:propertyRef key="platform.version"/>
-			</uri>
-		</provider>
-		
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="p2" source="false"
-			mutable="false">
-			<property key="buckminster.source" value="false"/>
-			<property key="buckminster.mutable" value="false"/>
-			<uri format="{0}/edapt/update-site/">
-				<bc:propertyRef key="eclipse.downloads"/>
-			</uri>
-		</provider>
-		
-		<provider componentTypes="eclipse.feature,osgi.bundle" readerType="p2" source="false"
-			mutable="false">
-			<property key="buckminster.source" value="false"/>
-			<property key="buckminster.mutable" value="false"/>
-			<uri format="{0}/modeling/mdt/ocl/updates/">
-				<bc:propertyRef key="eclipse.downloads"/>
-			</uri>
-		</provider>
-	</searchPath>
-
-	<searchPath name="emf">
-		<provider readerType="p2" componentTypes="eclipse.feature,osgi.bundle" source="false"
-			mutable="false">
-			<property key="buckminster.source" value="false"/>
-			<property key="buckminster.mutable" value="false"/>
-			<uri format="{0}/modeling/emf/updates/releases/">
-				<bc:propertyRef key="eclipse.downloads"/>
-			</uri>
-		</provider>
-	</searchPath>
-
 </rmap>

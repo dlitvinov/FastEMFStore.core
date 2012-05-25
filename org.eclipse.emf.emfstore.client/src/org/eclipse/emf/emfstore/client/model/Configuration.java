@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.emfstore.client.common.IClientVersionProvider;
 import org.eclipse.emf.emfstore.client.model.connectionmanager.KeyStoreManager;
 import org.eclipse.emf.emfstore.client.model.util.ConfigurationProvider;
 import org.eclipse.emf.emfstore.client.model.util.DefaultWorkspaceLocationProvider;
@@ -224,13 +225,14 @@ public final class Configuration {
 			false).getFirst();
 
 		if (version != null) {
-			versionId = version.getAttribute("identifier");
-		} else {
-			Bundle emfStoreBundle = Platform.getBundle("org.eclipse.emf.emfstore.client");
-			versionId = (String) emfStoreBundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
+			IClientVersionProvider versionProvider = version.getClass("class", IClientVersionProvider.class);
+			return versionProvider.getVersion();
 		}
 
+		Bundle emfStoreBundle = Platform.getBundle("org.eclipse.emf.emfstore.client");
+		versionId = (String) emfStoreBundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
 		clientVersionInfo.setVersion(versionId);
+
 		return clientVersionInfo;
 	}
 

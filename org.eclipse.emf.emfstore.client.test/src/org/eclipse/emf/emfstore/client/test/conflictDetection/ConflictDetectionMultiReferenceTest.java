@@ -10,7 +10,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.emfstore.client.model.ProjectSpace;
 import org.eclipse.emf.emfstore.client.model.util.EMFStoreCommand;
 import org.eclipse.emf.emfstore.client.test.model.document.DocumentFactory;
@@ -72,8 +71,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -125,8 +124,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -182,8 +181,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 
@@ -234,8 +233,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 
@@ -288,8 +287,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 
@@ -347,8 +346,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		EList<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		EList<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 
@@ -407,8 +406,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 
@@ -465,8 +464,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -527,8 +526,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -584,8 +583,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -642,8 +641,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		assertEquals(cd.getConflictingIndexIntegrity(ops1, ops2).size(), cd.getConflictingIndexIntegrity(ops2, ops1)
@@ -698,8 +697,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -756,8 +755,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		assertEquals(cd.getConflictingIndexIntegrity(ops2, ops1).size(), cd.getConflictingIndexIntegrity(ops1, ops2)
@@ -810,8 +809,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// hard conflict between add and remove, serialization matters
@@ -870,8 +869,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// hard conflict between add and remove, serialization matters
@@ -929,8 +928,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// hard conflict between add and remove, serialization matters
@@ -989,8 +988,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// hard conflict between add and remove, serialization matters
@@ -1048,8 +1047,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// hard conflict between add and remove, serialization matters
@@ -1102,8 +1101,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 
 			}
 		}.run(false);
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// hard conflict between add and remove, serialization matters
@@ -1161,8 +1160,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// hard conflict between add and remove, serialization matters
@@ -1221,8 +1220,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// hard conflict between add and remove, serialization matters
@@ -1278,8 +1277,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 
@@ -1345,8 +1344,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// no index conflict
@@ -1406,8 +1405,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// no index conflict
@@ -1534,8 +1533,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// index conflict expected, implicitly actor gets a new parent in each copy
@@ -1594,8 +1593,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// no index conflict
@@ -1651,8 +1650,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// no index conflict
@@ -1710,8 +1709,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// no index conflict
@@ -1769,8 +1768,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// no index conflict
@@ -1830,8 +1829,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// no index conflict
@@ -1895,8 +1894,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// no index conflict
@@ -1962,8 +1961,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// no index conflict
@@ -2027,8 +2026,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// no index conflict
@@ -2092,8 +2091,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -2155,8 +2154,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -2220,8 +2219,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -2285,8 +2284,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -2344,8 +2343,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -2406,8 +2405,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -2467,8 +2466,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -2533,8 +2532,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -2599,8 +2598,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -2666,8 +2665,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -2733,8 +2732,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -2800,8 +2799,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -2869,8 +2868,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -2938,8 +2937,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -3008,8 +3007,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -3074,8 +3073,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -3140,8 +3139,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -3206,8 +3205,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -3277,8 +3276,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		// two reasons to conflict: 1. two competing adds by parent, 2. add and move might (actually do) affect the same
@@ -3343,8 +3342,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -3409,8 +3408,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -3476,8 +3475,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -3545,8 +3544,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -3615,8 +3614,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -3683,8 +3682,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 
 			}
 		}.run(false);
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -3752,8 +3751,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -3821,8 +3820,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);
@@ -3890,8 +3889,8 @@ public class ConflictDetectionMultiReferenceTest extends ConflictDetectionTest {
 			}
 		}.run(false);
 
-		List<AbstractOperation> ops1 = getProjectSpace().getLocalOperations().getOperations();
-		List<AbstractOperation> ops2 = ps2.getLocalOperations().getOperations();
+		List<AbstractOperation> ops1 = getProjectSpace().getOperations();
+		List<AbstractOperation> ops2 = ps2.getOperations();
 
 		ConflictDetector cd = new ConflictDetector(getConflictDetectionStrategy());
 		Set<AbstractOperation> conflicts = cd.getConflictingIndexIntegrity(ops1, ops2);

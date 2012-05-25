@@ -141,7 +141,7 @@ public final class IntegrationTestHelper {
 			@Override
 			protected void doRun() {
 				for (AbstractOperation op : operations) {
-					changePackage.getOperations().add((AbstractOperation) ModelUtil.clone(op));
+					changePackage.getOperations().add(ModelUtil.clone(op));
 
 				}
 				if (clearOperations) {
@@ -1299,8 +1299,7 @@ public final class IntegrationTestHelper {
 			}
 		}.run(false);
 
-		List<AbstractOperation> operations = WorkspaceManager.getProjectSpace(testProject).getLocalOperations()
-			.getOperations();
+		List<AbstractOperation> operations = WorkspaceManager.getProjectSpace(testProject).getOperations();
 		if (operations.size() == 0) {
 			throw new IllegalStateException("No operations recorded");
 		}

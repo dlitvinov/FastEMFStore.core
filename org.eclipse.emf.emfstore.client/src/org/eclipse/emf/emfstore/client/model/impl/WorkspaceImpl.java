@@ -184,6 +184,7 @@ public class WorkspaceImpl extends EObjectImpl implements Workspace {
 	public ProjectSpace checkout(final Usersession usersession, final ProjectInfo projectInfo,
 		PrimaryVersionSpec targetSpec) throws EmfStoreException {
 
+		// SubMonitor subMonitor = SubMonitor.convert(progressMonitor);
 		// FIXME: MK: hack: set head version manually because esbrowser does not update
 		// revisions properly
 		ProjectInfo projectInfoCopy = ModelUtil.clone(projectInfo);
@@ -202,6 +203,7 @@ public class WorkspaceImpl extends EObjectImpl implements Workspace {
 		ProjectSpace projectSpace = ModelFactory.eINSTANCE.createProjectSpace();
 
 		// initialize project space
+		// progressMonitor.subTask("Initializing project space...");
 		projectSpace.setProjectId(projectInfo.getProjectId());
 		projectSpace.setProjectName(projectInfo.getName());
 		projectSpace.setProjectDescription(projectInfo.getDescription());
@@ -213,6 +215,7 @@ public class WorkspaceImpl extends EObjectImpl implements Workspace {
 		projectSpace.setResourceCount(0);
 		projectSpace.setLocalOperations(ModelFactory.eINSTANCE.createOperationComposite());
 
+		// progressMonitor.subTask("Initializing resources...");
 		projectSpace.initResources(this.workspaceResourceSet);
 
 		// retrieve recent changes

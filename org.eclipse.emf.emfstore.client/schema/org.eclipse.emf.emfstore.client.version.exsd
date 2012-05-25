@@ -49,11 +49,14 @@
 
    <element name="version">
       <complexType>
-         <attribute name="identifier" type="string" use="required">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.emf.emfstore.client.common.IClientVersionProvider"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

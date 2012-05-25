@@ -67,6 +67,7 @@ public class CommitDialog extends TitleAreaDialog implements KeyListener {
 	 */
 	public CommitDialog(Shell parentShell, ChangePackage changes, ProjectSpace activeProjectSpace) {
 		super(parentShell);
+		setTitle("Commit your changes");
 		this.setShellStyle(this.getShellStyle() | SWT.RESIZE);
 		this.changes = changes;
 		this.activeProjectSpace = activeProjectSpace;

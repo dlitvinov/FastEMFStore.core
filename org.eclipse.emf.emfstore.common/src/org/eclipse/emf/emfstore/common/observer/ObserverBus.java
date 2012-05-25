@@ -288,6 +288,7 @@ public class ObserverBus {
 		
 		for (Class<?> iface : clazz.getInterfaces()) {
 			interfacesFound.add((Class<?>) iface);
+			interfacesFound.addAll(getAllInterfaces(iface, interfacesFound));
 		}
 		
 		if (clazz.getSuperclass() == null) {
