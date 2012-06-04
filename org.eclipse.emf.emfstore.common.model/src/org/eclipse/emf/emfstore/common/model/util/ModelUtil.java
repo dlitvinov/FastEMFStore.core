@@ -191,7 +191,85 @@ public final class ModelUtil {
 			containmentCheckEnabled = element.getBoolean("SelfContainmentCheck");
 		}
 
-		return eObjectToString(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
+		String res = eObjectToString(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
+		// String oldRes = eObjectToString_old(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
+		// if (res == null && oldRes != null || !res.equals(oldRes)) {
+		// System.err.println("The results are DIFFERENT!!");
+		// System.err.println("res.length() = " + res.length());
+		// System.err.println("oldRes.length() = " + oldRes.length());
+		// int j = -1;
+		// for (int i = 0; i < res.length() && i < oldRes.length(); i++) {
+		// if (res.charAt(i) != oldRes.charAt(i)) {
+		// j = i;
+		// break;
+		// }
+		// }
+		// if (j == -1 && res.length() != oldRes.length()) {
+		// j = Math.min(res.length(), oldRes.length());
+		// }
+		// int start = Math.max(0, j - 10);
+		// int end = j + 100;
+		// System.err.println("res:    " + res.substring(start, Math.min(end, res.length())));
+		// System.err.println("oldRes: " + oldRes.substring(start, Math.min(end, oldRes.length())));
+		// }
+		return res;
+	}
+
+	public static String eObjectToString(EObject object, boolean overrideContainmentCheck, boolean overrideHrefCheck,
+		boolean overrideProxyCheck) throws SerializationException {
+
+		Resource res;
+		int step = 200;
+		int initialSize = step;
+		if (object instanceof Project) {
+			Project project = (Project) object;
+			initialSize = project.getAllModelElements().size() * step;
+			// ((ResourceImpl) res).setIntrinsicIDToEObjectMap(((IdEObjectCollectionImpl) project).getIdToEObjectMap());
+			res = project.eResource();
+		} else {
+			res = (new ResourceSetImpl()).createResource(VIRTUAL_URI);
+			((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
+			res.getContents().add(object);
+		}
+		// XMIResource res = (XMIResource) object.eResource();
+		// String before = null;
+		// try {
+		// before = asString(res.getURI().toFileString());
+		// } catch (IOException e1) {
+		// e1.printStackTrace();
+		// }
+		// StringWriter stringWriter = new StringWriter(initialSize);
+		// try {
+		// res.save(stringWriter, getResourceSaveOptions());
+		// // if (before != null && !before.equals(asString(res.getURI().toFileString()))) {
+		// // System.err.println("The file is changed!");
+		// // }
+		// } catch (IOException e) {
+		// throw new SerializationException(e);
+		// }
+		// String result = stringWriter.toString();
+
+		// ByteArrayOutputStream outputStream = new ByteArrayOutputStream(initialSize);
+		// try {
+		// res.save(outputStream, getResourceSaveOptions());
+		// } catch (IOException e) {
+		// throw new SerializationException(e);
+		// }
+		// String result = outputStream.toString();
+		StringWriter stringWriter = new StringWriter(initialSize);
+		URIConverter.WriteableOutputStream uws = new URIConverter.WriteableOutputStream(stringWriter, "UTF-8");
+		try {
+			res.save(uws, getResourceSaveOptions());
+		} catch (IOException e) {
+			throw new SerializationException(e);
+		}
+		String result = stringWriter.toString();
+
+		if (!overrideHrefCheck) {
+			hrefCheck(result);
+		}
+
+		return result;
 	}
 
 	/**
@@ -210,8 +288,8 @@ public final class ModelUtil {
 	 * @throws SerializationException
 	 *             if a serialization problem occurs
 	 */
-	public static String eObjectToString(EObject object, boolean overrideContainmentCheck, boolean overrideHrefCheck,
-		boolean overrideProxyCheck) throws SerializationException {
+	public static String eObjectToString_old(EObject object, boolean overrideContainmentCheck,
+		boolean overrideHrefCheck, boolean overrideProxyCheck) throws SerializationException {
 
 		if (object == null) {
 			return null;
