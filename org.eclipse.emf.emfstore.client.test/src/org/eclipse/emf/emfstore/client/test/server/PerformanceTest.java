@@ -7,9 +7,11 @@ package org.eclipse.emf.emfstore.client.test.server;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -42,12 +44,12 @@ public class PerformanceTest extends ServerTests {
 
 	private static final String MODELS_DIR = new File("../../../Models").getAbsolutePath() + '/';
 	private static final String OUTPUT_DIR = "../../TestResults/";
-	private static final String[] MODELS = new String[] { "200000" };
-	// { "1000", "10000", "50000", "100000", "200000", "500000" };
+	private static final String[] MODELS = new String[] // { "500000" };
+	{ "1000", "10000", "50000", "100000", "200000", "500000" };
 	private static final int NUM_ITERATIONS = 15;
 
 	private static MemoryMeter memoryMeter;
-	private static FileWriter writer;
+	private static Writer writer;
 	private static File file;
 
 	private Usersession usersession;
@@ -178,7 +180,7 @@ public class PerformanceTest extends ServerTests {
 				}
 				String fileName = new SimpleDateFormat("yyyy.MM.dd_HH.mm").format(new Date()) + ".csv";
 				file = new File(outputDir, fileName);
-				writer = new FileWriter(file);
+				writer = new BufferedWriter(new FileWriter(file));
 			}
 			writer.write(title + "\nTime:;" + modelName + ";" + average(times));
 			for (double time : times) {
