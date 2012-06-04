@@ -196,7 +196,7 @@ public final class ModelUtil {
 			containmentCheckEnabled = element.getBoolean("SelfContainmentCheck");
 		}
 
-		String res = eObjectToString(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
+		String res = eObjectToString_old(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
 		// String oldRes = eObjectToString_old(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
 		// if (res == null && oldRes != null || !res.equals(oldRes)) {
 		// System.err.println("The results are DIFFERENT!!");
