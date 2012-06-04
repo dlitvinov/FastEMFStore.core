@@ -196,13 +196,27 @@ public final class ModelUtil {
 			containmentCheckEnabled = element.getBoolean("SelfContainmentCheck");
 		}
 
-		String res = eObjectToString_old(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
-		String oldRes = eObjectToString_old(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
-		if (res == null && oldRes != null || !res.equals(oldRes)) {
-			System.err.println("The results are DIFFERENT!!");
-			System.err.println("res = " + res);
-			System.err.println("oldRes = " + oldRes);
-		}
+		String res = eObjectToString(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
+		// String oldRes = eObjectToString_old(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
+		// if (res == null && oldRes != null || !res.equals(oldRes)) {
+		// System.err.println("The results are DIFFERENT!!");
+		// System.err.println("res.length() = " + res.length());
+		// System.err.println("oldRes.length() = " + oldRes.length());
+		// int j = -1;
+		// for (int i = 0; i < res.length() && i < oldRes.length(); i++) {
+		// if (res.charAt(i) != oldRes.charAt(i)) {
+		// j = i;
+		// break;
+		// }
+		// }
+		// if (j == -1 && res.length() != oldRes.length()) {
+		// j = Math.min(res.length(), oldRes.length());
+		// }
+		// int start = Math.max(0, j - 10);
+		// int end = j + 100;
+		// System.err.println("res:    " + res.substring(start, Math.min(end, res.length())));
+		// System.err.println("oldRes: " + oldRes.substring(start, Math.min(end, oldRes.length())));
+		// }
 		return res;
 	}
 
@@ -225,15 +239,15 @@ public final class ModelUtil {
 	public static String eObjectToString(EObject object, boolean overrideContainmentCheck, boolean overrideHrefCheck,
 		boolean overrideProxyCheck) throws SerializationException {
 
-		XMIResource res;
+		Resource res;
 		int step = 200;
 		int initialSize = step;
 		if (object instanceof Project) {
 			Project project = (Project) object;
 			initialSize = project.getAllModelElements().size() * step;
-			res = (XMIResource) project.eResource();
+			res = project.eResource();
 		} else {
-			res = (XMIResource) (new ResourceSetImpl()).createResource(VIRTUAL_URI);
+			res = (new ResourceSetImpl()).createResource(VIRTUAL_URI);
 			((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
 			res.getContents().add(object);
 		}
