@@ -20,6 +20,7 @@ import org.apache.ws.commons.util.Base64.Encoder;
 import org.apache.ws.commons.util.Base64.EncoderOutputStream;
 import org.apache.xmlrpc.serializer.TypeSerializerImpl;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.emfstore.common.model.Project;
 import org.eclipse.emf.emfstore.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.common.model.util.SerializationException;
 import org.eclipse.emf.emfstore.server.model.versioning.ChangePackage;
@@ -52,7 +53,7 @@ public class EObjectSerializer extends TypeSerializerImpl {
 			BufferedOutputStream bos = new BufferedOutputStream(ostream);
 			OutputStreamWriter writer = new OutputStreamWriter(bos);
 			try {
-				if (pObject instanceof ChangePackage) {
+				if (pObject instanceof ChangePackage || pObject instanceof Project) {
 					ModelUtil.eobjectToString(writer, (EObject) pObject, true, true, true);
 				} else {
 					bos.write(ModelUtil.eObjectToString((EObject) pObject).getBytes());
