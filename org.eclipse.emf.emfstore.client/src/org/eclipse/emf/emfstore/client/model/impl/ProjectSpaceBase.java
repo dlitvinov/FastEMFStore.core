@@ -534,11 +534,11 @@ public abstract class ProjectSpaceBase extends IdentifiableElementImpl implement
 	 */
 	@SuppressWarnings("unchecked")
 	public void init() {
-		boolean useCrossReferenceAdapter = false;
+		boolean useCrossReferenceAdapter = true;
 
 		for (ExtensionElement element : new ExtensionPoint("org.eclipse.emf.emfstore.client.inverseCrossReferenceCache")
 			.getExtensionElements()) {
-			useCrossReferenceAdapter |= element.getBoolean("activated");
+			useCrossReferenceAdapter &= element.getBoolean("activated");
 		}
 
 		if (useCrossReferenceAdapter) {
