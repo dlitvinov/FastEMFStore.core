@@ -63,7 +63,7 @@ public class PerformanceTest extends ServerTests {
 	private static final String OUTPUT_DIR = "../../TestResults/";
 	private static final String[] MODELS = new String[] { "500000" };
 	// { "1000", "10000", "50000", "100000", "200000", "500000" };
-	private static final int NUM_ITERATIONS = 15;
+	private static final int NUM_ITERATIONS = 30;
 
 	private static MemoryMeter memoryMeter;
 	private static Writer writer;
@@ -676,11 +676,12 @@ public class PerformanceTest extends ServerTests {
 			long[] loadBinMemDuring = new long[NUM_ITERATIONS];
 			long[] loadBinMemAfter = new long[NUM_ITERATIONS];
 
+			final SetupHelper setupHelper = new SetupHelper(MODELS_DIR + modelName + ".ecp");
+			setupHelper.setupWorkSpace();
+			setupHelper.setupTestProjectSpace();
+			final Project project = setupHelper.getTestProjectSpace().getProject();
+
 			for (int i = 0; i < NUM_ITERATIONS; i++) {
-				final SetupHelper setupHelper = new SetupHelper(MODELS_DIR + modelName + ".ecp");
-				setupHelper.setupWorkSpace();
-				setupHelper.setupTestProjectSpace();
-				final Project project = setupHelper.getTestProjectSpace().getProject();
 				// ================= XML ==================
 				memoryMeter.startMeasurements();
 				saveXmlMemBefore[i] = usedMemory();
@@ -849,8 +850,6 @@ public class PerformanceTest extends ServerTests {
 				ModelUtil.logInfo("load binary resource " + modelName + " iteration #" + (i + 1) + ": time="
 					+ loadBinTimes[i] + ", memory used before: " + loadBinMemBefore[i] / 1024 / 1024 + "MB, during: "
 					+ loadBinMemDuring[i] / 1024 / 1024 + "MB");
-
-				SetupHelper.cleanupWorkspace();
 			} // for loop with iterations
 			ModelUtil.logInfo("Save XML times=" + Arrays.toString(saveXmlTimes));
 			writedata("Save XML", modelName, saveXmlTimes, saveXmlMemBefore, saveXmlMemDuring, saveXmlMemAfter);
@@ -882,6 +881,14 @@ public class PerformanceTest extends ServerTests {
 			ModelUtil.logInfo("Load Binary resource times=" + Arrays.toString(loadBinTimes));
 			writedata("Load Binary resource", modelName, loadBinTimes, loadBinMemBefore, loadBinMemDuring,
 				loadBinMemAfter);
+
+			try {
+				WorkspaceManager.getInstance().getCurrentWorkspace()
+					.deleteProjectSpace(setupHelper.getTestProjectSpace());
+			} catch (IOException e) {
+				ModelUtil.logException(e);
+			}
+			SetupHelper.cleanupWorkspace();
 
 		} // for loop with different models
 
