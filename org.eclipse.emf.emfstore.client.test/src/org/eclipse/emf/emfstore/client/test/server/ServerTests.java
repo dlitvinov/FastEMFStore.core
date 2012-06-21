@@ -269,7 +269,7 @@ public abstract class ServerTests extends WorkspaceTest {
 	 */
 	public static void assertEqual(Project expected, Project compare) {
 		try {
-			if (!ModelUtil.eObjectToString(expected).equals(ModelUtil.eObjectToString(compare))) {
+			if (!ModelUtil.eObjectToBytes(expected).equals(ModelUtil.eObjectToBytes(compare))) {
 				throw new AssertionError("Projects are not equal.");
 			}
 		} catch (SerializationException e) {

@@ -32,7 +32,7 @@ import org.eclipse.emf.emfstore.server.model.ProjectId;
  */
 public interface OrgUnitProperty extends EObject {
 
-	public final static String ARRAY_SEPARATOR = "%%";
+	public final static byte[] ARRAY_SEPARATOR = "%%%%".getBytes();
 
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
@@ -76,7 +76,7 @@ public interface OrgUnitProperty extends EObject {
 	 * @model
 	 * @generated
 	 */
-	String getValue();
+	byte[] getValue();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.emf.emfstore.server.model.accesscontrol.OrgUnitProperty#getValue
@@ -87,7 +87,7 @@ public interface OrgUnitProperty extends EObject {
 	 * @see #getValue()
 	 * @generated
 	 */
-	void setValue(String value);
+	void setValue(byte[] value);
 
 	/**
 	 * Returns the value of the '<em><b>Project</b></em>' containment reference.

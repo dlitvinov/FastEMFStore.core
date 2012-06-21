@@ -54,9 +54,9 @@ public class EObjectSerializer extends TypeSerializerImpl {
 			OutputStreamWriter writer = new OutputStreamWriter(bos);
 			try {
 				if (pObject instanceof ChangePackage || pObject instanceof Project) {
-					ModelUtil.eobjectToString(writer, (EObject) pObject, true, true, true);
+					ModelUtil.eobjectToBytes(writer, (EObject) pObject, true, true, true);
 				} else {
-					bos.write(ModelUtil.eObjectToString((EObject) pObject).getBytes());
+					bos.write(ModelUtil.eObjectToBytes((EObject) pObject));
 				}
 			} catch (SerializationException e) {
 				throw new SAXException("Couldn't serialize EObject", e);

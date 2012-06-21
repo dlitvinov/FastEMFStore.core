@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.server.model.accesscontrol.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +72,7 @@ public class OrgUnitPropertyImpl extends EObjectImpl implements OrgUnitProperty 
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String VALUE_EDEFAULT = null;
+	protected static final byte[] VALUE_EDEFAULT = null;
 
 	/**
 	 * The cached value of the '{@link #getValue() <em>Value</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc
@@ -80,7 +82,7 @@ public class OrgUnitPropertyImpl extends EObjectImpl implements OrgUnitProperty 
 	 * @generated
 	 * @ordered
 	 */
-	protected String value = VALUE_EDEFAULT;
+	protected byte[] value = VALUE_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getProject() <em>Project</em>}' containment reference.
@@ -139,7 +141,7 @@ public class OrgUnitPropertyImpl extends EObjectImpl implements OrgUnitProperty 
 	 * 
 	 * @generated
 	 */
-	public String getValue() {
+	public byte[] getValue() {
 		return value;
 	}
 
@@ -148,8 +150,8 @@ public class OrgUnitPropertyImpl extends EObjectImpl implements OrgUnitProperty 
 	 * 
 	 * @generated
 	 */
-	public void setValue(String newValue) {
-		String oldValue = value;
+	public void setValue(byte[] newValue) {
+		byte[] oldValue = value;
 		value = newValue;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, AccesscontrolPackage.ORG_UNIT_PROPERTY__VALUE,
@@ -279,7 +281,7 @@ public class OrgUnitPropertyImpl extends EObjectImpl implements OrgUnitProperty 
 			setName((String) newValue);
 			return;
 		case AccesscontrolPackage.ORG_UNIT_PROPERTY__VALUE:
-			setValue((String) newValue);
+			setValue((byte[]) newValue);
 			return;
 		case AccesscontrolPackage.ORG_UNIT_PROPERTY__PROJECT:
 			setProject((ProjectId) newValue);
@@ -350,47 +352,61 @@ public class OrgUnitPropertyImpl extends EObjectImpl implements OrgUnitProperty 
 	 * {@inheritDoc}
 	 */
 	public void setValue(boolean value) {
-		String newValue = null;
+		byte[] newValue = null;
 		if (value) {
-			newValue = "true";
+			newValue = "true".getBytes();
 		} else {
-			newValue = "false";
+			newValue = "false".getBytes();
 		}
 		setValue(newValue);
+	}
+
+	private byte[] intToBytes(int value) {
+		return new byte[] { (byte) (value >>> 24), (byte) (value >>> 16), (byte) (value >>> 8), (byte) value };
+	}
+
+	private Integer bytesToInt(byte[] buf) {
+		return new Integer((buf[0] << 24) + (buf[1] << 16) + (buf[2] << 8) + buf[0]);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setValue(int value) {
-		setValue(new Integer(value).toString());
+		setValue(intToBytes(value));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setValue(String[] value) {
+	public void setValue(byte[][] value) {
 		if (value.length == 0) {
-			setValue("");
+			setValue(new byte[0]);
 			return;
 		}
-		StringBuilder newValue = new StringBuilder();
-		for (String s : value) {
-			newValue.append(s);
-			newValue.append(OrgUnitProperty.ARRAY_SEPARATOR);
+		ByteArrayOutputStream output = new ByteArrayOutputStream(value.length * 10);
+		int i = 0;
+		try {
+			for (byte[] buf : value) {
+				output.write(buf);
+				if (++i < value.length) {
+					output.write(OrgUnitProperty.ARRAY_SEPARATOR);
+				}
+			}
+		} catch (IOException e) {
+			ModelUtil.logException(e);
 		}
-		String ret = newValue.toString();
-		setValue(ret.substring(0, ret.length() - 2));
+		setValue(output.toByteArray());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setValue(EObject[] value) {
-		String[] newValue = new String[value.length];
+		byte[][] newValue = new byte[value.length][];
 		try {
 			for (int i = 0; i < value.length; i++) {
-				newValue[i] = ModelUtil.eObjectToString(value[i]);
+				newValue[i] = ModelUtil.eObjectToBytes(value[i]);
 			}
 			setValue(newValue);
 		} catch (SerializationException e) {
@@ -401,9 +417,9 @@ public class OrgUnitPropertyImpl extends EObjectImpl implements OrgUnitProperty 
 	 * {@inheritDoc}
 	 */
 	public Boolean getBooleanProperty() {
-		String value = getValue();
+		byte[] value = getValue();
 		if (value != null) {
-			Boolean b = new Boolean(value);
+			Boolean b = new Boolean(new String(value));
 			return b;
 		}
 		throw new IllegalStateException("Existing key without value!");
@@ -413,10 +429,9 @@ public class OrgUnitPropertyImpl extends EObjectImpl implements OrgUnitProperty 
 	 * {@inheritDoc}
 	 */
 	public Integer getIntegerProperty() {
-		String value = getValue();
-		if (value != null) {
-			Integer b = new Integer(value);
-			return b;
+		byte[] buf = getValue();
+		if (buf != null && buf.length == 4) {
+			return bytesToInt(buf);
 		}
 		throw new IllegalStateException("Existing key without value!");
 	}
@@ -424,11 +439,15 @@ public class OrgUnitPropertyImpl extends EObjectImpl implements OrgUnitProperty 
 	/**
 	 * {@inheritDoc}
 	 */
-	public String[] getStringArrayProperty() {
-		String value = getValue();
+	public byte[][] getBytesArrayProperty() {
+		byte[] value = getValue();
 		if (value != null) {
-			if (value.equals("")) {
-				return new String[0];
+			if (value.length == 0) {
+				return new byte[0][];
+			}
+			int start = 0;
+			for (int i = 0; i < value.length; i++) {
+
 			}
 			String[] split = value.split(OrgUnitProperty.ARRAY_SEPARATOR);
 			return split;
@@ -444,12 +463,12 @@ public class OrgUnitPropertyImpl extends EObjectImpl implements OrgUnitProperty 
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends EObject> List<T> getEObjectListProperty(List<T> result) {
-		String[] value = getStringArrayProperty();
+		byte[][] value = getBytesArrayProperty();
 		List<Exception> causes = new ArrayList<Exception>();
 		if (value != null && value.length > 0) {
 			for (int i = 0; i < value.length; i++) {
 				try {
-					EObject eObject = ModelUtil.stringToEObject(value[i]);
+					EObject eObject = ModelUtil.bytesToEObject(value[i]);
 					result.add((T) eObject);
 				} catch (SerializationException e) {
 					causes.add(e);

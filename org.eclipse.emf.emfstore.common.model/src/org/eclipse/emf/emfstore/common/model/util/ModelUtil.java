@@ -10,11 +10,11 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.common.model.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -127,15 +127,15 @@ public final class ModelUtil {
 	 * @return true if the two objects are equal
 	 */
 	public static boolean areEqual(EObject eobjectA, EObject eobjectB) {
-		String stringA;
-		String stringB;
+		byte[] bufA;
+		byte[] bufB;
 		try {
-			stringA = eObjectToString(eobjectA);
-			stringB = eObjectToString(eobjectB);
+			bufA = eObjectToBytes(eobjectA);
+			bufB = eObjectToBytes(eobjectB);
 		} catch (SerializationException e) {
 			return false;
 		}
-		return stringA.equals(stringB);
+		return bufA.equals(bufB);
 
 	}
 
@@ -178,6 +178,24 @@ public final class ModelUtil {
 	 *             if a serialization problem occurs
 	 */
 	public static String eObjectToString(EObject object) throws SerializationException {
+		try {
+			return new String(eObjectToBytes(object), "UTF8");
+		} catch (UnsupportedEncodingException e) {
+			ModelUtil.logException(e);
+			return new String(eObjectToBytes(object));
+		}
+	}
+
+	/**
+	 * Converts an EObject to a byte array.
+	 * 
+	 * @param object
+	 *            the eObject
+	 * @return String representation of the EObject
+	 * @throws SerializationException
+	 *             if a serialization problem occurs
+	 */
+	public static byte[] eObjectToBytes(EObject object) throws SerializationException {
 
 		boolean containmentCheckEnabled = false;
 		boolean hrefCheckEnabled = false;
@@ -191,31 +209,10 @@ public final class ModelUtil {
 			containmentCheckEnabled = element.getBoolean("SelfContainmentCheck");
 		}
 
-		String res = eObjectToString(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
-		// String oldRes = eObjectToString_old(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
-		// if (res == null && oldRes != null || !res.equals(oldRes)) {
-		// System.err.println("The results are DIFFERENT!!");
-		// System.err.println("res.length() = " + res.length());
-		// System.err.println("oldRes.length() = " + oldRes.length());
-		// int j = -1;
-		// for (int i = 0; i < res.length() && i < oldRes.length(); i++) {
-		// if (res.charAt(i) != oldRes.charAt(i)) {
-		// j = i;
-		// break;
-		// }
-		// }
-		// if (j == -1 && res.length() != oldRes.length()) {
-		// j = Math.min(res.length(), oldRes.length());
-		// }
-		// int start = Math.max(0, j - 10);
-		// int end = j + 100;
-		// System.err.println("res:    " + res.substring(start, Math.min(end, res.length())));
-		// System.err.println("oldRes: " + oldRes.substring(start, Math.min(end, oldRes.length())));
-		// }
-		return res;
+		return eObjectToBytes(object, !containmentCheckEnabled, !hrefCheckEnabled, !proxyCheckEnabled);
 	}
 
-	public static String eObjectToString(EObject object, boolean overrideContainmentCheck, boolean overrideHrefCheck,
+	public static byte[] eObjectToBytes(EObject object, boolean overrideContainmentCheck, boolean overrideHrefCheck,
 		boolean overrideProxyCheck) throws SerializationException {
 
 		Resource res;
@@ -231,108 +228,17 @@ public final class ModelUtil {
 			((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
 			res.getContents().add(object);
 		}
-		// XMIResource res = (XMIResource) object.eResource();
-		// String before = null;
-		// try {
-		// before = asString(res.getURI().toFileString());
-		// } catch (IOException e1) {
-		// e1.printStackTrace();
-		// }
-		// StringWriter stringWriter = new StringWriter(initialSize);
-		// try {
-		// res.save(stringWriter, getResourceSaveOptions());
-		// // if (before != null && !before.equals(asString(res.getURI().toFileString()))) {
-		// // System.err.println("The file is changed!");
-		// // }
-		// } catch (IOException e) {
-		// throw new SerializationException(e);
-		// }
-		// String result = stringWriter.toString();
-
-		// ByteArrayOutputStream outputStream = new ByteArrayOutputStream(initialSize);
-		// try {
-		// res.save(outputStream, getResourceSaveOptions());
-		// } catch (IOException e) {
-		// throw new SerializationException(e);
-		// }
-		// String result = outputStream.toString();
-		StringWriter stringWriter = new StringWriter(initialSize);
-		URIConverter.WriteableOutputStream uws = new URIConverter.WriteableOutputStream(stringWriter, "UTF-8");
+		ByteArrayOutputStream output = new ByteArrayOutputStream(initialSize);
 		try {
-			res.save(uws, getResourceSaveOptions());
+			res.save(output, getResourceSaveOptions());
 		} catch (IOException e) {
 			throw new SerializationException(e);
 		}
-		String result = stringWriter.toString();
+		byte[] result = output.toByteArray();
 
-		if (!overrideHrefCheck) {
-			hrefCheck(result);
-		}
-
-		return result;
-	}
-
-	/**
-	 * Converts an {@link EObject} to a {@link String}.
-	 * 
-	 * @param object
-	 *            the {@link EObject}
-	 * @param overrideContainmentCheck
-	 *            if true, no containment check is performed
-	 * @param overrideHrefCheck
-	 *            checks whether there is a <code>href</code> in the serialized
-	 *            text
-	 * @param overrideProxyCheck
-	 *            if true, proxy check is ignored
-	 * @return String representation of the {@link EObject}
-	 * @throws SerializationException
-	 *             if a serialization problem occurs
-	 */
-	public static String eObjectToString_old(EObject object, boolean overrideContainmentCheck,
-		boolean overrideHrefCheck, boolean overrideProxyCheck) throws SerializationException {
-
-		if (object == null) {
-			return null;
-		}
-
-		XMIResource res = (XMIResource) (new ResourceSetImpl()).createResource(VIRTUAL_URI);
-		((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
-		EObject copy;
-		if (object instanceof IdEObjectCollection) {
-			copy = copyIdEObjectCollection((IdEObjectCollection) object, res);
-		} else {
-			copy = ModelUtil.clone(object);
-			res.getContents().add(copy);
-		}
-
-		if (!overrideContainmentCheck && !(copy instanceof EClass)) {
-			if (!CommonUtil.isSelfContained(copy) || !CommonUtil.isContainedInResource(copy, res)) {
-				throw new SerializationException(copy);
-			}
-		}
-
-		int step = 200;
-		int initialSize = step;
-		if (object instanceof Project) {
-			Project project = (Project) object;
-			initialSize = project.getAllModelElements().size() * step;
-		}
-		if (!overrideProxyCheck) {
-			proxyCheck(res);
-		}
-
-		StringWriter stringWriter = new StringWriter(initialSize);
-		URIConverter.WriteableOutputStream uws = new URIConverter.WriteableOutputStream(stringWriter, "UTF-8");
-		try {
-			res.save(uws, getResourceSaveOptions());
-		} catch (IOException e) {
-			throw new SerializationException(e);
-		}
-		String result = stringWriter.toString();
-
-		if (!overrideHrefCheck) {
-			hrefCheck(result);
-		}
+		// if (!overrideHrefCheck) {
+		// hrefCheck(result);
+		// }
 
 		return result;
 	}
@@ -354,7 +260,7 @@ public final class ModelUtil {
 	 * @throws SerializationException
 	 *             if a serialization problem occurs
 	 */
-	public static void eobjectToString(OutputStreamWriter writer, EObject object, boolean overrideContainmentCheck,
+	public static void eobjectToBytes(OutputStreamWriter writer, EObject object, boolean overrideContainmentCheck,
 		boolean overrideHrefCheck, boolean overrideProxyCheck) throws SerializationException {
 
 		if (object == null) {
@@ -379,21 +285,6 @@ public final class ModelUtil {
 		} catch (IOException e) {
 			throw new SerializationException(e);
 		}
-	}
-
-	private static EObject copyIdEObjectCollection(IdEObjectCollection collection, XMIResource res) {
-		IdEObjectCollection copiedCollection = clone(collection);
-
-		for (EObject modelElement : copiedCollection.getAllModelElements()) {
-			if (isIgnoredDatatype(modelElement)) {
-				continue;
-			}
-			ModelElementId modelElementId = copiedCollection.getModelElementId(modelElement);
-			res.setID(modelElement, modelElementId.getId());
-		}
-
-		res.getContents().add(copiedCollection);
-		return copiedCollection;
 	}
 
 	/**
@@ -453,24 +344,24 @@ public final class ModelUtil {
 
 	/**
 	 * Converts a {@link String} to an {@link EObject}. <b>Note</b>: {@link String} must be the result of
-	 * {@link ModelUtil#eObjectToString(EObject)}
+	 * {@link ModelUtil#eObjectToBytes(EObject)}
 	 * 
-	 * @param object
+	 * @param buf
 	 *            the {@link String} representation of the {@link EObject}
 	 * @return the deserialized {@link EObject}
 	 * @throws SerializationException
 	 *             if deserialization fails
 	 */
-	public static EObject stringToEObject(String object) throws SerializationException {
+	public static EObject bytesToEObject(byte[] buf) throws SerializationException {
 
-		if (object == null) {
+		if (buf == null) {
 			return null;
 		}
 
 		XMIResource res = (XMIResource) (new ResourceSetImpl()).createResource(VIRTUAL_URI);
 		((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
 		try {
-			res.load(new InputSource(new StringReader(object)), getResourceLoadOptions());
+			res.load(new InputSource(new ByteArrayInputStream(buf)), getResourceLoadOptions());
 		} catch (UnsupportedEncodingException e) {
 			throw new SerializationException(e);
 		} catch (IOException e) {
@@ -490,7 +381,7 @@ public final class ModelUtil {
 	 * @throws SerializationException
 	 *             if deserialization fails
 	 */
-	public static EObject stringToEObject(Reader reader) throws SerializationException {
+	public static EObject bytesToEObject(Reader reader) throws SerializationException {
 
 		XMIResource res = (XMIResource) (new ResourceSetImpl()).createResource(VIRTUAL_URI);
 		((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
