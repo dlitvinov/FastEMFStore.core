@@ -13,7 +13,6 @@ package org.eclipse.emf.emfstore.server.connection.xmlrpc.util;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 
 import org.apache.ws.commons.util.Base64;
 import org.apache.ws.commons.util.Base64.Encoder;
@@ -51,10 +50,9 @@ public class EObjectSerializer extends TypeSerializerImpl {
 		try {
 			OutputStream ostream = new EncoderOutputStream(encoder);
 			BufferedOutputStream bos = new BufferedOutputStream(ostream);
-			OutputStreamWriter writer = new OutputStreamWriter(bos);
 			try {
 				if (pObject instanceof ChangePackage || pObject instanceof Project) {
-					ModelUtil.eobjectToBytes(writer, (EObject) pObject, true, true, true);
+					ModelUtil.eobjectToBytes(bos, (EObject) pObject, true, true, true);
 				} else {
 					bos.write(ModelUtil.eObjectToBytes((EObject) pObject));
 				}

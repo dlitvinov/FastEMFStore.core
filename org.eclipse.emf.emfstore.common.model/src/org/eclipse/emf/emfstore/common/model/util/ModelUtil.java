@@ -13,7 +13,8 @@ package org.eclipse.emf.emfstore.common.model.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -43,7 +44,6 @@ import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -61,7 +61,6 @@ import org.eclipse.emf.emfstore.common.model.ModelFactory;
 import org.eclipse.emf.emfstore.common.model.Project;
 import org.eclipse.emf.emfstore.common.model.SingletonIdResolver;
 import org.eclipse.emf.emfstore.common.model.impl.ProjectImpl;
-import org.xml.sax.InputSource;
 
 /**
  * Utility class for ModelElements.
@@ -92,9 +91,13 @@ public final class ModelUtil {
 	 */
 	private static Set<SingletonIdResolver> singletonIdResolvers;
 
-	private static HashMap<Object, Object> resourceLoadOptions;
+	private static Map<Object, Object> resourceLoadOptions;
 
-	private static HashMap<Object, Object> resourceSaveOptions;
+	private static Map<Object, Object> resourceSaveOptions;
+
+	private static Map<Object, Object> binaryResourceLoadOptions;
+
+	private static Map<Object, Object> binaryResourceSaveOptions;
 
 	/**
 	 * Private constructor.
@@ -215,22 +218,18 @@ public final class ModelUtil {
 	public static byte[] eObjectToBytes(EObject object, boolean overrideContainmentCheck, boolean overrideHrefCheck,
 		boolean overrideProxyCheck) throws SerializationException {
 
-		Resource res;
-		int step = 200;
-		int initialSize = step;
+		XMIResource res = (XMIResource) (new ResourceSetImpl()).createResource(ModelUtil.VIRTUAL_URI);
 		if (object instanceof Project) {
-			Project project = (Project) object;
-			initialSize = project.getAllModelElements().size() * step;
-			// ((ResourceImpl) res).setIntrinsicIDToEObjectMap(((IdEObjectCollectionImpl) project).getIdToEObjectMap());
-			res = project.eResource();
+			ModelUtil.setXmiIdsOnResource((Project) object, res);
 		} else {
-			res = (new ResourceSetImpl()).createResource(VIRTUAL_URI);
 			((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
-			res.getContents().add(object);
 		}
+		res.getContents().add(object);
+
+		int initialSize = 200;
 		ByteArrayOutputStream output = new ByteArrayOutputStream(initialSize);
 		try {
-			res.save(output, getResourceSaveOptions());
+			res.save(output, getBinaryResourceSaveOptions());
 		} catch (IOException e) {
 			throw new SerializationException(e);
 		}
@@ -246,7 +245,7 @@ public final class ModelUtil {
 	/**
 	 * Converts an {@link EObject} to a {@link String}.
 	 * 
-	 * @param writer
+	 * @param outputStream
 	 *            a writer that will be used as the destination where to write the serialized EObject
 	 * @param object
 	 *            the {@link EObject} that needs to be serialized
@@ -260,7 +259,7 @@ public final class ModelUtil {
 	 * @throws SerializationException
 	 *             if a serialization problem occurs
 	 */
-	public static void eobjectToBytes(OutputStreamWriter writer, EObject object, boolean overrideContainmentCheck,
+	public static void eobjectToBytes(OutputStream outputStream, EObject object, boolean overrideContainmentCheck,
 		boolean overrideHrefCheck, boolean overrideProxyCheck) throws SerializationException {
 
 		if (object == null) {
@@ -279,9 +278,8 @@ public final class ModelUtil {
 			proxyCheck(res);
 		}
 
-		URIConverter.WriteableOutputStream uws = new URIConverter.WriteableOutputStream(writer, "UTF-8");
 		try {
-			res.save(uws, getResourceSaveOptions());
+			res.save(outputStream, getBinaryResourceSaveOptions());
 		} catch (IOException e) {
 			throw new SerializationException(e);
 		}
@@ -361,7 +359,7 @@ public final class ModelUtil {
 		XMIResource res = (XMIResource) (new ResourceSetImpl()).createResource(VIRTUAL_URI);
 		((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
 		try {
-			res.load(new InputSource(new ByteArrayInputStream(buf)), getResourceLoadOptions());
+			res.load(new ByteArrayInputStream(buf), getBinaryResourceLoadOptions());
 		} catch (UnsupportedEncodingException e) {
 			throw new SerializationException(e);
 		} catch (IOException e) {
@@ -381,14 +379,22 @@ public final class ModelUtil {
 	 * @throws SerializationException
 	 *             if deserialization fails
 	 */
-	public static EObject bytesToEObject(Reader reader) throws SerializationException {
+	public static EObject bytesToEObject(InputStream inputStream) throws SerializationException {
+
+		// String s = null;
+		// try {
+		// byte[] buf = new byte[inputStream.available()];
+		// inputStream.read(buf);
+		// inputStream.reset();
+		// s = new String(buf);
+		// } catch (IOException e1) {
+		// ModelUtil.logException(e1);
+		// }
 
 		XMIResource res = (XMIResource) (new ResourceSetImpl()).createResource(VIRTUAL_URI);
 		((ResourceImpl) res).setIntrinsicIDToEObjectMap(new HashMap<String, EObject>());
-		URIConverter.ReadableInputStream ris = new URIConverter.ReadableInputStream(reader, "UTF-8");
-
 		try {
-			res.load(ris, getResourceLoadOptions());
+			res.load(inputStream, getBinaryResourceLoadOptions());
 		} catch (UnsupportedEncodingException e) {
 			throw new SerializationException(e);
 		} catch (IOException e) {
@@ -420,7 +426,6 @@ public final class ModelUtil {
 					throw new SerializationException("Failed to retrieve ID for EObject contained in project: "
 						+ modelElement);
 				}
-
 				eObjectToIdMap.put(modelElement, modelElementId);
 				idToEObjectMap.put(modelElementId, modelElement);
 			}
@@ -456,6 +461,20 @@ public final class ModelUtil {
 	}
 
 	/**
+	 * Delivers a map of mandatory options for loading resources from binary format
+	 * 
+	 * @return map of options for {@link XMIResource} or {@link XMLResource}.
+	 */
+	public synchronized static Map<Object, Object> getBinaryResourceLoadOptions() {
+		if (binaryResourceLoadOptions == null) {
+			binaryResourceLoadOptions = getResourceLoadOptions();
+			binaryResourceLoadOptions.put(XMLResource.OPTION_BINARY, Boolean.TRUE);
+			binaryResourceLoadOptions.put(XMLResource.OPTION_ZIP, Boolean.TRUE);
+		}
+		return binaryResourceLoadOptions;
+	}
+
+	/**
 	 * Delivers a map of mandatory options for saving resources.
 	 * 
 	 * @return map of options for {@link XMIResource} or {@link XMLResource}.
@@ -467,6 +486,20 @@ public final class ModelUtil {
 			resourceSaveOptions.put(XMLResource.OPTION_USE_CACHED_LOOKUP_TABLE, new ArrayList<Object>());
 		}
 		return resourceSaveOptions;
+	}
+
+	/**
+	 * Delivers a map of mandatory options for saving resources in binary format
+	 * 
+	 * @return map of options for {@link XMIResource} or {@link XMLResource}.
+	 */
+	public synchronized static Map<Object, Object> getBinaryResourceSaveOptions() {
+		if (binaryResourceSaveOptions == null) {
+			binaryResourceSaveOptions = getResourceSaveOptions();
+			binaryResourceLoadOptions.put(XMLResource.OPTION_BINARY, Boolean.TRUE);
+			binaryResourceSaveOptions.put(XMLResource.OPTION_ZIP, Boolean.TRUE);
+		}
+		return binaryResourceSaveOptions;
 	}
 
 	private static boolean canHaveInstances(EClass eClass) {

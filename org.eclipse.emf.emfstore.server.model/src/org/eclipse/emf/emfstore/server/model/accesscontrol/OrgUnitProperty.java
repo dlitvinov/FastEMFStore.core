@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.server.model.accesscontrol;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
@@ -31,8 +32,6 @@ import org.eclipse.emf.emfstore.server.model.ProjectId;
  * @generated
  */
 public interface OrgUnitProperty extends EObject {
-
-	public final static byte[] ARRAY_SEPARATOR = "%%%%".getBytes();
 
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
@@ -135,12 +134,12 @@ public interface OrgUnitProperty extends EObject {
 	void setValue(int value);
 
 	/**
-	 * Sets a new String[] property.
+	 * Sets a new byte[][] property.
 	 * 
 	 * @param value the new value
 	 * @generated NOT
 	 */
-	void setValue(String[] value);
+	void setValue(byte[][] value);
 
 	/**
 	 * Sets a new EObject[] property.
@@ -163,7 +162,7 @@ public interface OrgUnitProperty extends EObject {
 	/**
 	 * @return the array value of the property or null if it doesn't exist
 	 */
-	String[] getStringArrayProperty();
+	byte[][] getBytesArrayProperty() throws IllegalStateException, IOException;
 
 	/**
 	 * @param <T> the EObject sub type

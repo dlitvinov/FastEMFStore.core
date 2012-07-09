@@ -10,7 +10,9 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.server.model.accesscontrol.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -385,13 +387,11 @@ public class OrgUnitPropertyImpl extends EObjectImpl implements OrgUnitProperty 
 			return;
 		}
 		ByteArrayOutputStream output = new ByteArrayOutputStream(value.length * 10);
-		int i = 0;
 		try {
+			output.write(value.length);
 			for (byte[] buf : value) {
+				output.write(buf.length);
 				output.write(buf);
-				if (++i < value.length) {
-					output.write(OrgUnitProperty.ARRAY_SEPARATOR);
-				}
 			}
 		} catch (IOException e) {
 			ModelUtil.logException(e);
@@ -439,18 +439,30 @@ public class OrgUnitPropertyImpl extends EObjectImpl implements OrgUnitProperty 
 	/**
 	 * {@inheritDoc}
 	 */
-	public byte[][] getBytesArrayProperty() {
+	public byte[][] getBytesArrayProperty() throws IllegalStateException, IOException {
 		byte[] value = getValue();
 		if (value != null) {
 			if (value.length == 0) {
 				return new byte[0][];
 			}
-			int start = 0;
-			for (int i = 0; i < value.length; i++) {
-
+			DataInputStream input = new DataInputStream(new ByteArrayInputStream(value));
+			int numObjects = input.readInt();
+			byte[][] result = new byte[numObjects][];
+			for (int i = 0; i < numObjects; i++) {
+				if (input.available() < 4) {
+					throw new IllegalStateException("Cannot parse a byte array");
+				}
+				int size = input.readInt();
+				byte[] buf = new byte[size];
+				input.read(buf);
+				result[i] = buf;
 			}
-			String[] split = value.split(OrgUnitProperty.ARRAY_SEPARATOR);
-			return split;
+			// int start = 0;
+			// for (int i = 0; i < value.length; i++) {
+			//
+			// }
+			// String[] split = value.split(OrgUnitProperty.ARRAY_SEPARATOR);
+			return result;
 		}
 		throw new IllegalStateException("Existing key without value!");
 	}
@@ -463,8 +475,15 @@ public class OrgUnitPropertyImpl extends EObjectImpl implements OrgUnitProperty 
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends EObject> List<T> getEObjectListProperty(List<T> result) {
-		byte[][] value = getBytesArrayProperty();
 		List<Exception> causes = new ArrayList<Exception>();
+		byte[][] value = null;
+		try {
+			value = getBytesArrayProperty();
+		} catch (IllegalStateException e) {
+			causes.add(e);
+		} catch (IOException e) {
+			causes.add(e);
+		}
 		if (value != null && value.length > 0) {
 			for (int i = 0; i < value.length; i++) {
 				try {
@@ -476,11 +495,11 @@ public class OrgUnitPropertyImpl extends EObjectImpl implements OrgUnitProperty 
 					causes.add(e);
 				}
 			}
-			if (!causes.isEmpty()) {
-				setValue(result.toArray(new EObject[0]));
-				for (Exception cause : causes) {
-					ModelUtil.logWarning("Removed broken entries from property " + this.getName() + ".", cause);
-				}
+		}
+		if (!causes.isEmpty()) {
+			setValue(result.toArray(new EObject[0]));
+			for (Exception cause : causes) {
+				ModelUtil.logWarning("Removed broken entries from property " + this.getName() + ".", cause);
 			}
 		}
 		return result;
